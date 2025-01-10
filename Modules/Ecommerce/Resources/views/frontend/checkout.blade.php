@@ -126,7 +126,7 @@ if(auth()->user() && auth()->user()->role_id != 5){
         }
 
         .cart-item-img img {
-            border-radius: 5px;
+            border-radius: 10px;
             max-width: 90px;
             padding: .5rem;
         }

@@ -104,7 +104,7 @@ h6 {
 
 .form-control {
     border: 1px solid #ced4da;
-    border-radius: 5px;
+    border-radius: 10px;
     color: #212529;
     font-size: 14px;
     height: 45px;
@@ -802,7 +802,7 @@ a.underline:after {
 
 .cart__menu.fixed {
     background-color: var(--theme-color);
-    border-radius: 5px;
+    border-radius: 10px;
     color: #fff;
     display: none;
     padding: 10px;
@@ -1612,7 +1612,7 @@ a.underline:after {
 .single-product-wrapper {
     background-color: #fff;
     border: 1px solid transparent;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
     padding: 20px;
     position: relative;

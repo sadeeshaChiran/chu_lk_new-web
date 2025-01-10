@@ -28,9 +28,9 @@ a { color: #7c5cc4; }
     padding: 25px 50px;
     background-color: #FFFFFF;
     border: 1px solid #E5E5E5;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
     -moz-box-shadow: 0px 5px 15px #bbb;
     -webkit-box-shadow: 0px 5px 15px #bbb;
     box-shadow: 0px 5px 15px #ddd;

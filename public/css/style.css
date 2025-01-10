@@ -21,7 +21,7 @@
 
 .dropzone {
     border: 1px dashed #ced4da;
-    border-radius: 5px;
+    border-radius: 10px;
     background: white;
 }
 #imageUpload{

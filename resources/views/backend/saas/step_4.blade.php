@@ -24,7 +24,7 @@
                 </p>
             </div>
             <hr>
-            <footer>Copyright &copy; lionCoders. All Rights Reserved.</footer>
+            <footer>Copyright &copy; metrocoding.com. All Rights Reserved.</footer>
         </div>
     </div>
     <script type="text/javascript" src="{{ asset('saas-install-assets/js/jquery.min.js')}}"></script>

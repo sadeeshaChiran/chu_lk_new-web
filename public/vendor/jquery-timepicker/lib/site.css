@@ -74,8 +74,8 @@ p:first-child {
 input {
     font-size: 13px;
     -webkit-border-radius: 3px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
     padding: 3px;
     background: #fff;
     border: 1px solid #aac;

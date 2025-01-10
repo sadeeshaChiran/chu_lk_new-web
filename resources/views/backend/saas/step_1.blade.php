@@ -26,7 +26,7 @@
                     Please contact <a href="mailto:support@lion-coders.com">support@lion-coders.com</a></h6>
             </div>
             <hr>
-            <footer>Copyright &copy; lionCoders. All Rights Reserved.</footer>
+            <footer>Copyright &copy; metrocoding.com. All Rights Reserved.</footer>
 		</div>
 	</div>
 </body>

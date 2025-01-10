@@ -124,7 +124,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
         }
 
         .cart-item-img img {
-            border-radius: 5px;
+            border-radius: 10px;
             max-width: 90px;
             padding: .5rem;
         }
