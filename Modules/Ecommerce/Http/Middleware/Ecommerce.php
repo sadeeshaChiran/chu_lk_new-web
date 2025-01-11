@@ -18,7 +18,7 @@ class Ecommerce
         });
 
         if(!$general_setting) {
-            \DB::unprepared(file_get_contents(public_path('tenant_necessary.sql')));
+            // \DB::unprepared(file_get_contents(public_path('tenant_necessary.sql')));
             $general_setting =  Cache::remember('general_setting', 60*60*24*365, function () {
                 return DB::table('general_settings')->latest()->first();
             });
