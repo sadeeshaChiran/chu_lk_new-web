@@ -1,7 +1,7 @@
     @php
         $brands = DB::table('brands')->where('is_active', true)->whereIn('id',explode(',',$widget->brand_slider_ids))->get();
     @endphp
-    <section class="category-tab-section mb-3">
+    <section class="category-tab-section mb-3 bg-gray rounded-2xl">
         <div class="container-fluid">
             <div class="section-title mb-3">
                 <div class="d-flex align-items-center">

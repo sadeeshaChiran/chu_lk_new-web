@@ -2,7 +2,7 @@
     $collections = DB::table('collections')->whereIn('id',explode(',',$widget->tab_product_collection_id))->get();
     @endphp
     <!--Product area starts-->
-    <section class="product-tab-section">
+    <section class="product-tab-section bg-gray rounded-2xl mt-3 mb-3">
         <div class="container-fluid">
             <div class="section-title mb-3">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">

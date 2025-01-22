@@ -1,5 +1,5 @@
-<section class="mb-3">
-    <div class="container-fluid">
+<section class="mb-3 ">
+    <div class="container-fluid ">
         <div class="row">
             <div class="col-md-4">
                 <a href="{{$widget->three_c_banner_link1}}"><img loading="lazy" class="banner-img" data-src="{{ url('frontend/images/banners/') }}/{{ $widget->three_c_banner_image1 }}" alt="banner" /></a>

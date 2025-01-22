@@ -20,7 +20,7 @@
                             @endif
                         </a>
                     </div>
-                    <form action="{{route('products.search')}}" method="post" class="header-search" style="max-width:550px">
+                    <form action="{{route('products.search')}}" method="post" class="header-search mt-2" style="max-width:550px">
                         @csrf
                         <div class="header-search-container">
                             <input id="search" type="text" placeholder="Search products..." name="search">

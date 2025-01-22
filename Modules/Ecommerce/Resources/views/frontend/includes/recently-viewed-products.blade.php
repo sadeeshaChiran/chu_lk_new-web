@@ -2,7 +2,7 @@
         $products = DB::table('products')->where('is_active', true)->where('is_online', true)->whereIn('id',$recently_viewed)->offset(0)->limit(20)->get();
     @endphp
 
-    <section class="product-tab-section">
+    <section class="product-tab-section bg-gray rounded-2xl mt-3 mb-3">
         <div class="container-fluid">
             <div class="section-title mb-3">
                 <div class="d-flex align-items-center">

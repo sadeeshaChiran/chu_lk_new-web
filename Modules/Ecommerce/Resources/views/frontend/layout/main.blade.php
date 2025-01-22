@@ -218,7 +218,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     @endif
 </head>
 
-<body class="@if(!empty($ecommerce_setting->is_rtl)) rtl @endif">
+<body style="background-color: rgb(251 250 250);" class="@if(!empty($ecommerce_setting->is_rtl)) rtl @endif container-fluid">
     @if(env('USER_VERIFIED') == false)
     <div id="demo">
         <h6>Theme Colors</h6>

@@ -1,4 +1,4 @@
-<div class="single-product-wrapper">
+<div class="single-product-wrapper m-1">
     <div class="single-product-item">
         @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
         <div class="product-promo-text style1 bg-danger">

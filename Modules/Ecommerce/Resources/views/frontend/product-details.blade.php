@@ -205,8 +205,8 @@ $product->image = $images[0];
 </section>
 <!--Product details section ends-->
 @if(isset($related_products) && count($related_products) > 0)
-<section>
-    <div class="container-fluid">
+<section class="bg-gray rounded-2xl">
+    <div class="container-fluid ">
         <div class="section-title mb-3">
             <div class="d-flex align-items-center">
                 <h3>{{trans('file.You may also like')}}</h3>
@@ -302,7 +302,7 @@ $product->image = $images[0];
             $(this).addClass('selected');
 
             // Check if all variant options are selected
-            if ($('.variant_val.selected').length == {{count($product->variant_option)}}) {
+            if ($('.variant_val.selected').length == {{ $product->variant_option ? count($product->variant_option) : 0 }} ) {
                 combination = '';
                 
                 // Build the combination string

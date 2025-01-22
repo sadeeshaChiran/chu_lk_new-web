@@ -225,7 +225,7 @@ class FrontController extends Controller
             $products = DB::table('products')
                             ->where('is_active', 1)
                             ->where('is_online', 1)
-                            ->where('is_variant', 1)
+                            // ->where('is_variant', 1)
                             ->where(function($query) use ($category,$sub_cats){
                                 $query->where('category_id', $category->id);
                                 $query->orWhereIn('category_id',$sub_cats);
@@ -258,7 +258,7 @@ class FrontController extends Controller
             $variants = DB::table('products')
                             ->where('is_active', 1)
                             ->where('is_online', 1)
-                            ->where('is_variant', 1)
+                            // ->where('is_variant', 1)
                             ->where(function ($query) use ($category, $sub_cats) {
                                 $query->where('category_id', $category->id)
                                     ->orWhereIn('category_id', $sub_cats);
@@ -271,8 +271,8 @@ class FrontController extends Controller
             $products = DB::table('products')
                             ->where('category_id', $category->id)
                             ->where('is_active', 1)
-                            ->where('is_online', 1)
-                            ->where('is_variant', 1);
+                            ->where('is_online', 1);
+                            // ->where('is_variant', 1)
 
             foreach ($queryParams as $key => $value) {
                 $valuesArray = explode(',', $value); // Split the parameter values into an array
@@ -301,7 +301,7 @@ class FrontController extends Controller
                         ->where('category_id', $category->id)
                         ->where('is_active', 1)
                         ->where('is_online', 1)
-                        ->where('is_variant', 1)
+                        // ->where('is_variant', 1)
                         ->get(['variant_option', 'variant_value']);
 
             return view('ecommerce::frontend/products', compact('products', 'category','variants'));

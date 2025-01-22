@@ -2,7 +2,7 @@
         $products = DB::table('products')->where('is_active', true)->where('is_online', true)->where('category_id',$widget->product_category_id)->offset(0)->limit($widget->product_category_limit)->get();
     @endphp
 
-    <section class="product-tab-section">
+    <section class="product-tab-section bg-gray rounded-2xl mt-3 mb-3">
         <div class="container-fluid">
             <div class="section-title mb-3">
                 <div class="d-flex align-items-center">

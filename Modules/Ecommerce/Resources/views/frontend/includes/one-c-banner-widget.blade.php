@@ -16,7 +16,7 @@
         </div>
     </div>
     @else
-    <div class="container-fluid">
+    <div class="container-fluid ">
         <div class="row">
             <div class="col-md-12">
                 <a href="{{$widget->one_c_banner_link1}}">
@@ -25,9 +25,9 @@
                     @endphp
 
                     @if(file_exists($file))
-                        <img class="banner-img" loading="lazy" data-src-m="{{ url('frontend/images/banners/mobile/' . $widget->one_c_banner_image1) }}" src="{{ url('frontend/images/banners/desktop/' . $widget->one_c_banner_image1) }}" alt="" />
+                        <img class="img-fluid w-100 rounded-2xl" loading="lazy" data-src-m="{{ url('frontend/images/banners/mobile/' . $widget->one_c_banner_image1) }}" src="{{ url('frontend/images/banners/desktop/' . $widget->one_c_banner_image1) }}" alt="" />
                     @else
-                        <img class="banner-img" loading="lazy" data-src-m="" src="{{ url('frontend/images/banners/desktop/' . $widget->one_c_banner_image1) }}" alt="" />
+                        <img class="img-fluid w-100 rounded-2xl" loading="lazy" data-src-m="" src="{{ url('frontend/images/banners/desktop/' . $widget->one_c_banner_image1) }}" alt="" />
                     @endif         
                 </a>
             </div>

@@ -379,11 +379,11 @@
                   <a href="{{url('holidays/my-holiday/'.date('Y').'/'.date('m'))}}"><i class="dripicons-vibrate"></i> {{trans('file.My Holiday')}}</a>
                 </li>
                 @endif
-                @if($empty_database_permission_active)
+                {{-- @if($empty_database_permission_active)
                 <li>
                   <a onclick="return confirm('Are you sure want to delete? If you do this all of your data will be lost.')" href="{{route('setting.emptyDatabase')}}"><i class="dripicons-stack"></i> {{trans('file.Empty Database')}}</a>
                 </li>
-                @endif
+                @endif --}}
                 <li>
                   <a href="{{ route('logout') }}" onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();"><i class="dripicons-power"></i>

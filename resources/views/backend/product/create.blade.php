@@ -336,9 +336,9 @@
                                         <textarea name="product_details" class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-3" id="variant-option">
+                                {{-- <div class="col-md-12 mt-3" id="variant-option">
                                     <h5><input name="is_variant" type="checkbox" id="is-variant" value="1">&nbsp; {{trans('file.This product has variant')}}</h5>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-12" id="variant-section">
                                     <div id="variant-input-section">
                                         <div class="row">
