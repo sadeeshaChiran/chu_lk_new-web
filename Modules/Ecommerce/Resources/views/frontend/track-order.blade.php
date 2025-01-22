@@ -64,7 +64,8 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    @if($delivery != 0)
+                                   
+                                    @if($delivery)
                                     <span class="mute">{{trans('file.Shipping Status')}} : </span>
                                     @if($sale->payment_status == 1)
                                     <span>{{trans('file.Packing')}}</span>

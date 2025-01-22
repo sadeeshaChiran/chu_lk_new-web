@@ -53,12 +53,13 @@
             dropdown.toggleClass('show');
         });
 
-        $('.single-carousel-item img,.banner-img').each(function(){
+        $('.single-carousel-item img,.banner-img').each(function() {
             var mobile = $(this).data('src-m');
-            if(mobile.length > 0){
+            if (typeof mobile !== 'undefined' && mobile.length > 0) {
                 $(this).attr('src', mobile);
             }
-        })
+        });
+        
             
         // $('body').on('click', function(){
         //     $('.dropdown').removeClass('show');

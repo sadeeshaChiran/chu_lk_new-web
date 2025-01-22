@@ -218,7 +218,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     @endif
 </head>
 
-<body style="background-color: rgb(251 250 250);" class="@if(!empty($ecommerce_setting->is_rtl)) rtl @endif container-fluid">
+<body style="background-color: rgb(251 250 250);" class="@if(!empty($ecommerce_setting->is_rtl)) rtl @endif">
     @if(env('USER_VERIFIED') == false)
     <div id="demo">
         <h6>Theme Colors</h6>
@@ -241,6 +241,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     @else
         @include('ecommerce::frontend.layout.header.header')
     @endif
+    <div class="container-fluid">
     <div class="body__overlay"></div>
     <!-- Offset Wrapper starts-->
     <div class="offset__wrapper">
@@ -503,7 +504,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     {!!$ecommerce_setting->chat_code!!}
     @endif
 
-
+</div>
     <!--Plugin js -->
     <script>
         {!! file_get_contents(Module::find('Ecommerce')->getPath(). "/assets/js/plugin.js") !!}
