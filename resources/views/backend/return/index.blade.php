@@ -220,7 +220,7 @@
             {"data": "sale_reference"},
             {"data": "warehouse"},
             {"data": "biller"},
-            {"data": "customer"},
+            {"data": "customer", "defaultContent": 'N/A' },
             {"data": "grand_total"},
             {"data": "options"},
         ],

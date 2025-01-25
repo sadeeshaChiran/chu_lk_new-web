@@ -376,8 +376,8 @@
                                 <div class="form-group top-fields">
                                     @if($lims_sale_data && $lims_sale_data->customer_id)
                                     <input type="hidden" name="customer_id_hidden" value="{{$lims_sale_data->customer_id}}">
-                                    @elseif($lims_pos_setting_data)
-                                    <input type="hidden" name="customer_id_hidden" value="{{$lims_pos_setting_data->customer_id}}">
+                                    {{-- @elseif($lims_pos_setting_data)
+                                    <input type="hidden" name="customer_id_hidden" value="{{$lims_pos_setting_data->customer_id}}"> --}}
                                     @endif
                                     <label>{{trans('file.customer')}}</label>
                                     <div class="input-group pos">
@@ -1505,7 +1505,7 @@
     var product_row_number = <?php echo json_encode($lims_pos_setting_data->product_number) ?>;
     @endif
     var rowindex;
-    var customer_group_rate;
+    var customer_group_rate= 0;
     var row_product_price;
     var pos;
     var keyboard_active = <?php echo json_encode($keybord_active); ?>;
@@ -1997,11 +1997,12 @@ function isCashRegisterAvailable(warehouse_id) {
             var customer_id = $('#customer_id').val();
             var warehouse_id = $('#warehouse_id').val();
             temp_data = $('#lims_productcodeSearch').val();
-            if(!customer_id){
-                $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
-                alert('Please select Customer!');
-            }
-            else if(!warehouse_id){
+            // if(!customer_id){
+            //     $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
+            //     alert('Please select Customer!');
+            // }
+            // else 
+            if(!warehouse_id){
                 $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
                 alert('Please select Warehouse!');
             }
@@ -2012,11 +2013,12 @@ function isCashRegisterAvailable(warehouse_id) {
             var customer_id = $('#customer_id').val();
             var warehouse_id = $('#warehouse_id').val();
             temp_data = $('#lims_productcodeSearch').val();
-            if(!customer_id){
-                $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
-                alert('Please select Customer!');
-            }
-            else if(!warehouse_id){
+            // if(!customer_id){
+            //     $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
+            //     alert('Please select Customer!');
+            // }
+            // else 
+            if(!warehouse_id){
                 $('#lims_productcodeSearch').val(temp_data.substring(0, temp_data.length - 1));
                 alert('Please select Warehouse!');
             }
@@ -2398,9 +2400,10 @@ function getProduct(warehouse_id){
         if(isMobile){
             $('.filter-window').hide('slide', {direction: 'right'}, 'fast');
         }
-        if(!customer_id)
-            alert('Please select Customer!');
-        else if(!warehouse_id)
+        // if(!customer_id)
+        //     alert('Please select Customer!');
+        // else 
+        if(!warehouse_id)
             alert('Please select Warehouse!');
         else{
             var data = $(this).data('product');
@@ -3087,7 +3090,7 @@ function getProduct(warehouse_id){
         localStorage.setItem("tbody-id", $("table.order-list tbody").html());
         if(data[16]) {
             populatePriceOption();
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.edit-product').click();
+            // $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.edit-product').click();
         }
     }
 

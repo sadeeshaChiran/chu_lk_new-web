@@ -1,0 +1,1 @@
+ALTER TABLE `sales` CHANGE `customer_id` `customer_id` INT(11) NULL;

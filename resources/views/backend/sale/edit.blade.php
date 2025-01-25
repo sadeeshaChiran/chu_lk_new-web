@@ -30,9 +30,9 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>{{trans('file.customer')}} *</label>
+                                            <label>{{trans('file.customer')}} </label>
                                             <input type="hidden" name="customer_id_hidden" value="{{ $lims_sale_data->customer_id }}" />
-                                            <select required name="customer_id" class="selectpicker form-control" data-live-search="true" id="customer_id" title="Select customer...">
+                                            <select  name="customer_id" class="selectpicker form-control" data-live-search="true" id="customer_id" title="Select customer...">
                                                 @foreach($lims_customer_list as $customer)
                                                 <option value="{{$customer->id}}">{{$customer->name . ' (' . $customer->phone_number . ')'}}</option>
                                                 @endforeach
@@ -568,7 +568,7 @@
     var exist_code = [];
     var exist_qty = [];
     var rowindex;
-    var customer_group_rate;
+    var customer_group_rate = 0;
     var row_product_price;
     var currencyExchangeRate = <?php echo json_encode($currency_exchange_rate) ?>;
     var role_id = <?php echo json_encode(Auth::user()->role_id)?>;
