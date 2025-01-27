@@ -81,16 +81,16 @@ class HomeController extends Controller
         DB::reconnect();
         if(Auth::user()->role_id == 5) {
             $customer = Customer::select('id', 'points')->where('user_id', Auth::id())->first();
-            $lims_sale_data = Sale::with('warehouse')->orderBy('created_at', 'desc')->get();
+            $lims_sale_data = Sale::with('warehouse')->where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
             $lims_payment_data = DB::table('payments')
                            ->join('sales', 'payments.sale_id', '=', 'sales.id')
-                           
+                           ->where('customer_id', $customer->id)
                            ->select('payments.*', 'sales.reference_no as sale_reference')
                            ->orderBy('payments.created_at', 'desc')
                            ->get();
-            $lims_quotation_data = Quotation::with('biller', 'customer', 'supplier', 'user')->orderBy('id', 'desc')->orderBy('created_at', 'desc')->get();
+            $lims_quotation_data = Quotation::with('biller', 'customer', 'supplier', 'user')->orderBy('id', 'desc')->where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
 
-            $lims_return_data = Returns::with('warehouse', 'customer', 'biller')->orderBy('created_at', 'desc')->get();
+            $lims_return_data = Returns::with('warehouse', 'customer', 'biller')->where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
             $lims_reward_point_setting_data = RewardPointSetting::select('per_point_amount')->latest()->first();
             return view('backend.customer_index', compact('customer', 'lims_sale_data', 'lims_payment_data', 'lims_quotation_data', 'lims_return_data', 'lims_reward_point_setting_data'));
         }

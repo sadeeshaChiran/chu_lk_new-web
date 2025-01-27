@@ -89,7 +89,9 @@
                             <select id="sale-type" class="form-control" name="sale_type">
                                 <option value="0">{{trans('file.All')}}</option>
                                 <option value="pos">{{trans('file.POS')}}</option>
-                                <option value="online">{{trans('file.eCommerce')}}</option>
+                                <option value="online">{{trans('file.Sell Online')}}</option>
+                                <option value="website">{{trans('file.Website')}}</option>
+
                             </select>
                         </div>
                     </div>
@@ -598,9 +600,7 @@
     @endif
 
 
-    var columns = [{"data": "key"}, {"data": "date"}, {"data": "reference_no"}, {"data": "biller"}, {"data": "customer","defaultContent": 'N/A' }, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
-        
-   
+    var columns = [{"data": "key"}, {"data": "date"}, {"data": "reference_no"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
     var field_name = <?php echo json_encode($field_name) ?>;
     for(i = 0; i < field_name.length; i++) {
         columns.push({"data": field_name[i]});

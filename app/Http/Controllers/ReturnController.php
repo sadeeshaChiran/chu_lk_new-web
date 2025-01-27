@@ -245,7 +245,7 @@ class ReturnController extends Controller
                     $nestedData['sale_reference'] = 'N/A';
                 $nestedData['warehouse'] = $returns->warehouse->name;
                 $nestedData['biller'] = $returns->biller->name;
-                $nestedData['customer'] = $returns->customer->name ?? 'N/A';
+                $nestedData['customer'] = $returns->customer->name;
                 $nestedData['grand_total'] = number_format($returns->grand_total, config('decimal'));
                 $nestedData['options'] = '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.trans("file.action").'
@@ -274,8 +274,7 @@ class ReturnController extends Controller
                 else
                     $currency_code = 'N/A';
 
-          
-                $nestedData['return'] = array( '[ "'.date(config('date_format'), strtotime($returns->created_at->toDateString())).'"', ' "'.$returns->reference_no.'"', ' "'.$returns->warehouse->name.'"', ' "'.$returns->biller->name.'"', ' "'.$returns->biller->company_name.'"', ' "'.$returns->biller->email.'"', ' "'.$returns->biller->phone_number.'"', ' "'.$returns->biller->address.'"', ' "'.$returns->biller->city.'"',  ' "'.$returns->id.'"', ' "'.$returns->total_tax.'"', ' "'.$returns->total_discount.'"', ' "'.$returns->total_price.'"', ' "'.$returns->order_tax.'"', ' "'.$returns->order_tax_rate.'"', ' "'.$returns->grand_total.'"', ' "'.preg_replace('/[\n\r]/', "<br>", $returns->return_note).'"', ' "'.preg_replace('/[\n\r]/', "<br>", $returns->staff_note).'"', ' "'.$returns->user->name.'"', ' "'.$returns->user->email.'"', ' "'.$nestedData['sale_reference'].'"', ' "'.$returns->document.'"', ' "'.$currency_code.'"', ' "'.$returns->exchange_rate.'"]'
+                $nestedData['return'] = array( '[ "'.date(config('date_format'), strtotime($returns->created_at->toDateString())).'"', ' "'.$returns->reference_no.'"', ' "'.$returns->warehouse->name.'"', ' "'.$returns->biller->name.'"', ' "'.$returns->biller->company_name.'"', ' "'.$returns->biller->email.'"', ' "'.$returns->biller->phone_number.'"', ' "'.$returns->biller->address.'"', ' "'.$returns->biller->city.'"', ' "'.$returns->customer->name.'"', ' "'.$returns->customer->phone_number.'"', ' "'.$returns->customer->address.'"', ' "'.$returns->customer->city.'"', ' "'.$returns->id.'"', ' "'.$returns->total_tax.'"', ' "'.$returns->total_discount.'"', ' "'.$returns->total_price.'"', ' "'.$returns->order_tax.'"', ' "'.$returns->order_tax_rate.'"', ' "'.$returns->grand_total.'"', ' "'.preg_replace('/[\n\r]/', "<br>", $returns->return_note).'"', ' "'.preg_replace('/[\n\r]/', "<br>", $returns->staff_note).'"', ' "'.$returns->user->name.'"', ' "'.$returns->user->email.'"', ' "'.$nestedData['sale_reference'].'"', ' "'.$returns->document.'"', ' "'.$currency_code.'"', ' "'.$returns->exchange_rate.'"]'
                 );
                 $data[] = $nestedData;
             }
@@ -529,14 +528,9 @@ class ReturnController extends Controller
         }
 
         $lims_return_data = Returns::create($data);
-        if($data['customer_id']){
-            $lims_customer_data = Customer::find($data['customer_id']);
-            //collecting male data
-            $mail_data['email'] = $lims_customer_data->email;
-        }else{
-            $mail_data['email'] = '';
-        }
-        
+        $lims_customer_data = Customer::find($data['customer_id']);
+        //collecting male data
+        $mail_data['email'] = $lims_customer_data->email;
         $mail_data['reference_no'] = $lims_return_data->reference_no;
         $mail_data['total_qty'] = $lims_return_data->total_qty;
         $mail_data['total_price'] = $lims_return_data->total_price;
@@ -1074,7 +1068,7 @@ class ReturnController extends Controller
         $mail_setting = MailSetting::latest()->first();
 
 
-        if(!($lims_customer_data && !$lims_customer_data->email) && !$mail_setting) {
+        if(!$lims_customer_data->email && !$mail_setting) {
             $message = 'Return updated successfully. Please setup your <a href="setting/mail_setting">mail setting</a> to send mail.';
         }else{
             //collecting male data

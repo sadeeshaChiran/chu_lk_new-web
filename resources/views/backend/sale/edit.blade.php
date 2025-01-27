@@ -30,9 +30,9 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>{{trans('file.customer')}} </label>
+                                            <label>{{trans('file.customer')}} *</label>
                                             <input type="hidden" name="customer_id_hidden" value="{{ $lims_sale_data->customer_id }}" />
-                                            <select  name="customer_id" class="selectpicker form-control" data-live-search="true" id="customer_id" title="Select customer...">
+                                            <select required name="customer_id" class="selectpicker form-control" data-live-search="true" id="customer_id" title="Select customer...">
                                                 @foreach($lims_customer_list as $customer)
                                                 <option value="{{$customer->id}}">{{$customer->name . ' (' . $customer->phone_number . ')'}}</option>
                                                 @endforeach
@@ -568,7 +568,7 @@
     var exist_code = [];
     var exist_qty = [];
     var rowindex;
-    var customer_group_rate = 0;
+    var customer_group_rate;
     var row_product_price;
     var currencyExchangeRate = <?php echo json_encode($currency_exchange_rate) ?>;
     var role_id = <?php echo json_encode(Auth::user()->role_id)?>;
@@ -887,6 +887,7 @@
                     data: data
                 },
                 success: function(data) {
+                    console.log(data);
                     var flag = 1;
                     if (pre_qty > 0) {
                         var qty = data[15];
@@ -896,7 +897,7 @@
                             product_price[rowindex] = parseFloat(product_warehouse_price[pos] * currencyExchangeRate) + parseFloat(product_warehouse_price[pos] * currencyExchangeRate * customer_group_rate);
                         }
                         else{
-                            product_price[rowindex] = parseFloat(data[2] * currencyExchangeRate) + parseFloat(data[2] * currencyExchangeRate * customer_group_rate);
+                            product_price[rowindex] = parseFloat(data['online_price'] * currencyExchangeRate) + parseFloat(data['online_price'] * currencyExchangeRate * customer_group_rate);
                         }
                         flag = 0;
                         checkQuantity(String(qty), true);
@@ -943,7 +944,7 @@
                             product_price.splice(rowindex, 0, parseFloat(product_warehouse_price[pos] * currencyExchangeRate) + parseFloat(product_warehouse_price[pos] * currencyExchangeRate * customer_group_rate));
                         }
                         else {
-                            product_price.splice(rowindex, 0, parseFloat(data[2] * currencyExchangeRate) + parseFloat(data[2] * currencyExchangeRate * customer_group_rate));
+                            product_price.splice(rowindex, 0, parseFloat(data['online_price'] * currencyExchangeRate) + parseFloat(data['online_price'] * currencyExchangeRate * customer_group_rate));
                         }
                         product_discount.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
                         tax_rate.splice(rowindex, 0, parseFloat(data[3]));

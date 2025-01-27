@@ -322,6 +322,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+
         //return $request;
         $this->validate($request, [
             'code' => [
@@ -1489,6 +1490,7 @@ class ProductController extends Controller
             $product[] = $variant_id;
             $product[] = $lims_product_data->cost;
             $products[] = $product;
+            
         }
         return $products;
     }

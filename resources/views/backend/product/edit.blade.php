@@ -222,6 +222,29 @@
                                         <input type="number" name="wholesale_price" class="form-control" value="{{$lims_product_data->wholesale_price}}" step="any">
                                     </div>
                                 </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Retail Price')}} </label>
+                                        <input type="number" name="retail_price" class="form-control" value="{{$lims_product_data->retail_price}}" step="any">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Online Price')}} </label>
+                                        <input type="number" name="online_price" class="form-control" value="{{$lims_product_data->online_price}}" step="any">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Product weight')}} (KG)</label>
+                                        <input type="number" name="product_weight" class="form-control" value="{{$lims_product_data->product_weight}}" step="any">
+                                    </div>
+                                </div>
+
+                                
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Daily Sale Objective')}} </label>

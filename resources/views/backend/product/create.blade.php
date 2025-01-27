@@ -193,6 +193,30 @@
                                         <input type="number" name="wholesale_price" class="form-control" step="any">
                                     </div>
                                 </div>
+                                
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Retail Price')}}</strong> </label>
+                                        <input type="number" name="retail_price" class="form-control" step="any">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Online Price')}}</strong> </label>
+                                        <input type="number" name="online_price" class="form-control" step="any">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{trans('file.Product weight')}}</strong> (KG)</label>
+                                        <input type="number" name="product_weight" class="form-control" step="any">
+                                    </div>
+                                </div>
+
+                                
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Daily Sale Objective')}}</strong></label> <i class="dripicons-question" data-toggle="tooltip" title="{{trans('file.Minimum qty which must be sold in a day. If not, you will be notified on dashboard. But you have to set up the cron job properly for that. Follow the documentation in that regard.')}}"></i>

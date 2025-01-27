@@ -167,7 +167,7 @@ class OrdersController extends Controller
             'sale_status'          => 2,
             'payment_status'       => 1,
             'sale_note'            => $post_data['sale_note'],
-            'sale_type'            => 'online',
+            'sale_type'            => 'website',
             'payment_mode'         => $post_data['payment_mode'],
             'created_at'           => date('Y-m-d H:i:s')
         ]);

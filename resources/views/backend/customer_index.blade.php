@@ -13,7 +13,7 @@
         <div class="brand-text float-left mt-4">
             <h3>{{trans('file.welcome')}} <span>{{Auth::user()->name}}</span> </h3>
         </div>
-        @if($customer && $customer->points)
+        @if($customer->points)
         <div class="brand-text float-right mt-4">
             <h3>{{trans('file.Reward Points')}}: <span>{{$customer->points}}</span> </h3>
             <h3>{{trans('file.One Point is Equivalent to:')}}
@@ -90,7 +90,7 @@
                             $staff_note = preg_replace('/\s+/S', " ", $sale->staff_note);
                         ?>
 
-                      <tr data-sale='["{{date($general_setting->date_format, strtotime($sale->created_at->toDateString()))}}", "{{$sale->reference_no}}", "{{$status}}", "{{$sale->biller->name}}", "{{$sale->biller->company_name}}", "{{$sale->biller->email}}", "{{$sale->biller->phone_number}}", "{{$sale->biller->address}}", "{{$sale->biller->city}}",  "{{$sale->id}}", "{{$sale->total_tax}}", "{{$sale->total_discount}}", "{{$sale->total_price}}", "{{$sale->order_tax}}", "{{$sale->order_tax_rate}}", "{{$sale->order_discount}}", "{{$sale->shipping_cost}}", "{{$sale->grand_total}}", "{{$sale->paid_amount}}", "{{$sale_note}}", "{{$staff_note}}", "{{$sale->user->name}}", "{{$sale->user->email}}", "{{$sale->warehouse->name}}", "{{$coupon_code}}", "{{$sale->coupon_discount}}"]'>
+                      <tr data-sale='["{{date($general_setting->date_format, strtotime($sale->created_at->toDateString()))}}", "{{$sale->reference_no}}", "{{$status}}", "{{$sale->biller->name}}", "{{$sale->biller->company_name}}", "{{$sale->biller->email}}", "{{$sale->biller->phone_number}}", "{{$sale->biller->address}}", "{{$sale->biller->city}}", "{{$sale->customer->name}}", "{{$sale->customer->phone_number}}", "{{$sale->customer->address}}", "{{$sale->customer->city}}", "{{$sale->id}}", "{{$sale->total_tax}}", "{{$sale->total_discount}}", "{{$sale->total_price}}", "{{$sale->order_tax}}", "{{$sale->order_tax_rate}}", "{{$sale->order_discount}}", "{{$sale->shipping_cost}}", "{{$sale->grand_total}}", "{{$sale->paid_amount}}", "{{$sale_note}}", "{{$staff_note}}", "{{$sale->user->name}}", "{{$sale->user->email}}", "{{$sale->warehouse->name}}", "{{$coupon_code}}", "{{$sale->coupon_discount}}"]'>
                         <td>{{$key}}</td>
                         <td>{{ date($general_setting->date_format, strtotime($sale->created_at->toDateString())) }}</td>
                         <td>{{$sale->reference_no}}</td>
@@ -206,7 +206,7 @@
                                 <td>{{ date($general_setting->date_format, strtotime($quotation->created_at->toDateString())) . ' '. $quotation->created_at->toTimeString() }}</td>
                                 <td>{{ $quotation->reference_no }}</td>
                                 <td>{{ $quotation->biller->name }}</td>
-                                <td>{{ $quotation->customer? $quotation->customer->name  : ''}}</td>
+                                <td>{{ $quotation->customer->name }}</td>
                                 @if($quotation->supplier_id)
                                 <td>{{ $quotation->supplier->name }}</td>
                                 @else
@@ -254,12 +254,12 @@
                         </thead>
                         <tbody>
                             @foreach($lims_return_data as $key=>$return)
-                            <tr class="return-link" data-return='["{{date($general_setting->date_format, strtotime($return->created_at->toDateString()))}}", "{{$return->reference_no}}", "{{$return->warehouse->name}}", "{{$return->biller->name}}", "{{$return->biller->company_name}}","{{$return->biller->email}}", "{{$return->biller->phone_number}}", "{{$return->biller->address}}", "{{$return->biller->city}}",  "{{$return->id}}", "{{$return->total_tax}}", "{{$return->total_discount}}", "{{$return->total_price}}", "{{$return->order_tax}}", "{{$return->order_tax_rate}}", "{{$return->grand_total}}", "{{$return->return_note}}", "{{$return->staff_note}}", "{{$return->user->name}}", "{{$return->user->email}}"]'>
+                            <tr class="return-link" data-return='["{{date($general_setting->date_format, strtotime($return->created_at->toDateString()))}}", "{{$return->reference_no}}", "{{$return->warehouse->name}}", "{{$return->biller->name}}", "{{$return->biller->company_name}}","{{$return->biller->email}}", "{{$return->biller->phone_number}}", "{{$return->biller->address}}", "{{$return->biller->city}}", "{{$return->customer->name}}", "{{$return->customer->phone_number}}", "{{$return->customer->address}}", "{{$return->customer->city}}", "{{$return->id}}", "{{$return->total_tax}}", "{{$return->total_discount}}", "{{$return->total_price}}", "{{$return->order_tax}}", "{{$return->order_tax_rate}}", "{{$return->grand_total}}", "{{$return->return_note}}", "{{$return->staff_note}}", "{{$return->user->name}}", "{{$return->user->email}}"]'>
                                 <td>{{$key}}</td>
                                 <td>{{ date($general_setting->date_format, strtotime($return->created_at->toDateString())) . ' '. $return->created_at->toTimeString() }}</td>
                                 <td>{{ $return->reference_no }}</td>
                                 <td>{{ $return->biller->name }}</td>
-                                <td>{{ $return->customer ? $return->customer->name : '' }}</td>
+                                <td>{{ $return->customer->name }}</td>
                                 <td>{{$return->warehouse->name}}</td>
                                 <td class="grand-total">{{ $return->grand_total }}</td>
                                 <td><button type="button" class="btn btn-info btn-sm return-view-btn" title="{{trans('file.View')}}"><i class="dripicons-preview"></i></button></td>
