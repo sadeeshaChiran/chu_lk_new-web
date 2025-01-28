@@ -407,7 +407,7 @@ class SaleController extends Controller
                 if(config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5) ) {
                     $nestedData['options'] .=
                     '<li>
-                        <button type="button" class="create-packing-slip-btn btn btn-link" data-id = "'.$sale->id.'" data-toggle="modal" data-target="#packing-slip-modal"><i class="dripicons-box"></i> '.trans('file.Create Packing Slip').'</button>
+                        <a href="'.url('sales/get-sold-items/'.$sale->id).'" class="create-packing-slip-btn btn btn-link" data-id = "'.$sale->id.'" ><i class="dripicons-box"></i> '.trans('file.Create Packing Slip').'</a>
                     </li>';
                 }
                 if(in_array("sale-payment-index", $request['all_permission']))
@@ -964,6 +964,7 @@ class SaleController extends Controller
         $product_sale_data = Product_Sale::where('sale_id', $id)->get();
         $data = [];
         $data['amount'] = $sale->shipping_cost - $sale->sale_discount;
+        $data['sale_id'] = $id;
         $flag = 0;
         foreach ($product_sale_data as $key => $product_sale) {
             $product = Product::select('type', 'name', 'code', 'product_list', 'qty_list')->find($product_sale->product_id);
@@ -973,7 +974,7 @@ class SaleController extends Controller
                 $child_ids = explode(",", $product->product_list);
                 $qty_list = explode(",", $product->qty_list);
                 foreach ($child_ids as $index => $child_id) {
-                    $child_product = Product::select('name', 'code')->find($child_id);
+                    $child_product = Product::select('id', 'name', 'code')->find($child_id);
 
                     $child_stock = $child_product->initial_qty + $child_product->received_qty;
                     $required_stock = $qty_list[$index] * $product_sale->qty;
@@ -1021,10 +1022,12 @@ class SaleController extends Controller
             }
             $data[$key]['is_packing'] = $product_sale->is_packing;
         }
+        $lims_warehouse_list = Warehouse::where('is_active', true)->get();
+        
         if($flag)
-            return $data;
+            return view('backend.sale.packing',compact('data', 'lims_warehouse_list'));
         else
-            return 'All the items of this sale has already been packed';
+            return back()->with('message', 'All the items of this sale has already been packed');
     }
     public function sendSMS(Request $request)
     {

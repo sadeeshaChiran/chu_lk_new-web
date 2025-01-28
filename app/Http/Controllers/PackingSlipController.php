@@ -125,6 +125,7 @@ class PackingSlipController extends Controller
     public function store(Request $request)
     {
     	$data = $request->all();
+
     	//return $data;
     	$packing_slip = PackingSlip::latest()->first();
         if(in_array('ecommerce',explode(',', config('addons'))))
@@ -146,12 +147,13 @@ class PackingSlipController extends Controller
                                 "status" => "Pending"
                             ]);
 
-            foreach ($data['is_packing'] as $key => $product_info) {
-                $product_info = explode("|", $product_info);
-                $product_id = $product_info[0];
-                $variant_id = $product_info[1];
+            foreach ($data['products'] as $key => $product_info) {
+
+                $product_id =  explode("|", $product_info['product_id'])[0];
+                
+                $variant_id = null;
                 if(!$variant_id) {
-                    if($sale->sale_type == 'online')
+                    if($sale->sale_type == 'online' || $sale->sale_type == 'website')
                         $variant_id = 0;
                     else
                         $variant_id = NULL;
@@ -160,13 +162,15 @@ class PackingSlipController extends Controller
                 PackingSlipProduct::create([
                     "packing_slip_id" => $packing_slip->id,
                     "product_id" => $product_id,
-                    "variant_id" => $variant_id
+                    // "variant_id" => $variant_id
                 ]);
                 $product_sale_data = Product_Sale::where([
                     ['sale_id', $data['sale_id']],
                     ['product_id', $product_id],
-                    ['variant_id', $variant_id]
+                    // ['variant_id', $variant_id]
                 ])->first();
+
+               
 
                 $product_sale_data->update(['is_packing' => true]);
                 //deduct product quantity
@@ -217,7 +221,7 @@ class PackingSlipController extends Controller
                     $product_warehouse_data = Product_Warehouse::where([
                         ['product_id', $product_data->id],
                         ['warehouse_id', $sale->warehouse_id],
-                        ['variant_id', $variant_id],
+                        // ['variant_id', $variant_id],
                     ])->first();
                     if($product_warehouse_data) {
                         $product_warehouse_data->qty -= $product_sale_data->qty;
@@ -227,7 +231,7 @@ class PackingSlipController extends Controller
                     if($variant_id) {
                         $product_vaiant_data = ProductVariant::where([
                             ['product_id', $product_id],
-                            ['variant_id', $variant_id]
+                            // ['variant_id', $variant_id]
                         ])->first();
                         $product_vaiant_data->qty -= $product_sale_data->qty;
                         $product_vaiant_data->save();
@@ -278,7 +282,8 @@ class PackingSlipController extends Controller
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()]);
         }
-    	return redirect()->back()->with('message', 'Packing slip created successfully');
+    	return redirect()->route('sales.index')->with('message', 'Packing slip created successfully');
+
     }
     public function genInvoice($id)
     {

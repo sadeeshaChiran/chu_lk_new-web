@@ -678,50 +678,50 @@
         saleDetails(sale);
     });
 
-    $(document).on("click", ".create-packing-slip-btn", function (e) {
-        e.preventDefault();
-        id = $(this).data('id');
-        $("#packing-slip-modal input[name=sale_id]").val(id);
-        $.get('sales/get-sold-items/'+id, function (data) {
-            if(data == 'All the items of this sale has already been packed') {
-                alert(data);
-                $("#packing-slip-modal").modal('hide');
-            }
-            else {
-                $("table.product-list tbody").remove();
-                var newBody = $("<tbody>");
-                $.each(data, function(index){
-                    if(index != 'amount') {
-                        var newRow = $("<tr>");
-                        var cols = '';
-                        cols += '<td>' + data[index]['name'] + '</td>';
-                        cols += '<td>' + data[index]['code'] + '</td>';
-                        cols += '<td>' + data[index]['sold_qty'] + '</td>';
-                        cols += '<td>' + data[index]['unit_price'] + '</td>';
-                        cols += '<td class="total-price">' + data[index]['total_price'] + '</td>';
-                        if( data[index]['type'] == 'standard' && without_stock == 'no' && (data[index]['qty'] > data[index]['stock']) ) {
-                            cols += '<td>In stock: '+data[index]['stock']+'</td>';
-                        }
-                        else if( data[index]['type'] == 'combo' && without_stock == 'no' && !data[index]['combo_in_stock'] ) {
-                            cols += '<td>'+data[index]['child_info']+'</td>';
-                        }
-                        else if(data[index]['is_packing']) {
-                            cols += '<td><input type="checkbox" class="is-packing" name="is_packing[]" value="'+data[index]['product_id']+'" checked disabled /></td>';
-                        }
-                        else {
-                            cols += '<td><input type="checkbox" class="is-packing" name="is_packing[]" value="'+data[index]['product_id']+'"/></td>';
-                        }
+    // $(document).on("click", ".create-packing-slip-btn", function (e) {
+    //     e.preventDefault();
+    //     id = $(this).data('id');
+    //     $("#packing-slip-modal input[name=sale_id]").val(id);
+    //     $.get('sales/get-sold-items/'+id, function (data) {
+    //         if(data == 'All the items of this sale has already been packed') {
+    //             alert(data);
+    //             $("#packing-slip-modal").modal('hide');
+    //         }
+    //         else {
+    //             $("table.product-list tbody").remove();
+    //             var newBody = $("<tbody>");
+    //             $.each(data, function(index){
+    //                 if(index != 'amount') {
+    //                     var newRow = $("<tr>");
+    //                     var cols = '';
+    //                     cols += '<td>' + data[index]['name'] + '</td>';
+    //                     cols += '<td>' + data[index]['code'] + '</td>';
+    //                     cols += '<td>' + data[index]['sold_qty'] + '</td>';
+    //                     cols += '<td>' + data[index]['unit_price'] + '</td>';
+    //                     cols += '<td class="total-price">' + data[index]['total_price'] + '</td>';
+    //                     if( data[index]['type'] == 'standard' && without_stock == 'no' && (data[index]['qty'] > data[index]['stock']) ) {
+    //                         cols += '<td>In stock: '+data[index]['stock']+'</td>';
+    //                     }
+    //                     else if( data[index]['type'] == 'combo' && without_stock == 'no' && !data[index]['combo_in_stock'] ) {
+    //                         cols += '<td>'+data[index]['child_info']+'</td>';
+    //                     }
+    //                     else if(data[index]['is_packing']) {
+    //                         cols += '<td><input type="checkbox" class="is-packing" name="is_packing[]" value="'+data[index]['product_id']+'" checked disabled /></td>';
+    //                     }
+    //                     else {
+    //                         cols += '<td><input type="checkbox" class="is-packing" name="is_packing[]" value="'+data[index]['product_id']+'"/></td>';
+    //                     }
 
-                        newRow.append(cols);
-                        newBody.append(newRow);
-                        $("table.product-list").append(newBody);
-                    }
-                });
-                $("#packing-slip-modal input[name=amount]").val(data['amount']);
-                $("#packing-slip-modal").modal();
-            }
-        });
-    });
+    //                     newRow.append(cols);
+    //                     newBody.append(newRow);
+    //                     $("table.product-list").append(newBody);
+    //                 }
+    //             });
+    //             $("#packing-slip-modal input[name=amount]").val(data['amount']);
+    //             $("#packing-slip-modal").modal();
+    //         }
+    //     });
+    // });
 
     $(document).on("change", ".is-packing", function (e) {
         rowindex = $(this).closest('tr').index();
