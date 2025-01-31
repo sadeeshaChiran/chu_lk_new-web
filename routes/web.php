@@ -432,8 +432,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
          });
         Route::post('importtransfer', 'importTransfer')->name('transfer.import');
     });
-    Route::resource('transfers', TransferController::class);
-
+    Route::resource('transfers', TransferController::class); 
 
 
     Route::controller(AdjustmentController::class)->group(function () {

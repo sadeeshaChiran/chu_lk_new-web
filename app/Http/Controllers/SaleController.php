@@ -521,6 +521,7 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+       
 
         /*DB::beginTransaction();
         try {*/
@@ -559,10 +560,12 @@ class SaleController extends Controller
                 if(!isset($data['reference_no']))
                     $data['reference_no'] = 'posr-' . date("Ymd") . '-'. date("his");
 
+                    $balance = $data['grand_total'];
                 foreach($new_data['paid_amount'] as $paid_amount)
                 {
-                    $balance = $data['grand_total'] - $paid_amount;
+                    $balance = $balance - $paid_amount;
                 }
+
                 if (is_array($data['paid_amount'])) {
                     $data['paid_amount'] = array_sum($data['paid_amount']);
                 }
@@ -2620,7 +2623,9 @@ class SaleController extends Controller
                     ])
                     ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
                     ->first();
+        // $totalDue = $saleData->grand_total - $returned_amount - $saleData->paid_amount;
         $totalDue = $saleData->grand_total - $returned_amount - $saleData->paid_amount;
+
         if($lims_pos_setting_data->invoice_option == 'A4') {
             return view('backend.sale.a4_invoice', compact('lims_sale_data', 'currency_code', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords', 'paid_by_info', 'sale_custom_fields', 'customer_custom_fields', 'product_custom_fields', 'qrText', 'totalDue'));
         }

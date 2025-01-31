@@ -274,7 +274,7 @@ class PackingSlipController extends Controller
             $packing_slip->delivery_id = $delivery->id;
             $packing_slip->save();
             //updating sale status
-            $sale->sale_status = 5;
+            $sale->sale_status = 1;
             $sale->save();
             DB::commit();
         }

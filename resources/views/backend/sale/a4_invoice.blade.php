@@ -261,14 +261,14 @@
                     {{number_format((float)($lims_sale_data->grand_total - $lims_sale_data->paid_amount) ,$general_setting->decimal, '.', ',')}}
                 </td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td class="td-text" colspan="3" style="border:1px solid #222;padding:1px 3px;background-color:rgb(205, 218, 235);">
                     {{trans('file.Total Due')}}
                 </td>
                 <td class="td-text" style="border:1px solid #222;padding:1px 3px;background-color:rgb(205, 218, 235);text-align: center;font-size: 15px;">
                     {{number_format($totalDue ,$general_setting->decimal, '.', ',')}}
                 </td>
-            </tr>
+            </tr> --}}
         </table>
         <table style="width: 100%; border-collapse: collapse;margin-top:-9px;">
             <tr>
