@@ -582,10 +582,14 @@ class SaleController extends Controller
                     }
                     $lims_sale_data->delete();
                 }
+                $data['sale_type'] = 'pos';
             }
             else {
+                $data['sale_type'] = 'online';
                 if(!isset($data['reference_no']))
                     $data['reference_no'] = 'sr-' . date("Ymd") . '-'. date("his");
+
+                    
             }
 
             $document = $request->document;
@@ -627,7 +631,7 @@ class SaleController extends Controller
             }
             //inserting data to sales table
             // return $data;
-            $data['sale_type'] = 'online';
+            
             $lims_sale_data = Sale::create($data);
 
             // add the $new_data variable value to $data['paid_amount'] variable
@@ -2626,6 +2630,7 @@ class SaleController extends Controller
         // $totalDue = $saleData->grand_total - $returned_amount - $saleData->paid_amount;
         $totalDue = $saleData->grand_total - $returned_amount - $saleData->paid_amount;
 
+        // dd($totalDue, $lims_sale_data,$lims_product_sale_data);
         if($lims_pos_setting_data->invoice_option == 'A4') {
             return view('backend.sale.a4_invoice', compact('lims_sale_data', 'currency_code', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords', 'paid_by_info', 'sale_custom_fields', 'customer_custom_fields', 'product_custom_fields', 'qrText', 'totalDue'));
         }

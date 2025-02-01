@@ -2297,13 +2297,14 @@
         $(document).on("click", ".add-more", function(e) {
             e.preventDefault();
 
-            var htmlText = `<div class="row new-row">
+            var htmlText = `<div class="col-12 full-new-row  new-row">
+                            <div class="row new-adding-row">
                             <div class="col-md-4 col-5 mt-2 cash-received-container">
                                 <label>{{ trans('file.Cash Received') }} *</label>
                                 <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
                             </div>
                             <div class="col-md-3 col-6 mt-2">
-                                <input type="hidden" name="paid_by_id[]">
+                                <input type="hidden" name="paid_by_id[]" value='1'>
                                 <label>{{ trans('file.Paid By') }}</label>
                                 <select name="paid_by_id_select[]" class="form-control selectpicker">
                                     @if (in_array('cash', $options))
@@ -2357,9 +2358,8 @@
             }
             calculatePayingAmount();
         });
-
         $(document).on("click", ".remove-row", function() {
-            $(this).parent().parent().remove();
+            $(this).closest('.full-new-row').remove();
             calculatePayingAmount();
             updateChange();
         });
@@ -3425,16 +3425,16 @@
 
             updateChange();
             var id = $(this).val();
-            console.log("Credit Card selected", id);
+            $(this).closest('.col-md-3').find('input[name="paid_by_id[]"]').val(id);
             var appendElement = '';
             $(".payment-form").off("submit");
-            $(this).parent().parent().siblings('.cash-received-container').addClass('d-none');
+            // $(this).parent().parent().siblings('.cash-received-container').addClass('d-none');
             $(this).parent().parent().siblings('.gift-card').remove();
             $(this).parent().parent().siblings('.credit-card').remove();
             $(this).parent().parent().siblings('.cheque').remove();
             //cash
             if (id == 1) {
-                $(this).parent().parent().siblings('.cash-received-container').removeClass('d-none');
+                // $(this).parent().parent().siblings('.cash-received-container').removeClass('d-none');
             }
             //gift
             else if (id == 2) {
@@ -3466,7 +3466,7 @@
             }
             //credit
             else if (id == 3) {
-                appendElement = `<div class="form-group col-md-10 credit-card remove-element">
+                appendElement = `
                                 <div class="row">
                                     <div class="col-md-5">
                                         <label>Card Number</label>
@@ -3484,9 +3484,9 @@
                                             <option>Master Card</option>
                                         </select>
                                     </div>
-                                </div>
-                            </div>`;
-                $(this).closest('.col-md-3').after(appendElement);
+                               </div>
+                            `;
+                $(this).closest('.new-adding-row').after(appendElement);
             }
             //cheque
             else if (id == 4) {
@@ -3504,6 +3504,7 @@
             else if (id == 7) {
                 pointCalculation();
             }
+            calculatePayingAmount();
         });
 
         $(document).on("change", '#add-payment select[name="gift_card_id_select"]', function() {
@@ -3591,15 +3592,16 @@
             $('.paid_amount').each(function() {
                 let value = $(this).val();
 
-                let parentRow = $(this).closest('.new-row');
-                console.log("SADAsd", parentRow.find('input[name="paid_by_id[]"]').val());
-                if (parentRow.find('input[name="paid_by_id[]"]').val() == '3') {
-                    cardCost = cardCost + ((parseFloat(value)) / 100) * 3;
-                }
-
                 // Check if the value is a valid number
                 if ($.isNumeric(value)) {
-                    total += parseFloat(value);
+                    total =  total + parseFloat(value);
+                }
+
+                let parentRow = $(this).closest('.new-row');
+
+                if (parentRow.find('input[name="paid_by_id[]"]').val() == '3') {
+
+                    cardCost = cardCost + ((parseFloat(value)) / 100) * 3;
                 }
             });
 
