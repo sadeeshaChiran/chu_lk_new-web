@@ -6,13 +6,23 @@
   <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ session()->get('not_permitted') }}</div>
 @endif
 
+@if (session()->has('download_invoice'))
+    <script>
+        console.log("DSFDSF",session('download_invoice'))
+        window.onload = function() {
+            window.open("{{ route('packingSlip.genInvoice', session('download_invoice')) }}", '_blank');
+        };
+    </script>
+@endif
+
+
 <section>
     <div class="container-fluid">
-        <form action="{{route('challan.create')}}" method="POST" id="challan-form">
+        {{-- <form action="{{route('challan.create')}}" method="POST" id="challan-form">
             @csrf
             <input type="hidden" name="packing_slip_id">
             <button id="create-challan-btn" type="submit" class="btn btn-info"><i class="fa fa-plus"></i> Create Challan</button>
-        </form>
+        </form> --}}
     </div>
     <div class="table-responsive">
         <table id="packing-slip-table" class="table table-striped">

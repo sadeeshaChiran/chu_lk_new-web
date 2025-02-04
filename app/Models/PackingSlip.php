@@ -9,7 +9,7 @@ class PackingSlip extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["reference_no", "sale_id", "delivery_id", "amount", "status"];
+    protected $fillable = ["reference_no","waybill_id", "sale_id", "delivery_id", "amount", "status"];
 
     public function sale()
     {

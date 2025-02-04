@@ -322,8 +322,9 @@ class ChallanController extends Controller
         DB::beginTransaction();
         try {
             $challan = Challan::find($id);
+  
             foreach ($data['cash_list'] as $key => $cash) {
-                if(!$cash && !$data['cheque_list'][$key] && !$data['online_payment_list'][$key])
+                if($challan->amount_list != 0 && !$cash && !$data['cheque_list'][$key] && !$data['online_payment_list'][$key])
                     $data['status_list'][$key] = 'Failed';
                 else
                     $data['status_list'][$key] = 'Delivered';

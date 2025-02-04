@@ -26,150 +26,267 @@
                         </div>
                         <div class="card-body">
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <form action="{{ route('packingSlip.store') }}" method="POST"
-                                        class="packing-slip-form">
-                                        @csrf
-                                        <div class="row">
-                                            <input type="hidden" value="{{ $data['sale_id'] }}" name="sale_id">
-                                            <input type="hidden" value="{{ $data['amount'] }}" name="amount">
-                                            <div class="col-md-12 form-group">
-                                                <h5>Product List</h5>
-                                                <table class="table table-bordered table-hover product-list mt-3">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>{{ trans('file.name') }}</th>
-                                                            <th>{{ trans('file.Code') }}</th>
-                                                            <th>Qty</th>
-                                                            <th>{{ trans('file.Unit Price') }}</th>
-                                                            <th>{{ trans('file.Total Price') }}</th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                            <div class="col-12">
 
-                                                        @foreach ($data as $key => $item)
-                                                            @if (is_array($item))
-                                                                <tr>
-                                                                    <td>{{ $item['name'] }}</td>
-                                                                    <td>{{ $item['code'] }}</td>
-                                                                    <td>{{ $item['qty'] }}</td>
-                                                                    <td>{{ $item['unit_price'] }}</td>
-                                                                    <td>{{ $item['total_price'] }}</td>
-                                                                    <td id="status"
-                                                                        class="bg-danger text-white text-center">
-                                                                        Not-Completed</td>
-                                                                </tr>
-
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][product_id]"
-                                                                    value="{{ $item['product_id'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][name]"
-                                                                    value="{{ $item['name'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][code]"
-                                                                    value="{{ $item['code'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][qty]"
-                                                                    value="{{ $item['qty'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][unit_price]"
-                                                                    value="{{ $item['unit_price'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][total_price]"
-                                                                    value="{{ $item['total_price'] }}">
-                                                                <input type="hidden"
-                                                                    name="products[{{ $key }}][is_packing]"
-                                                                    id="product-status-{{ $key }}" value="false">
-                                                            @endif
+                                <form action="{{ route('packingSlip.store') }}" method="POST"
+                                    class="packing-slip-form row">
+                                    @csrf
+                                    {{-- <div class="col-12 pb-5">
+                                        @if (isset(auth()->user()->warehouse_id))
+                                            <input type="hidden" name="warehouse_id" id="warehouse_id"
+                                                value="{{ auth()->user()->warehouse_id }}" />
+                                        @else
+                                            <div class="col-12 ">
+                                                <div class="form-group">
+                                                    <label>{{ trans('file.Warehouse') }} *</label>
+                                                    <select required name="warehouse_id" id="warehouse_id"
+                                                        class="selectpicker form-control" data-live-search="true"
+                                                        data-live-search-style="begins" title="Select warehouse...">
+                                                        @foreach ($lims_warehouse_list as $warehouse)
+                                                            <option value="{{ $warehouse->id }}">
+                                                                {{ $warehouse->name }}
+                                                            </option>
                                                         @endforeach
-                                                    </tbody>
-                                                </table>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <label>{{ trans('file.Select Product') }}</label>
+                                                <div class="search-box input-group">
+                                                    <button type="button" class="btn btn-secondary btn-lg"><i
+                                                            class="fa fa-barcode"></i></button>
+                                                    <input type="text" name="product_code_name"
+                                                        id="lims_productcodeSearch"
+                                                        placeholder="Please type product code and select..."
+                                                        class="form-control" />
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <button id="submit-button" type="submit"
-                                                class="btn btn-primary packing-slip-submit-btn col-12"
-                                                disabled>{{ trans('file.submit') }}</button>
-                                        </div>
-                                    </form>
+                                    </div> --}}
+                                    <div class="col-md-6">
 
-                                    <hr />
+                                        <input type="hidden" value="{{ $data['sale_id'] }}" name="sale_id">
+                                        <input type="hidden" value="{{ $data['amount'] }}" name="amount">
+                                        <input type="hidden" value="{{ $packing_weight }}" name="weight">
+                                        <input type="hidden" value="{{ $customer_data->name }}" name="recipient_name">
+                                        <input type="hidden" value="{{ $customer_data->phone_number }}"
+                                            name="recipient_contact_1">
+                                        <input type="hidden" value="{{ $customer_data->phone_number_2 }}"
+                                            name="recipient_contact_2">
+                                        <input type="hidden" value="{{ $customer_data->address }}"
+                                            name="recipient_address">
+                                        <input type="hidden" value="{{ $customer_data->city }}" name="recipient_city">
 
-                                    @if (isset(auth()->user()->warehouse_id))
-                                        <input type="hidden" name="warehouse_id" id="warehouse_id"
-                                            value="{{ auth()->user()->warehouse_id }}" />
-                                    @else
-                                        <div class="col-12 py-2">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Warehouse') }} *</label>
-                                                <select required name="warehouse_id" id="warehouse_id"
-                                                    class="selectpicker form-control" data-live-search="true"
-                                                    data-live-search-style="begins" title="Select warehouse...">
-                                                    @foreach ($lims_warehouse_list as $warehouse)
-                                                        <option value="{{ $warehouse->id }}">
-                                                            {{ $warehouse->name }}
-                                                        </option>
+                                        <div class="col-md-12 form-group">
+                                            <h5>Product List</h5>
+                                            <table class="table table-bordered table-hover product-list mt-3">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{ trans('file.name') }}</th>
+                                                        <th>{{ trans('file.Code') }}</th>
+                                                        <th>Qty</th>
+                                                        <th>{{ trans('file.Unit Price') }}</th>
+                                                        <th>{{ trans('file.Total Price') }}</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @foreach ($data as $key => $item)
+                                                        @if (is_array($item))
+                                                            <tr>
+                                                                <td>{{ $item['name'] }}</td>
+                                                                <td>{{ $item['code'] }}</td>
+                                                                <td>{{ $item['qty'] }}</td>
+                                                                <td>{{ $item['unit_price'] }}</td>
+                                                                <td>{{ $item['total_price'] }}</td>
+                                                                <td id="status" class="bg-danger text-white text-center">
+                                                                    Not-Completed</td>
+                                                            </tr>
+
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][product_id]"
+                                                                value="{{ $item['product_id'] }}">
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][name]"
+                                                                value="{{ $item['name'] }}">
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][code]"
+                                                                value="{{ $item['code'] }}">
+                                                            <input type="hidden" name="products[{{ $key }}][qty]"
+                                                                value="{{ $item['qty'] }}">
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][unit_price]"
+                                                                value="{{ $item['unit_price'] }}">
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][total_price]"
+                                                                value="{{ $item['total_price'] }}">
+                                                            <input type="hidden"
+                                                                name="products[{{ $key }}][is_packing]"
+                                                                id="product-status-{{ $key }}" value="false">
+                                                        @endif
                                                     @endforeach
-                                                </select>
-                                            </div>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    @endif
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <label>{{ trans('file.Select Product') }}</label>
-                                            <div class="search-box input-group">
-                                                <button type="button" class="btn btn-secondary btn-lg"><i
-                                                        class="fa fa-barcode"></i></button>
-                                                <input type="text" name="product_code_name" id="lims_productcodeSearch"
-                                                    placeholder="Please type product code and select..."
-                                                    class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-5">
-                                        <div class="col-md-12">
-                                            <h5>List</h5>
-                                            <div class="table-responsive mt-3">
-                                                <table id="myTable"
-                                                    class="table table-hover order-list order-list-product">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>{{ trans('file.name') }}</th>
-                                                            <th>{{ trans('file.Code') }}</th>
-                                                            <th>{{ trans('file.Quantity') }}</th>
 
 
-                                                            <th><i class="dripicons-trash"></i></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                    <tfoot class="tfoot active">
-                                                        <th colspan="2">{{ trans('file.Total') }}</th>
-                                                        <th id="total-qty">0</th>
-
-
-
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="total_qty" />
-                                            </div>
-                                        </div>
 
                                     </div>
 
+                                    <div class="col-md-6">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+
+                                                @if (isset(auth()->user()->warehouse_id))
+                                                    <input type="hidden" name="warehouse_id" id="warehouse_id"
+                                                        value="{{ auth()->user()->warehouse_id }}" />
+                                                @else
+                                                    <div class="col-12 ">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('file.Warehouse') }} *</label>
+                                                            <select required name="warehouse_id" id="warehouse_id"
+                                                                class="selectpicker form-control" data-live-search="true"
+                                                                data-live-search-style="begins" title="Select warehouse...">
+                                                                @foreach ($lims_warehouse_list as $warehouse)
+                                                                    <option value="{{ $warehouse->id }}">
+                                                                        {{ $warehouse->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="row mt-3">
+                                                    <div class="col-md-12">
+                                                        <label>{{ trans('file.Select Product') }}</label>
+                                                        <div class="search-box input-group">
+                                                            <button type="button" class="btn btn-secondary btn-lg"><i
+                                                                    class="fa fa-barcode"></i></button>
+                                                            <input type="text" name="product_code_name"
+                                                                id="lims_productcodeSearch"
+                                                                placeholder="Please type product code and select..."
+                                                                class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <h5 class="mt-4">Selected List</h5>
+                                                <div class="table-responsive mt-3">
+                                                    <table id="myTable"
+                                                        class="table table-hover order-list order-list-product">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{ trans('file.name') }}</th>
+                                                                <th>{{ trans('file.Code') }}</th>
+                                                                <th>{{ trans('file.Quantity') }}</th>
+                                                                <th>C/R</th>
+                                                                <th><i class="dripicons-trash"></i></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                        <tfoot class="tfoot active">
+                                                            <th colspan="2">{{ trans('file.Total') }}</th>
+                                                            <th id="total-qty">0</th>
 
 
-                                </div>
+
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+
+
+                                                @if ($sale->delivery_type == 'Main Courier')
+                                                    <div class="col-12 courier-section">
+                                                        <div class="form-group">
+                                                            <label><strong>Courier *</strong></label>
+                                                            <select name="courier_id" required id="courier-id"
+                                                                class="selectpicker form-control" data-live-search="true"
+                                                                data-live-search-style="begins" title="Select courier...">
+                                                                @foreach ($courier_list as $courier)
+                                                                    @if ($courier->name == 'Main Courier')
+                                                                        <option value="{{ $courier->id }}" selected>
+                                                                            {{ $courier->name . ' [' . $courier->phone_number . ']' }}
+                                                                        </option>
+                                                                    @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- <div class="col-12">
+                                                        <div class="row">
+                                                            <div class="form-group col-md-8">
+                                                                <label><strong>Waybill Id *</strong></label>
+                                                                <input type="text" name="waybill_id"
+                                                                    class="form-control" id="waybill_id" required
+                                                                    readonly />
+
+                                                            </div>
+                                                            <button type="button" class="col-md-4 btn btn-warning"
+                                                                id="getWaybillId">Get Waybill Id</button>
+                                                        </div>
+                                                    </div> --}}
+                                                @else
+                                                    <div class="col-12 courier-section">
+                                                        <div class="form-group">
+                                                            <label><strong>Courier *</strong></label>
+                                                            <select name="courier_id" required id="courier-id"
+                                                                class="selectpicker form-control" data-live-search="true"
+                                                                data-live-search-style="begins" title="Select courier...">
+                                                                @foreach ($courier_list as $courier)
+                                                                    {{-- @if ($courier->name != 'Main Courier') --}}
+                                                                        <option value="{{ $courier->id }}">
+                                                                            {{ $courier->name . ' [' . $courier->phone_number . ']' }}
+                                                                        </option>
+                                                                    {{-- @endif --}}
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="row">
+                                                            <div class="form-group col-md-12">
+                                                                <label><strong>Waybill Id *</strong></label>
+                                                                <input type="text" name="waybill_id"
+                                                                    class="form-control" id="waybill_id"
+                                                                     />
+
+                                                            </div>
+                                                           
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="hidden" name="total_qty" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group col-12">
+                                        <button id="submit-button" type="submit"
+                                            class="btn btn-primary packing-slip-submit-btn col-12"
+                                            disabled>{{ trans('file.submit') }}</button>
+                                    </div>
+                                </form>
+
+                                <hr />
+
+
+
+
+
+
                             </div>
                             {!! Form::close() !!}
                         </div>
@@ -186,6 +303,16 @@
 
 @push('scripts')
     <script type="text/javascript">
+        $(document).on("change", "#warehouse_id", function() {
+            localStorage.setItem("packing_warehouse_id", $(this).val());
+        });
+        $(document).ready(function() {
+            // Restore warehouse selection
+            let savedWarehouseId = localStorage.getItem("packing_warehouse_id");
+            if (savedWarehouseId) {
+                $("#warehouse_id").val(savedWarehouseId).change();
+            }
+        })
         $("ul#sale").siblings('a').attr('aria-expanded', 'true');
         $("ul#sale").addClass("show");
         $("ul#sale #sale-create-menu").addClass("active");
@@ -378,14 +505,14 @@
                         .text("Completed");
 
                     $(`#product-status-${index}`).val("true");
-                }else {
+                } else {
                     $(this)
-                            .find("#status")
-                            .removeClass("bg-success")
-                            .addClass("bg-danger")
-                            .text("Not-Completed");
+                        .find("#status")
+                        .removeClass("bg-success")
+                        .addClass("bg-danger")
+                        .text("Not-Completed");
 
-                        $(`#product-status-${index}`).val("false");
+                    $(`#product-status-${index}`).val("false");
                 }
 
 
@@ -399,7 +526,7 @@
                 var productListRows = $(".product-list tbody tr").length;
 
                 var status = $(this).find("#status").text().trim();
-    
+
                 if (status != "Completed") {
                     allCompleted = false;
                 }
@@ -427,7 +554,18 @@
                 const productName = $(this).find("td:nth-child(1)").text().trim();
                 const productCode = $(this).find("td:nth-child(2)").text().trim();
                 const productQty = $(this).find("td:nth-child(3) input.qty").val();
+                const status = $(this).find("td:nth-child(4)");
+                console.log("123",productCode);
+                $(".product-list tbody tr").each(function(index) {
+                    let rowCode = $(this).find("td:nth-child(2)").text().trim();
+                    console.log("ASDAS",rowCode,productCode);
+                    if (rowCode == productCode) {
+                        status.removeClass("bg-danger")
+                            .addClass("bg-success")
+                            .text("Correct");
+                    } 
 
+                });
                 products.push({
                     name: productName,
                     code: productCode,
@@ -689,14 +827,16 @@
                             pos = product_code.indexOf(data[1]);
                             temp_unit_name = (data[6]).split(',');
                             cols += '<td>' + data[0] +
-                                '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
+                                '';
                             cols += '<td>' + data[1] + '</td>';
                             cols += '<td><input type="text" class="form-control qty" name="qty[]" value="' +
                                 data[15] + '" required/></td>';
 
-
+                            cols +=
+                                '<td class="bg-danger text-white text-center align-middle">Wrong</td>';
                             cols +=
                                 '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{ trans('file.delete') }}</button></td>';
+
                             cols += '<input type="hidden" class="product-code" name="product_code[]" value="' +
                                 data[1] + '"/>';
                             cols += '<input type="hidden" class="product-id" name="product_id[]" value="' +

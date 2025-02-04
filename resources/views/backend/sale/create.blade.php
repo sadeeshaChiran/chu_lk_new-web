@@ -32,77 +32,6 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.Date') }}</label>
-                                                <input type="text" name="created_at" class="form-control date"
-                                                    placeholder="Choose date" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>
-                                                    {{ trans('file.Reference No') }}
-                                                </label>
-                                                <input type="text" name="reference_no" class="form-control" />
-                                            </div>
-                                            @if ($errors->has('reference_no'))
-                                                <span>
-                                                    <strong>{{ $errors->first('reference_no') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ trans('file.customer') }} *</label>
-                                                <div class="input-group pos">
-                                                    <?php
-                                                    $deposit = [];
-                                                    $points = [];
-                                                    $customer_active = DB::table('permissions')
-                                                        ->join('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
-                                                        ->where([['permissions.name', 'customers-add'], ['role_id', \Auth::user()->role_id]])
-                                                        ->first();
-                                                    ?>
-                                                    @if ($customer_active)
-                                                        <select required name="customer_id" id="customer_id"
-                                                            class="selectpicker form-control" data-live-search="true"
-                                                            title="Select customer..." style="width: 100px">
-                                                            @foreach ($lims_customer_list as $customer)
-                                                                @php
-                                                                    $deposit[$customer->id] =
-                                                                        $customer->deposit - $customer->expense;
-
-                                                                    $points[$customer->id] = $customer->points;
-                                                                @endphp
-                                                                <option value="{{ $customer->id }}">
-                                                                    {{ $customer->name . ' (' . $customer->phone_number . ')' }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="button" class="btn btn-default btn-sm"
-                                                            data-toggle="modal" data-target="#addCustomer"><i
-                                                                class="dripicons-plus"></i></button>
-                                                    @else
-                                                        <select required name="customer_id" id="customer_id"
-                                                            class="selectpicker form-control" data-live-search="true"
-                                                            title="Select customer...">
-                                                            @foreach ($lims_customer_list as $customer)
-                                                                @php
-                                                                    $deposit[$customer->id] =
-                                                                        $customer->deposit - $customer->expense;
-
-                                                                    $points[$customer->id] = $customer->points;
-                                                                @endphp
-                                                                <option value="{{ $customer->id }}">
-                                                                    {{ $customer->name . ' (' . $customer->phone_number . ')' }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
                                         @if (isset(auth()->user()->warehouse_id))
                                             <input type="hidden" name="warehouse_id" id="warehouse_id"
                                                 value="{{ auth()->user()->warehouse_id }}" />
@@ -159,7 +88,7 @@
                                                 <label>{{ trans('file.Exchange Rate') }} *</label>
                                             </div>
                                             <div class="form-group d-flex">
-                                                <input class="form-control" type="text" id="exchange_rate"
+                                                <input class="form-control" type="text" id="exchange_rate" readonly
                                                     name="exchange_rate" value="{{ $currency->exchange_rate }}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text" data-toggle="tooltip" title=""
@@ -167,6 +96,86 @@
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.Date') }}</label>
+                                                <input type="text" name="created_at" class="form-control date"
+                                                    placeholder="Choose date" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ trans('file.Reference No') }}
+                                                </label>
+                                                <input type="text" name="reference_no" class="form-control" />
+                                            </div>
+                                            @if ($errors->has('reference_no'))
+                                                <span>
+                                                    <strong>{{ $errors->first('reference_no') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>{{ trans('file.customer') }} *</label>
+                                                <div class="input-group pos">
+                                                    <?php
+                                                    $deposit = [];
+                                                    $points = [];
+                                                    $customer_active = DB::table('permissions')
+                                                        ->join('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+                                                        ->where([['permissions.name', 'customers-add'], ['role_id', \Auth::user()->role_id]])
+                                                        ->first();
+                                                    ?>
+                                                    @if ($customer_active)
+                                                        <select required name="customer_id" id="customer_id"
+                                                            class="selectpicker form-control" data-live-search="true"
+                                                            title="Select customer..." style="width: 100px">
+
+                                                            @foreach ($lims_customer_list as $customer)
+                                                                @php
+                                                                    $deposit[$customer->id] =
+                                                                        $customer->deposit - $customer->expense;
+
+                                                                    $points[$customer->id] = $customer->points;
+                                                                @endphp
+                                                                <option value="{{ $customer->id }}">
+                                                                    {{ $customer->name . ' (' . $customer->phone_number . '/' . $customer->phone_number_2 . ')' . "\n -: " . $customer->address . "\n -- " . $customer->city }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <button type="button" class="btn btn-default btn-sm addCustomer"
+                                                            data-toggle="modal" data-target="#addCustomer"><i
+                                                                class="dripicons-plus"></i></button>
+                                                        <button type="button" class="btn btn-default btn-sm addCustomer"
+                                                            id="editCustomerBtn" style="display:none;">
+                                                            <i class="dripicons-pencil"></i> Edit
+                                                        </button>
+                                                    @else
+                                                        <select required name="customer_id" id="customer_id"
+                                                            class="selectpicker form-control" data-live-search="true"
+                                                            title="Select customer...">
+                                                            @foreach ($lims_customer_list as $customer)
+                                                                @php
+                                                                    $deposit[$customer->id] =
+                                                                        $customer->deposit - $customer->expense;
+
+                                                                    $points[$customer->id] = $customer->points;
+                                                                @endphp
+                                                                <option value="{{ $customer->id }}">
+                                                                    {{ $customer->name . ' (' . $customer->phone_number . ' ' . $customer->phone_number_2 . ')' . "\n -: " . $customer->address . "\n -- " . $customer->city }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-md-12">
@@ -295,7 +304,7 @@
                                                 <input type="number" name="shipping_cost" value="0.00"
                                                     class="form-control" step="any" />
                                                 <div>
-                                                    <input type="checkbox" id="use_shipping_cost" >
+                                                    <input type="checkbox" id="use_shipping_cost">
                                                     <label for="use_shipping_cost">Use entered value</label>
                                                 </div>
                                             </div>
@@ -411,6 +420,15 @@
                                                     <option value="2">{{ trans('file.Due') }}</option>
                                                     <option value="3">{{ trans('file.Partial') }}</option>
                                                     <option value="4">{{ trans('file.Paid') }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Delivery Type *</label>
+                                                <select name="delivery_type" class="form-control">
+                                                    <option value="Main Courier">main courier</option>
+                                                    <option value="normal">normal</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -689,6 +707,10 @@
                             <input type="text" name="phone_number" required class="form-control">
                         </div>
                         <div class="form-group">
+                            <label>{{ trans('file.Phone Number') }} - 2 </label>
+                            <input type="text" name="phone_number_2" class="form-control">
+                        </div>
+                        <div class="form-group">
                             <label>{{ trans('file.Address') }}</label>
                             <input type="text" name="address" class="form-control">
                         </div>
@@ -703,6 +725,80 @@
                         </div>
                     </div>
                     {{ Form::close() }}
+                </div>
+            </div>
+        </div>
+
+        <div id="editCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+            class="modal fade text-left">
+            <div role="document" class="modal-dialog">
+                <div class="modal-content">
+                    {!! Form::open([
+                        'route' => ['customer.update', $customer->id],
+                        'method' => 'put',
+                        'files' => true,
+                        'id' => 'customer-edit-form',
+                    ]) !!}
+                    <div class="modal-header">
+                        <h5 id="exampleModalLabel" class="modal-title">Edit Customer</h5>
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                                aria-hidden="true"><i class="dripicons-cross"></i></span></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="italic">
+                            <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
+                        </p>
+                        <div class="form-group">
+                            <label>{{ trans('file.Customer Group') }} *</label>
+                            <select required class="form-control selectpicker" name="customer_group_id">
+                                @foreach ($lims_customer_group_all as $customer_group)
+                                    <option value="{{ $customer_group->id }}"
+                                        @if ($customer_group->id == $customer->customer_group_id) selected @endif>
+                                        {{ $customer_group->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('file.Name') }} *</label>
+                            <input type="text" name="customer_name" required class="form-control"
+                                value="{{ $customer->name }}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('file.Email') }}</label>
+                            <input type="text" name="email" placeholder="example@example.com" class="form-control"
+                                value="{{ $customer->email }}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('file.Phone Number') }} *</label>
+                            <input type="text" name="phone_number" required class="form-control"
+                                value="{{ $customer->phone_number }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('file.Phone Number') }} - 2 </label>
+                            <input type="text" name="phone_number_2" class="form-control"
+                                value="{{ $customer->phone_number_2 }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('file.Address') }}</label>
+                            <input type="text" name="address" class="form-control"
+                                value="{{ $customer->address }}">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('file.City') }}</label>
+                            <input type="text" name="city" class="form-control" value="{{ $customer->city }}">
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" name="pos" value="1">
+                            <button type="button"
+                                class="btn btn-primary customer-edit-btn">{{ trans('file.submit') }}</button>
+                        </div>
+
+
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
@@ -753,6 +849,127 @@
 
 @push('scripts')
     <script type="text/javascript">
+        // $(document).on("change", "#customer_id", function() {
+        //     localStorage.setItem("sale_customer_id", $(this).val());
+        // });
+        $(document).on("change", "#warehouse_id", function() {
+            localStorage.setItem("sale_warehouse_id", $(this).val());
+        });
+
+        $(document).on("change", "#biller_id", function() {
+            localStorage.setItem("sale_biller_id", $(this).val());
+        });
+
+        $(document).ready(function() {
+            // Restore warehouse selection
+            let savedWarehouseId = localStorage.getItem("sale_warehouse_id");
+            if (savedWarehouseId) {
+                $("#warehouse_id").val(savedWarehouseId).change();
+            }
+
+            // Restore biller selection
+            let savedBillerId = localStorage.getItem("sale_biller_id");
+            if (savedBillerId) {
+                $("#biller_id").val(savedBillerId).change();
+            }
+
+
+
+            // let savedCustomerId = localStorage.getItem("sale_customer_id");
+            // if (savedCustomerId) {
+            //     $("#customer_id").val(savedCustomerId).change(); // Set the value and trigger change event
+            // }
+
+
+            let today = new Date();
+            let day = ("0" + today.getDate()).slice(-2); // Add leading zero if single digit
+            let month = ("0" + (today.getMonth() + 1)).slice(-2); // Add leading zero if single digit
+            let year = today.getFullYear();
+
+            let formattedDate = `${day}-${month}-${year}`;
+            $("input[name='created_at']").val(formattedDate);
+
+
+
+        });
+
+
+
+        $('.addCustomer').on('click', function() {
+            $('#customer-form')[0].reset(); // Resets the form fields
+
+        });
+
+        $('#customer_id').on('change', function() {
+            var customerId = $(this).val();
+
+            // Show or hide the "Edit" button
+            if (customerId) {
+                $('#editCustomerBtn').show(); // Show the Edit button
+            } else {
+                $('#editCustomerBtn').hide(); // Hide the Edit button
+            }
+        });
+
+        $('#editCustomerBtn').on('click', function() {
+
+            var customerId = $('#customer_id').val();
+            console.log("ASdasd", customerId);
+            if (customerId) {
+                // Make an AJAX call to get the customer details (or pass customer data from the server)
+                $.ajax({
+                    url: '/customers/get-customer/' + customerId, // Adjust this URL for your controller
+                    type: 'GET',
+                    success: function(response) {
+                        // Pre-fill the modal fields with the customer data
+                        $('input[name="customer_name"]').val(response.name);
+                        $('input[name="email"]').val(response.email);
+                        $('input[name="phone_number"]').val(response.phone_number);
+                        $('input[name="phone_number_2"]').val(response.phone_number_2);
+
+                        $('input[name="address"]').val(response.address);
+                        $('input[name="city"]').val(response.city);
+                        $('select[name="customer_group_id"]').val(response.group_id)
+                            .selectpicker('refresh');
+                        $('#editCustomer').modal('show');
+
+                    }
+                });
+            }
+        });
+
+
+        $('.customer-edit-btn').on("click", function() {
+            var customerId = $('#customer_id').val(); // Assuming the form has an input with the name 'customer_id'
+            var updateUrl = '{{ route('customer.update', ':id') }}'.replace(':id', customerId);
+
+            $.ajax({
+                type: 'PUT',
+                url: updateUrl,
+                data: $("#customer-edit-form").serialize(),
+                success: function(response) {
+                    var key = response.id;
+                    var value = response.name + ' [' + response.phone_number + '/' + response
+                        .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response.city;
+
+                    // Update the select picker
+                    var dropdownButton = $('button[data-id="customer_id"]');
+
+                    // Update the title attribute with the new value
+                    dropdownButton.attr('title', value);
+
+                    // Also update the text inside the button (visible label)
+                    dropdownButton.find('.filter-option').text(value);
+
+                    // Hide the modal after success
+                    $("#editCustomer").modal('hide');
+                    setCustomerGroupRate(key);
+                }
+            });
+        });
+
+
+
         $("ul#sale").siblings('a').attr('aria-expanded', 'true');
         $("ul#sale").addClass("show");
         $("ul#sale #sale-create-menu").addClass("active");
@@ -802,7 +1019,8 @@
                 data: $("#customer-form").serialize(),
                 success: function(response) {
                     key = response['id'];
-                    value = response['name'] + ' [' + response['phone_number'] + ']';
+                    var value = response.name + ' [' + response.phone_number + '/' + response
+                        .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response.city;
                     $('select[name="customer_id"]').append('<option value="' + key + '">' + value +
                         '</option>');
                     $('select[name="customer_id"]').val(key);
@@ -1156,19 +1374,21 @@
                     success: function(data) {
                         console.log('sdf', data);
                         var flag = 1;
-                        console.log('pos','kjk',product_warehouse_price);
+                        console.log('pos', 'kjk', product_warehouse_price);
                         if (pre_qty > 0) {
                             var qty = data[15];
                             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(qty);
                             pos = product_code.indexOf(data[1]);
-                           
+
                             if (!data[11] && product_warehouse_price[pos]) {
                                 product_price[rowindex] = parseFloat(product_warehouse_price[pos] * currency[
                                     'exchange_rate']) + parseFloat(product_warehouse_price[pos] * currency[
                                     'exchange_rate'] * customer_group_rate);
                             } else {
-                                product_price[rowindex] = parseFloat(data['online_price'] * currency['exchange_rate']) +
-                                    parseFloat(data['online_price'] * currency['exchange_rate'] * customer_group_rate);
+                                product_price[rowindex] = parseFloat(data['online_price'] * currency[
+                                        'exchange_rate']) +
+                                    parseFloat(data['online_price'] * currency['exchange_rate'] *
+                                        customer_group_rate);
                             }
                             flag = 0;
                             checkQuantity(String(qty), true);
@@ -1238,7 +1458,8 @@
                                     pos] * currency['exchange_rate'] * customer_group_rate));
                             } else {
                                 product_price.splice(rowindex, 0, parseFloat(data['online_price'] * currency[
-                                    'exchange_rate']) + parseFloat(data['online_price'] * currency['exchange_rate'] *
+                                    'exchange_rate']) + parseFloat(data['online_price'] * currency[
+                                        'exchange_rate'] *
                                     customer_group_rate));
                             }
                             if (data[16])
@@ -1562,7 +1783,7 @@
 
             // Check if the checkbox is checked
             if ($('#use_shipping_cost').is(':checked')) {
-                var shipping_cost = parseFloat($('input[name="shipping_cost"]').val()) || 0;
+                var shipping_cost = $('input[name="shipping_cost"]').val() || 0;
             } else {
                 var total_weight = 0;
                 $('input[name="product_weight[]"]').each(function(index) {
@@ -1571,8 +1792,25 @@
                     total_weight += weight * qty;
                 });
 
-                var shipping_cost_per_kg = 5; // Customize the shipping cost per kg as needed
-                var shipping_cost = total_weight * shipping_cost_per_kg;
+                console.log('total_weight1', total_weight);
+                if (total_weight < 2) {
+                    total_weight = Math.ceil(total_weight);
+                } else {
+                    total_weight = Math.round(total_weight);
+                }
+                console.log('total_weight2', total_weight);
+                var shipping_cost_per_kg = 50;
+                var first_kg_cost = 350;
+
+                if (total_weight <= 1) {
+                    shipping_cost = first_kg_cost;
+                } else {
+                    shipping_cost = first_kg_cost + (total_weight - 1) * shipping_cost_per_kg;
+                }
+
+
+
+                console.log('shipping_cost', shipping_cost);
 
                 if (currencyChange) {
                     shipping_cost *= currency['exchange_rate'];
@@ -1863,10 +2101,10 @@
                                 }
                             }, 100);
                         } else if ($('select[name="sale_status"]').val() != 1) {
-                            localStorage.clear();
-                            location.href = "{{ route('sales.index') }}";
+                            // localStorage.clear();
+                            location.href = "{{ route('sales.create') }}";
                         } else {
-                            localStorage.clear();
+                            // localStorage.clear();
                             location.href = response;
                         }
                     },

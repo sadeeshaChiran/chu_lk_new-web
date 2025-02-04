@@ -300,6 +300,9 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::post('customers/clear-due', 'clearDue')->name('customer.clearDue');
         Route::post('customers/customer-data', 'customerData');
         Route::get('customers/all', 'customersAll')->name('customer.all');
+
+        Route::get('customers/get-customer/{id}', 'getCustomerData');
+
     });
     Route::resource('customer', CustomerController::class)->except('show');
 

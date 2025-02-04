@@ -2335,7 +2335,7 @@
                             </div>
                             <div class="col-md-4 col-6 mt-2 paying-amount-container">
                                 <label>{{ trans('file.Paying Amount') }} *</label>
-                                <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" step="any">
+                                <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
                             </div>
                             
                             <div class="col-1 mt-2">
@@ -3199,8 +3199,28 @@
         });
 
         $("#submit-btn").on("click", function() {
-            $('.payment-form').submit();
+            var val = $('.paying_amount').val()
+            if (val > 0) {
+                $('.payment-form').submit();
+            } else {
+                alert("Please Enter Amount")
+            }
+
         });
+
+
+        $(document).on("keypress", ".paying_amount", function(event) {
+            var val = $('.paying_amount').val()
+            if (val > 0) {
+                if (event.which === 13) {
+                    event.preventDefault();
+                    $(".payment-form").submit();
+                }
+            } else {
+                alert("Please Enter Amount")
+            }
+        });
+
 
         $("#gift-card-btn").on("click", function() {
             appendRemoveElement('gift-card');
@@ -3208,6 +3228,7 @@
 
         $("#credit-card-btn").on("click", function() {
             appendRemoveElement('credit-card');
+
         });
 
         $("#cheque-btn").on("click", function() {
@@ -3216,6 +3237,7 @@
 
         $("#cash-btn").on("click", function() {
             appendRemoveElement('cash');
+            $(".paying_amount").focus();
         });
 
         $("#multiple-payment-btn").on("click", function() {
@@ -3265,7 +3287,7 @@
                            
                                     <div class="col-6 mt-2 paying-amount-container">
                                         <label>{{ trans('file.Paying Amount') }} *</label>
-                                        <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" step="any">
+                                        <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
                                     </div>
                             
                                 </div>
@@ -3273,7 +3295,9 @@
                             `;
                 $("#payment-select-row .row:eq(0)").append(appendElement);
                 $('.paid_amount').val($("#grand-total").text());
-
+                setTimeout(function() {
+                    $(".paying_amount").last().focus();
+                }, 500);
 
 
             } else if (className == 'credit-card') {
@@ -3291,7 +3315,7 @@
                             
                                         <div class="col-6 mt-2 paying-amount-container">
                                             <label>{{ trans('file.Paying Amount') }} *</label>
-                                            <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" step="any">
+                                            <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
                                         </div>
                                 
                                     </div>
@@ -3325,6 +3349,9 @@
 
                 $('.selectpicker').selectpicker('refresh');
                 $('.selectpicker').selectpicker();
+                setTimeout(function() {
+                    $(".paying_amount").last().focus();
+                }, 500);
 
                 ismultiplepayment = 1;
                 $('select[name="paid_by_id_select[]"]').val(1);
@@ -3371,7 +3398,8 @@
             } else if (className == 'deposit') {
                 $('select[name="paid_by_id_select[]"]').val(6);
                 if ($('input[name="paid_amount[]"]').val() > deposit[$('#customer_id').val()]) {
-                    alert('Amount exceeds customer deposit! Customer deposit : ' + deposit[$('#customer_id').val()]);
+                    alert('Amount exceeds customer deposit! Customer deposit : ' + deposit[$('#customer_id')
+                        .val()]);
 
                 } else {
                     $('#add-payment').modal('show');
@@ -3415,7 +3443,8 @@
             paid_amount = $('input[name=paid_amount]').val();
             required_point = Math.ceil(paid_amount / reward_point_setting['per_point_amount']);
             if (required_point > points[$('#customer_id').val()]) {
-                alert('Customer does not have sufficient points. Available points: ' + points[$('#customer_id').val()]);
+                alert('Customer does not have sufficient points. Available points: ' + points[$('#customer_id')
+                    .val()]);
             } else {
                 $("input[name=used_points]").val(required_point);
             }
@@ -3455,7 +3484,8 @@
                             gift_card_amount[data[index]['id']] = data[index]['amount'];
                             gift_card_expense[data[index]['id']] = data[index]['expense'];
                             $('#add-payment select[name="gift_card_id_select"]').append(
-                                '<option value="' + data[index]['id'] + '">' + data[index][
+                                '<option value="' + data[index]['id'] + '">' + data[
+                                    index][
                                     'card_no'
                                 ] + '</option>');
                         });
@@ -3594,7 +3624,7 @@
 
                 // Check if the value is a valid number
                 if ($.isNumeric(value)) {
-                    total =  total + parseFloat(value);
+                    total = total + parseFloat(value);
                 }
 
                 let parentRow = $(this).closest('.new-row');
@@ -3671,8 +3701,9 @@
                         {{ $general_setting->decimal }}));
                     $('.qc').data('initial', 0);
                 } else {
-                    $('input[name="paying_amount"]').val((parseFloat($('input[name="paying_amount"]').val()) + $(
-                        this).data('amount')).toFixed({{ $general_setting->decimal }}));
+                    $('input[name="paying_amount"]').val((parseFloat($('input[name="paying_amount"]').val()) +
+                        $(
+                            this).data('amount')).toFixed({{ $general_setting->decimal }}));
                 }
             } else
                 $('input[name="paying_amount"]').val(
@@ -3724,9 +3755,11 @@
                         $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(qty);
                         pos = product_code.indexOf(data[1]);
                         if (!data[11] && product_warehouse_price[pos]) {
-                            product_price[rowindex] = parseFloat(product_warehouse_price[pos] * currency[
-                                'exchange_rate']) + parseFloat(product_warehouse_price[pos] * currency[
-                                'exchange_rate'] * customer_group_rate);
+                            product_price[rowindex] = parseFloat(product_warehouse_price[pos] *
+                                currency[
+                                    'exchange_rate']) + parseFloat(product_warehouse_price[pos] *
+                                currency[
+                                    'exchange_rate'] * customer_group_rate);
                         } else {
                             product_price[rowindex] = parseFloat(data[2] * currency['exchange_rate']) +
                                 parseFloat(data[2] * currency['exchange_rate'] * customer_group_rate);
@@ -3742,13 +3775,15 @@
                     if (flag) {
                         addNewProduct(data);
                     } else if (data[18]) {
-                        var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
+                        var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) +
+                            ')').find(
                             '.imei-number').val();
                         if (imeiNumbers)
                             imeiNumbers += ',' + data[18];
                         else
                             imeiNumbers = data[18];
-                        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number')
+                        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
+                                '.imei-number')
                             .val(imeiNumbers);
                     }
                 }
@@ -3828,14 +3863,17 @@
             rowindex = newRow.index();
 
             if (!data[11] && product_warehouse_price[pos]) {
-                product_price.splice(rowindex, 0, parseFloat(product_warehouse_price[pos] * currency['exchange_rate']) +
+                product_price.splice(rowindex, 0, parseFloat(product_warehouse_price[pos] * currency[
+                        'exchange_rate']) +
                     parseFloat(product_warehouse_price[pos] * currency['exchange_rate'] * customer_group_rate));
             } else {
-                product_price.splice(rowindex, 0, parseFloat(data[2] * currency['exchange_rate']) + parseFloat(data[2] *
+                product_price.splice(rowindex, 0, parseFloat(data[2] * currency['exchange_rate']) + parseFloat(data[
+                        2] *
                     currency['exchange_rate'] * customer_group_rate));
             }
             if (data[16])
-                wholesale_price.splice(rowindex, 0, parseFloat(data[16] * currency['exchange_rate']) + parseFloat(data[16] *
+                wholesale_price.splice(rowindex, 0, parseFloat(data[16] * currency['exchange_rate']) + parseFloat(
+                    data[16] *
                     currency['exchange_rate'] * customer_group_rate));
             else
                 wholesale_price.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
@@ -3849,8 +3887,9 @@
             unit_operation_value.splice(rowindex, 0, data[8]);
             is_imei.splice(rowindex, 0, data[13]);
             is_variant.splice(rowindex, 0, data[14]);
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product_price').val(product_price[
-                rowindex]);
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product_price').val(
+                product_price[
+                    rowindex]);
             localStorageQty.splice(rowindex, 0, data[15]);
             localStorageProductId.splice(rowindex, 0, data[9]);
             localStorageProductCode.splice(rowindex, 0, data[1]);
@@ -3863,10 +3902,14 @@
             localStorageSaleUnitOperator.splice(rowindex, 0, data[7]);
             localStorageSaleUnitOperationValue.splice(rowindex, 0, data[8]);
             //put some dummy value
-            localStorageNetUnitPrice.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
-            localStorageTaxValue.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
-            localStorageSubTotalUnit.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
-            localStorageSubTotal.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+            localStorageNetUnitPrice.splice(rowindex, 0,
+                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+            localStorageTaxValue.splice(rowindex, 0,
+                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+            localStorageSubTotalUnit.splice(rowindex, 0,
+                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+            localStorageSubTotal.splice(rowindex, 0,
+                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
 
             localStorage.setItem("localStorageProductId", localStorageProductId);
             localStorage.setItem("localStorageSaleUnit", localStorageSaleUnit);
@@ -3889,7 +3932,8 @@
             $('#editModal select[name=price_option]').append('<option value="' + product_price[rowindex] + '">' +
                 product_price[rowindex] + '</option>');
             if (wholesale_price[rowindex] > 0)
-                $('#editModal select[name=price_option]').append('<option value="' + wholesale_price[rowindex] + '">' +
+                $('#editModal select[name=price_option]').append('<option value="' + wholesale_price[rowindex] +
+                    '">' +
                     wholesale_price[rowindex] + '</option>');
             $('.selectpicker').selectpicker('refresh');
         }
@@ -3898,7 +3942,8 @@
             $(".imei-section").remove();
             if (is_imei[rowindex]) {
                 console.log('das');
-                var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number')
+                var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
+                        '.imei-number')
                     .val();
                 console.log(imeiNumbers);
                 if (imeiNumbers.length) {
@@ -3943,7 +3988,8 @@
             pos = tax_name_all.indexOf(tax_name[rowindex]);
             $('select[name="edit_tax_rate"]').val(pos);
 
-            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product-code')
+            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
+                    '.product-code')
                 .val();
             pos = product_code.indexOf(row_product_code);
             if (product_type[pos] == 'standard') {
@@ -3956,7 +4002,8 @@
                 temp_unit_operation_value.pop();
                 $('select[name="edit_unit"]').empty();
                 $.each(temp_unit_name, function(key, value) {
-                    $('select[name="edit_unit"]').append('<option value="' + key + '">' + value + '</option>');
+                    $('select[name="edit_unit"]').append('<option value="' + key + '">' + value +
+                        '</option>');
                 });
                 $("#edit_unit").show();
             } else {
@@ -3990,13 +4037,17 @@
                         else if (todyDate > value['expired_date'])
                             alert('This Coupon has expired!');
                         else if (value['type'] == 'fixed') {
-                            if (parseFloat($('input[name="grand_total"]').val()) >= value['minimum_amount']) {
-                                $('input[name="grand_total"]').val($('input[name="grand_total"]').val() - (value[
-                                    'amount'] * currency['exchange_rate']));
-                                $('#grand-total').text(parseFloat($('input[name="grand_total"]').val()).toFixed(
-                                    {{ $general_setting->decimal }}));
-                                $('#grand-total-m').text(parseFloat($('input[name="grand_total"]').val()).toFixed(
-                                    {{ $general_setting->decimal }}));
+                            if (parseFloat($('input[name="grand_total"]').val()) >= value[
+                                    'minimum_amount']) {
+                                $('input[name="grand_total"]').val($('input[name="grand_total"]').val() - (
+                                    value[
+                                        'amount'] * currency['exchange_rate']));
+                                $('#grand-total').text(parseFloat($('input[name="grand_total"]').val())
+                                    .toFixed(
+                                        {{ $general_setting->decimal }}));
+                                $('#grand-total-m').text(parseFloat($('input[name="grand_total"]').val())
+                                    .toFixed(
+                                        {{ $general_setting->decimal }}));
                                 if (!$('input[name="coupon_active"]').val())
                                     alert('Congratulation! You got ' + (value['amount'] * currency[
                                         'exchange_rate']) + ' ' + currency['code'] + ' discount');
@@ -4005,8 +4056,10 @@
                                 $('input[name="coupon_active"]').val(1);
                                 $("#coupon-modal").modal('hide');
                                 $('input[name="coupon_id"]').val(value['id']);
-                                $('input[name="coupon_discount"]').val(value['amount'] * currency['exchange_rate']);
-                                $('#coupon-text').text(parseFloat(value['amount'] * currency['exchange_rate'])
+                                $('input[name="coupon_discount"]').val(value['amount'] * currency[
+                                    'exchange_rate']);
+                                $('#coupon-text').text(parseFloat(value['amount'] * currency[
+                                        'exchange_rate'])
                                     .toFixed({{ $general_setting->decimal }}));
                             } else
                                 alert('Grand Total is not sufficient for discount! Required ' + value[
@@ -4046,14 +4099,17 @@
                 $.ajax({
                     type: 'GET',
                     async: false,
-                    url: '{{ url('/') }}/sales/check-discount?qty=' + qty + '&customer_id=' + customer_id +
+                    url: '{{ url('/') }}/sales/check-discount?qty=' + qty + '&customer_id=' +
+                        customer_id +
                         '&product_id=' + product_id + '&warehouse_id=' + warehouse_id,
                     success: function(data) {
                         //console.log(data);
-                        pos = product_code.indexOf($('table.order-list tbody tr:nth-child(' + (rowindex + 1) +
+                        pos = product_code.indexOf($('table.order-list tbody tr:nth-child(' + (
+                                rowindex + 1) +
                             ') .product-code').val());
-                        product_price[rowindex] = parseFloat(data[0] * currency['exchange_rate']) + parseFloat(
-                            data[0] * currency['exchange_rate'] * customer_group_rate);
+                        product_price[rowindex] = parseFloat(data[0] * currency['exchange_rate']) +
+                            parseFloat(
+                                data[0] * currency['exchange_rate'] * customer_group_rate);
                     }
                 });
             }
@@ -4064,10 +4120,12 @@
 
         function checkQuantity(sale_qty, flag) {
 
-            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product-code')
+            var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
+                    '.product-code')
                 .val();
             pos = product_code.indexOf(row_product_code);
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.in-stock').text(product_qty[pos]);
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.in-stock').text(product_qty[
+                pos]);
             localStorageQty[rowindex] = sale_qty;
             localStorage.setItem("localStorageQty", localStorageQty);
             if (without_stock == 'no') {
@@ -4125,8 +4183,9 @@
 
         function unitConversion() {
             var row_unit_operator = unit_operator[rowindex].slice(0, unit_operator[rowindex].indexOf(","));
-            var row_unit_operation_value = unit_operation_value[rowindex].slice(0, unit_operation_value[rowindex].indexOf(
-                ","));
+            var row_unit_operation_value = unit_operation_value[rowindex].slice(0, unit_operation_value[rowindex]
+                .indexOf(
+                    ","));
 
 
             if (row_unit_operator == '*') {
@@ -4157,20 +4216,26 @@
                 var sub_total = sub_total_unit * quantity;
             }
 
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount-value').val((product_discount[
-                rowindex] * quantity).toFixed({{ $general_setting->decimal }}));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val(tax_rate[rowindex]
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.discount-value').val((
+                product_discount[
+                    rowindex] * quantity).toFixed({{ $general_setting->decimal }}));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val(tax_rate[
+                    rowindex]
                 .toFixed({{ $general_setting->decimal }}));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_price').val(net_unit_price
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.net_unit_price').val(
+                net_unit_price
                 .toFixed({{ $general_setting->decimal }}));
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-value').val(tax.toFixed(
                 {{ $general_setting->decimal }}));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product-price').text(sub_total_unit
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product-price').text(
+                sub_total_unit
                 .toFixed({{ $general_setting->decimal }}));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(sub_total.toFixed(
-                {{ $general_setting->decimal }}));
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total.toFixed(
-                {{ $general_setting->decimal }}));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sub-total').text(sub_total
+                .toFixed(
+                    {{ $general_setting->decimal }}));
+            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.subtotal-value').val(sub_total
+                .toFixed(
+                    {{ $general_setting->decimal }}));
 
             localStorageProductDiscount.splice(rowindex, 1, (product_discount[rowindex] * quantity).toFixed(
                 {{ $general_setting->decimal }}));
@@ -4268,7 +4333,8 @@
             if (!currencyChange)
                 var coupon_discount = parseFloat($('input[name="coupon_discount"]').val());
             else
-                var coupon_discount = parseFloat($('input[name="coupon_discount"]').val() * currency['exchange_rate']);
+                var coupon_discount = parseFloat($('input[name="coupon_discount"]').val() * currency[
+                    'exchange_rate']);
             if (!coupon_discount)
                 coupon_discount = {{ number_format(0, $general_setting->decimal, '.', '') }};
             grand_total -= coupon_discount;

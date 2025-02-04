@@ -56,6 +56,17 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label>{{trans('file.Phone Number')}} - 2  </label>
+                                    <input type="text" name="phone_number_2" value="{{$lims_customer_data->phone_number_2}}" class="form-control">
+                                    @if($errors->has('phone_number_2'))
+                                   <span>
+                                       <strong>{{ $errors->first('phone_number_2') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label>{{trans('file.Tax Number')}}</label>
                                     <input type="text" name="tax_no" class="form-control" value="{{$lims_customer_data->tax_no}}">
                                 </div>

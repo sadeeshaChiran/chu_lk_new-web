@@ -201,11 +201,12 @@
                                 @endforeach
 
                                 </br>
-                                <del>{{ $lims_product_data->retail_price ?? '' }}</del>
+                                <del
+                                    style="margin-right: 10px">{{ $lims_product_data->retail_price ? $lims_product_data->retail_price . '.00' : '' }}</del>
 
-                                <br>{{ $product_sale_data->qty }} x
+
                                 {{ number_format((float) ($product_sale_data->total / $product_sale_data->qty), $general_setting->decimal, '.', ',') }}
-
+                                x{{ $product_sale_data->qty }}
                                 @if ($product_sale_data->tax_rate)
                                     <?php $total_product_tax += $product_sale_data->tax; ?>
                                     [{{ trans('file.Tax') }} ({{ $product_sale_data->tax_rate }}%):
@@ -225,7 +226,7 @@
                             {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal, '.', ',') }}
                         </th>
                     </tr>
-                    
+
                     @if ($general_setting->invoice_format == 'gst' && $general_setting->state == 1)
                         <tr>
                             <td colspan="2">IGST</td>
@@ -293,32 +294,53 @@
                             </th>
                         </tr>
                     @endif
-                    <tr>
+                    {{-- <tr>
                         <td colspan="2"><strong>Total Retail Price:</strong></td>
                         <td style="text-align:right;"><del><strong>{{ number_format((float) $total_retail_price, $general_setting->decimal, '.', ',') }}</strong></del></td>
+                    </tr> --}}
+                    {{-- @if ($totalDue)
+                        <tr>
+                            <th colspan="2" style="text-align:left">{{ trans('file.Total Due') }}</th>
+                            <th style="text-align:right">
+                                {{ number_format($totalDue, $general_setting->decimal, '.', ',') }}</th>
+                        </tr>
+                    @endif --}}
+                    <tr style=" border: 1px dotted #ddd; text-align: center;">
+                        <td style="padding: 5px;width:30%">Retail Price: <br />
+                            {{ number_format((float) $total_retail_price, $general_setting->decimal, '.', ',') }}
+                        </td>
+                        <td style="padding: 5px;width:40%">Amount: <br />
+                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal, '.', ',') }}
+                        </td>
+                        <td style="padding: 5px;width:30%">Saveing: <br />
+                            {{ number_format((float) ($total_retail_price - $lims_sale_data->total_price), $general_setting->decimal, '.', ',') }}
+                        </td>
                     </tr>
-                    @if ($totalDue)
-                        {{-- <tr>
-                    <th colspan="2" style="text-align:left">{{trans('file.Total Due')}}</th>
-                    <th style="text-align:right">{{number_format($totalDue, $general_setting->decimal, '.', ',')}}</th>
-                </tr> --}}
-                    @endif
                     <tr>
                         @if ($general_setting->currency_position == 'prefix')
                             <th class="centered" colspan="3">{{ trans('file.In Words') }}:
                                 <span>{{ $currency_code }}</span>
-                                <span>{{ str_replace('-', ' ', $numberInWords) }}</span></th>
+                                <span>{{ str_replace('-', ' ', $numberInWords) }}</span>
+                            </th>
                         @else
                             <th class="centered" colspan="3">{{ trans('file.In Words') }}:
                                 <span>{{ str_replace('-', ' ', $numberInWords) }}</span>
-                                <span>{{ $currency_code }}</span></th>
+                                <span>{{ $currency_code }}</span>
+                            </th>
                         @endif
                     </tr>
+
+
+                    </tr>
+
                 </tbody>
+
+
                 <!-- </tfoot> -->
             </table>
             <table>
                 <tbody>
+
                     @foreach ($lims_payment_data as $payment_data)
                         <tr style="background-color:#ddd;">
                             <td style="padding: 5px;width:30%">{{ trans('file.Paid By') }}:
@@ -331,6 +353,8 @@
                             </td>
                         </tr>
                     @endforeach
+
+
                     <tr>
                         <td class="centered" colspan="3">
                             {{ trans('file.Thank you for shopping with us. Please come again') }}</td>
