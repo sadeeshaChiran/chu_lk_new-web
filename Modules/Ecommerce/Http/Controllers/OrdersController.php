@@ -43,6 +43,7 @@ class OrdersController extends Controller
 
     public function create(Request $request)
     {
+       
         if(auth()->user() && auth()->user()->role_id != 5) {
             auth()->logout();
         }
@@ -51,15 +52,7 @@ class OrdersController extends Controller
         $post_data['reference_no'] = uniqid(); // reference_no must be unique
         $post_data['currency'] = $request->input('currency');
 
-        # BILLING INFORMATION
-        $post_data['billing_name'] = trim(htmlspecialchars($request->input('billing_name')));
-        $post_data['billing_email'] = trim(htmlspecialchars($request->input('billing_email')));
-        $post_data['billing_phone'] = trim(htmlspecialchars($request->input('billing_phone')));
-        $post_data['billing_address'] = trim(htmlspecialchars($request->input('billing_address')));
-        $post_data['billing_city'] = trim(htmlspecialchars($request->input('billing_city')));
-        $post_data['billing_state'] = trim(htmlspecialchars($request->input('billing_state')));
-        $post_data['billing_zip'] = trim(htmlspecialchars($request->input('billing_zip')));
-        $post_data['billing_country'] = trim(htmlspecialchars($request->input('billing_country')));
+
 
         # SHIPMENT INFORMATION
         $post_data['shipping_name'] = trim(htmlspecialchars($request->input('shipping_name')));
@@ -86,33 +79,41 @@ class OrdersController extends Controller
             $post_data['user_id'] = auth()->user()->id;
             $customer = Customer::select('id')->where('user_id', $post_data['user_id'])->first();
 
+            $customer->email = $post_data['shipping_email'];
+            $customer->name = $post_data['shipping_name'];
+            $customer->phone_number = $post_data['shipping_phone'];
+            $customer->address = $post_data['shipping_address'];
+            $customer->city = $post_data['shipping_city'];
+            $customer->is_active = 1;
+            
+            $customer->save();
+
             $post_data['customer_id'] = $customer->id;
         } else {
             if(isset($request->register_guest) && ($request->register_guest == 0)){
-                $user = User::firstOrCreate(
-                    ['email' =>  'guest@customer.com'],
-                    ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
-                );
+                // $user = User::firstOrCreate(
+                //     ['email' =>  'guest@customer.com'],
+                //     ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
+                // );
 
-                $customer = Customer::firstOrCreate(
-                    ['email' =>  $post_data['shipping_email']],
-                    ['name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
+                $customer = Customer::create(
+                    ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
                 );
             }else{
-                $user = User::firstOrCreate(
-                    ['email' =>  $post_data['billing_email']],
-                    ['name' => $post_data['billing_name'], 'password' => trim(bcrypt($request->input('password'))), 'phone' => $post_data['billing_phone'], 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
-                );
+                // $user = User::firstOrCreate(
+                //     ['email' =>  $post_data['billing_email']],
+                //     ['name' => $post_data['billing_name'], 'password' => trim(bcrypt($request->input('password'))), 'phone' => $post_data['billing_phone'], 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
+                // );
 
-                $customer = Customer::firstOrCreate(
-                    ['email' =>  $post_data['billing_email']],
-                    ['name' => $post_data['billing_name'], 'phone_number' => $post_data['billing_phone'], 'address' => $post_data['billing_address'], 'city' => $post_data['billing_city'], 'customer_group_id' => 1, 'is_active' => 1]
+                $customer = Customer::create(
+                    ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
                 );
             }
 
-            $post_data['user_id'] = $user->id;
+            // $post_data['user_id'] = $user->id;
             $post_data['customer_id'] = $customer->id; // walk-in-customer / guest customer
         }
+
 
         # OPTIONAL PARAMETERS
         $post_data['item'] = trim(htmlspecialchars($request->input('item')));
@@ -137,14 +138,6 @@ class OrdersController extends Controller
             'reference_no'         => $post_data['reference_no'],
             'user_id'              => $post_data['user_id'],
             'customer_id'          => $post_data['customer_id'],
-            'billing_name'         => $post_data['billing_name'],
-            'billing_email'        => $post_data['billing_email'],
-            'billing_phone'        => $post_data['billing_phone'],
-            'billing_address'      => $post_data['billing_address'],
-            'billing_city'         => $post_data['billing_city'],
-            'billing_state'        => $post_data['billing_state'],
-            'billing_zip'          => $post_data['billing_zip'],
-            'billing_country'      => $post_data['billing_country'],
             'shipping_name'        => $post_data['shipping_name'],
             'shipping_email'       => $post_data['shipping_email'],
             'shipping_phone'       => $post_data['shipping_phone'],
@@ -238,9 +231,37 @@ class OrdersController extends Controller
             $post_data['grand_total'] = ($post_data['grand_total'] - $post_data['gift_card_amount']);
         }
 
-        if ($post_data['payment_mode'] != 'Cash on Delivery') {
-            session(['grand_total' => $post_data['grand_total'], 'sale_id' => $create_sale->id, 'mode' => $post_data['payment_mode'], 'user_id' => $user_id, 'account_id' => $account->id]);
-            return redirect()->route('online.payment');
+        // if ($post_data['payment_mode'] != 'Cash on Delivery') {
+        //     session(['grand_total' => $post_data['grand_total'], 'sale_id' => $create_sale->id, 'mode' => $post_data['payment_mode'], 'user_id' => $user_id, 'account_id' => $account->id]);
+        //     return redirect()->route('online.payment');
+        // } 
+        if($post_data['payment_mode'] == 'payhere'){
+            $payment = Payment::create([
+                'payment_reference' => 'spr-' . date('Ymd-His'),
+                'user_id' => $user_id,
+                'sale_id' => $create_sale->id,
+                'account_id' => $account->id,
+                'amount' => $post_data['grand_total'],
+                'change' => 0,
+                'paying_method' => 'Credit Card'
+            ]);
+            // $charge = \Stripe\Charge::create([
+            //     'amount' => 1000 * 100,
+            //     'currency' => 'lkr',
+            //     'customer' => $post_data['customer_id']
+            // ]);
+    
+            // PaymentWithCreditCard::create([
+            //     'payment_id' => $payment->id,
+            // ]);
+
+            $sale_update = Sale::find($create_sale->id);
+            $sale_update->payment_status = 4;
+            $sale_update->paid_amount = $post_data['grand_total'];
+
+            $sale_update->save();
+            session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0]);
+            return redirect()->route('order.success', $create_sale->reference_no);
         } else {
             // if ($post_data['grand_total'] > 0) {
             //     $payment = Payment::create([

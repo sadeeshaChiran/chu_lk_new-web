@@ -68,18 +68,19 @@
                                         </div>
                                     </td>
                                     <td class="cart-product-quantity">
+                                        
                                         <div class="product-subtotal">
                                             {{$currency->symbol ?? $currency->code}}<span class="amount">{{ $cart_product['total_price'] }}</span>
                                         </div>
-                                        <div class="input-qty">
-                                            <span class="input-group-btn">
-                                                <button type="button" class="cart-quantity-left-minus" data-id="{{$cart_product['id']}}" data-variant="{{$true_variant}}">
+                                        <div class="input-qty d-block border-0">
+                                            <span class="input-group-btn ">
+                                                <button type="button" class="cart-quantity-left-minus btn btn-secondary text-white bg-dark" data-id="{{$cart_product['id']}}" data-variant="{{$true_variant}}">
                                                     <i class="material-symbols-outlined">remove</i>
                                                 </button>
                                             </span>
-                                            <input type="text" class="input-number" value="{{ $cart_product['qty'] }}">
+                                            <input type="text" class="input-number border  " value="{{ $cart_product['qty'] }}" readonly>
                                             <span class="input-group-btn">
-                                                <button type="button" class="cart-quantity-right-plus" data-id="{{$cart_product['id']}}" data-variant="{{$true_variant}}">
+                                                <button type="button" class="cart-quantity-right-plus btn btn-secondary text-white bg-dark" data-id="{{$cart_product['id']}}" data-variant="{{$true_variant}}">
                                                     <i class="material-symbols-outlined">add</i>
                                                 </button>
                                             </span>

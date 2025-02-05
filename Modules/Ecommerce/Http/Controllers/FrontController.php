@@ -374,6 +374,7 @@ class FrontController extends Controller
 
     public function contactMail(Request $request)
     {
+
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -384,6 +385,7 @@ class FrontController extends Controller
         $email_to = Cache::get('ecommerce_setting')->contact_form_email;
 
         $mail_setting = MailSetting::latest()->first();
+
         $this->setMailInfo($mail_setting);
         Mail::to($email_to)->send(new ContactUs($data));
 

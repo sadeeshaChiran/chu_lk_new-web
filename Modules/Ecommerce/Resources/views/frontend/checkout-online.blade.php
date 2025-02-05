@@ -367,7 +367,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
                     purchase_units: [{
                         amount: {
                             value: $('input[name="grand_total"]').val(),
-                            currency_code: "{{$currency->code}}",
+                            currency_code: "LKR",
                         }
                     }]
                 });

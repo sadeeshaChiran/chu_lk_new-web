@@ -467,15 +467,16 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     <!-- Quick Shop Modal starts -->
     <div class="modal fade d-none" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content ">
                 <div class="modal-body">
                     <button type="button" class="close offsetmenu__close__btn" data-dismiss="modal" aria-label="Close">
                         <span class="material-symbols-outlined">close</span>
                     </button>
-                    <div class="row">
+                    <div class="row d-flex align-items-center">
                         <div class="col-md-5 modal-image">
                             
                         </div>
+                        
                         <div class="col-md-7">
                             <h3 class="item-name"></h3>
                             <div class="item-price">
@@ -816,9 +817,9 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
                         var image = response.image.split(',');
                         if(image) {
                             
-                            $.each(image, function(index, value) {
-                                $('#detailsModal .modal-image').append('<img src="{{ url("images/product/large") }}/'+image[index]+'" alt="'+response.name+'" />')
-                            })
+                          
+                                $('#detailsModal .modal-image').append('<img src="{{ url("images/product/large") }}/'+image[0]+'" alt="'+response.name+'" />')
+                         
                             
                         } else {
                             $('#detailsModal .modal-image').html('<img src="https://placehold.co/550x550" alt="'+response.name+'"/>');

@@ -17,7 +17,7 @@ $product->image = $images[0];
 
 @section('stock')@if($product->qty > 0){{'in stock'}} @else {{'out of stock'}}@endif @endsection
 
-@section('price')@if(!empty($product->promotion_price)){{ $product->promotion_price }}@else{{ $product->price }}@endif @endsection
+@section('price')@if(!empty($product->promotion_price)){{ $product->promotion_price }}@else{{ $product->online_price }}@endif @endsection
 
 @section('id'){{ $product->id }}@endsection
 
@@ -38,7 +38,7 @@ $product->image = $images[0];
             <div class="col-md-5 mt-5">
                 @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
                 <div class="product-promo-text style1 bg-danger">
-                    <span>-{{ round(($product->price - $product->promotion_price) / $product->price * 100) }}%</span>
+                    <span>-{{ round(($product->online_price - $product->promotion_price) / $product->online_price * 100) }}%</span>
                 </div>    
                 @endif
                 @if(isset($images))
@@ -74,9 +74,9 @@ $product->image = $images[0];
                 <div class="item-price mb-3">
                     @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
                     <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->promotion_price }}</span>
-                    <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                    <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                     @else
-                    <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                    <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                     @endif
                 </div>
                 @if(isset($product->short_description) && strlen($product->short_description) > 0)

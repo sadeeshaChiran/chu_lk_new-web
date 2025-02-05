@@ -23,9 +23,9 @@
         <div class="product-price">
             @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
             <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->promotion_price }}</span>
-            <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+            <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
             @else
-            <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+            <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
             @endif
         </div>
         @if(isset($ecommerce_setting->theme) && $ecommerce_setting->theme != 'fashion')

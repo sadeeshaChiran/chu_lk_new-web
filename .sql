@@ -9,3 +9,7 @@ ALTER TABLE ⁠ products ⁠
 ALTER TABLE `sales` ADD `delivery_type` VARCHAR(255) NULL DEFAULT NULL AFTER `woocommerce_order_id`;
 ALTER TABLE `packing_slips` ADD `waybill_id` VARCHAR(255) NULL DEFAULT NULL AFTER `reference_no`;
 ALTER TABLE `customers` ADD `phone_number_2` VARCHAR(191) NULL DEFAULT NULL AFTER `phone_number`;
+
+-- 2025/02/06
+ALTER TABLE `customer_addresses` CHANGE `country` `country` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `payment_with_credit_card` CHANGE `charge_id` `charge_id` VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;

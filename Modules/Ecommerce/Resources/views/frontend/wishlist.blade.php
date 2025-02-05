@@ -84,10 +84,10 @@
                                                         @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
                                                         <div>
                                                             <span class="price mr-1">{{$currency->symbol ?? $currency->code}}{{ $product->promotion_price }}</span>
-                                                            <span class="old-price mr-3">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                                                            <span class="old-price mr-3">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                                                         </div>
                                                         @else
-                                                        <span class="price mr-3">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                                                        <span class="price mr-3">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                                                         @endif
 
                                                         @if($product->in_stock == 1)
@@ -110,9 +110,9 @@
                                                 <td class="d-none d-lg-flex d-xl-flex align-items-center justify-content-between">
                                                     @if(($product->promotion == 1) && (($product->last_date > date('Y-m-d')) || !isset($product->last_date)))
                                                     <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->promotion_price }}</span>
-                                                    <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                                                    <span class="old-price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                                                     @else
-                                                    <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->price }}</span>
+                                                    <span class="price">{{$currency->symbol ?? $currency->code}}{{ $product->online_price }}</span>
                                                     @endif
 
                                                     @if($product->in_stock == 1)

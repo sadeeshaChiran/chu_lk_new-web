@@ -100,11 +100,9 @@ class CustomerController extends Controller
         $data = [
             'name'              => trim(htmlspecialchars($request->input('name'))),
             'phone'             => trim(htmlspecialchars($request->input('phone'))),
+            'email'             => trim(htmlspecialchars($request->input('email'))),
             'address'           => trim(htmlspecialchars($request->input('address'))),
-            'state'             => trim(htmlspecialchars($request->input('state'))),
             'city'              => trim(htmlspecialchars($request->input('city'))),
-            'country'           => trim(htmlspecialchars($request->input('country'))),
-            'zip'               => trim(htmlspecialchars($request->input('zip'))),
             'customer_id'       => $request->input('customer_id'),
         ];
 
