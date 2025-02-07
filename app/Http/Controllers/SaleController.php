@@ -371,6 +371,46 @@ class SaleController extends Controller
                 foreach ($field_names as $field_name) {
                     $nestedData[$field_name] = $sale->$field_name;
                 }
+
+
+
+                $nestedData['action'] = '<div class="btn-group">';
+
+                // Invoice button
+                $nestedData['action'] .= '<a href="' . route('sale.invoice', $sale->id) . '" class="btn btn-sm btn-primary" title="Invoice">
+                    <i class="fa fa-copy"></i>
+                </a>';
+                
+                // View button
+                // $nestedData['action'] .= '<button type="button" class="btn btn-sm btn-info  " title="View">
+                //     <i class="fa fa-eye"></i>
+                // </button>';
+                
+                // Edit button (if allowed)
+                if (in_array("sales-edit", $request['all_permission'])) {
+                    if ($sale->sale_status != 3) {
+                        $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
+                            <i class="dripicons-document-edit"></i>
+                        </a>';
+                    } else {
+                        $nestedData['action'] .= '<a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-sm btn-warning" title="Edit">
+                            <i class="dripicons-document-edit"></i>
+                        </a>';
+                    }
+                }
+                
+                // Packing Slip button (if applicable)
+                if (config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
+                    $nestedData['action'] .= '<a href="' . url('sales/get-sold-items/' . $sale->id) . '" class="btn btn-sm btn-secondary" title="Packing Slip">
+                        <i class="dripicons-box"></i>
+                    </a>';
+                }
+                
+                $nestedData['action'] .= '</div>';
+
+
+
+
                 $nestedData['options'] = '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . trans("file.action") . '
                               <span class="caret"></span>
@@ -378,9 +418,7 @@ class SaleController extends Controller
                             </button>
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                                 <li><a href="' . route('sale.invoice', $sale->id) . '" class="btn btn-link"><i class="fa fa-copy"></i> ' . trans('file.Generate Invoice') . '</a></li>
-                                <li>
-                                    <button type="button" class="btn btn-link view"><i class="fa fa-eye"></i> ' . trans('file.View') . '</button>
-                                </li>';
+                                ';
                 if (in_array("sales-edit", $request['all_permission'])) {
                     if ($sale->sale_status != 3)
                         $nestedData['options'] .= '<li>
@@ -570,13 +608,14 @@ class SaleController extends Controller
             $data['created_at'] = date("Y-m-d H:i:s");
         //return dd($data);
 
-        //set the paid_amount value to $new_data variable
-        $new_data['paid_amount'] = $data['paid_amount'];
+        if ($data['paid_amount'] > 0) {
+            //set the paid_amount value to $new_data variable
+            $new_data['paid_amount'] = $data['paid_amount'];
 
-        if (is_array($data['paid_amount'])) {
-            $data['paid_amount'] = array_sum($data['paid_amount']);
+            if (is_array($data['paid_amount'])) {
+                $data['paid_amount'] = array_sum($data['paid_amount']);
+            }
         }
-
         if ($data['pos']) {
             if (!isset($data['reference_no']))
                 $data['reference_no'] = 'posr-' . date("Ymd") . '-' . date("his");
@@ -586,8 +625,10 @@ class SaleController extends Controller
                 $balance = $balance - $paid_amount;
             }
 
-            if (is_array($data['paid_amount'])) {
-                $data['paid_amount'] = array_sum($data['paid_amount']);
+            if ($data['paid_amount'] > 0) {
+                if (is_array($data['paid_amount'])) {
+                    $data['paid_amount'] = array_sum($data['paid_amount']);
+                }
             }
             if ($balance > 0 || $balance < 0)
                 $data['payment_status'] = 2;
@@ -651,8 +692,9 @@ class SaleController extends Controller
         $lims_sale_data = Sale::create($data);
 
         // add the $new_data variable value to $data['paid_amount'] variable
-        $data['paid_amount'] = $new_data['paid_amount'];
-
+        if ($data['paid_amount'] > 0) {
+            $data['paid_amount'] = $new_data['paid_amount'];
+        }
         //inserting data for custom fields
         $custom_field_data = [];
         $custom_fields = CustomField::where('belongs_to', 'sale')->select('name', 'type')->get();
@@ -848,6 +890,7 @@ class SaleController extends Controller
             }
         }
 
+
         if ($data['payment_status'] == 3 || $data['payment_status'] == 4 || ($data['payment_status'] == 2 && $data['pos'] && $data['paid_amount'] > 0)) {
             foreach ($data['paid_by_id'] as $key => $value) {
                 if ($data['paid_amount'][$key] > 0) {
@@ -1033,10 +1076,10 @@ class SaleController extends Controller
         }
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
         $courier_list = Courier::where('is_active', true)->get();
-   
+
         // dd($ $data);
         if ($flag)
-            return view('backend.sale.packing', compact('data', 'lims_warehouse_list', 'courier_list','sale', 'customer_data','packing_weight'));
+            return view('backend.sale.packing', compact('data', 'lims_warehouse_list', 'courier_list', 'sale', 'customer_data', 'packing_weight'));
         else
             return back()->with('message', 'All the items of this sale has already been packed');
     }

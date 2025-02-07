@@ -293,6 +293,35 @@
                                             </div>
                                         </div>
                                     </div>
+
+
+                                    <table class="table table-bordered table-condensed totals">
+                                        <td><strong>{{ trans('file.Items') }}</strong>
+                                            <span class="pull-right"
+                                                id="item">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                        <td><strong>{{ trans('file.Total') }}</strong>
+                                            <span class="pull-right"
+                                                id="subtotal">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                        <td><strong>{{ trans('file.Order Tax') }}</strong>
+                                            <span class="pull-right"
+                                                id="order_tax">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                        <td><strong>{{ trans('file.Order Discount') }}</strong>
+                                            <span class="pull-right"
+                                                id="order_discount">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                        <td><strong>{{ trans('file.Shipping Cost') }}</strong>
+                                            <span class="pull-right"
+                                                id="shipping_cost">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                        <td><strong>{{ trans('file.grand total') }}</strong>
+                                            <span class="pull-right"
+                                                id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                        </td>
+                                    </table>
+                                    
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
@@ -572,7 +601,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
+        {{-- <div class="container-fluid">
             <table class="table table-bordered table-condensed totals">
                 <td><strong>{{ trans('file.Items') }}</strong>
                     <span class="pull-right"
@@ -599,7 +628,7 @@
                         id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
                 </td>
             </table>
-        </div>
+        </div> --}}
         <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
             class="modal fade text-left">
             <div role="document" class="modal-dialog">

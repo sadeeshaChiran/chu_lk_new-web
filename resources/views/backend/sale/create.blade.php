@@ -173,6 +173,15 @@
                                                         </select>
                                                     @endif
                                                 </div>
+                                                <div id="customer-details" class="mt-2" style="display: none;">
+                                                    <p><strong>Name:</strong> <span id="customer-name"></span></p>
+                                                    <p><strong>Email:</strong> <span id="customer-email"></span></p>
+                                                    <p><strong>Phone 1:</strong> <span id="customer-phone-1"></span></p>
+                                                    <p><strong>Phone 2:</strong> <span id="customer-phone-2"></span></p>
+                                                    <p><strong>Address:</strong> <span id="customer-address"></span></p>
+                                                    <p><strong>City:</strong> <span id="customer-city"></span></p>
+                                                </div>
+
                                             </div>
                                         </div>
 
@@ -229,6 +238,37 @@
                                             </div>
                                         </div>
                                     </div>
+
+
+                                    <div >
+                                        <table class="table table-bordered table-condensed totals">
+                                            <td><strong>{{ trans('file.Items') }}</strong>
+                                                <span class="pull-right"
+                                                    id="item">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                            <td><strong>{{ trans('file.Total') }}</strong>
+                                                <span class="pull-right"
+                                                    id="subtotal">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                            <td><strong>{{ trans('file.Order Tax') }}</strong>
+                                                <span class="pull-right"
+                                                    id="order_tax">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                            <td><strong>{{ trans('file.Order Discount') }}</strong>
+                                                <span class="pull-right"
+                                                    id="order_discount">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                            <td><strong>{{ trans('file.Shipping Cost') }}</strong>
+                                                <span class="pull-right"
+                                                    id="shipping_cost">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                            <td><strong>{{ trans('file.grand total') }}</strong>
+                                                <span class="pull-right"
+                                                    id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                            </td>
+                                        </table>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
@@ -574,34 +614,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
-            <table class="table table-bordered table-condensed totals">
-                <td><strong>{{ trans('file.Items') }}</strong>
-                    <span class="pull-right"
-                        id="item">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-                <td><strong>{{ trans('file.Total') }}</strong>
-                    <span class="pull-right"
-                        id="subtotal">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-                <td><strong>{{ trans('file.Order Tax') }}</strong>
-                    <span class="pull-right"
-                        id="order_tax">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-                <td><strong>{{ trans('file.Order Discount') }}</strong>
-                    <span class="pull-right"
-                        id="order_discount">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-                <td><strong>{{ trans('file.Shipping Cost') }}</strong>
-                    <span class="pull-right"
-                        id="shipping_cost">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-                <td><strong>{{ trans('file.grand total') }}</strong>
-                    <span class="pull-right"
-                        id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
-                </td>
-            </table>
-        </div>
+
 
         <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
             class="modal fade text-left">
@@ -905,18 +918,7 @@
 
             // Show or hide the "Edit" button
             if (customerId) {
-                $('#editCustomerBtn').show(); // Show the Edit button
-            } else {
-                $('#editCustomerBtn').hide(); // Hide the Edit button
-            }
-        });
-
-        $('#editCustomerBtn').on('click', function() {
-
-            var customerId = $('#customer_id').val();
-            console.log("ASdasd", customerId);
-            if (customerId) {
-                // Make an AJAX call to get the customer details (or pass customer data from the server)
+                $('#editCustomerBtn').show();
                 $.ajax({
                     url: '/customers/get-customer/' + customerId, // Adjust this URL for your controller
                     type: 'GET',
@@ -931,10 +933,33 @@
                         $('input[name="city"]').val(response.city);
                         $('select[name="customer_group_id"]').val(response.group_id)
                             .selectpicker('refresh');
-                        $('#editCustomer').modal('show');
+
+
+                        $('#customer-name').text(response.name);
+                        $('#customer-email').text(response.email);
+                        $('#customer-phone-1').text(response.phone_number);
+                        $('#customer-phone-2').text(response.phone_number_2);
+                        $('#customer-address').text(response.address);
+                        $('#customer-city').text(response.city);
+
+                        // Show the details div
+                        $('#customer-details').show();
 
                     }
                 });
+
+            } else {
+                $('#editCustomerBtn').hide();
+            }
+        });
+
+        $('#editCustomerBtn').on('click', function() {
+
+            var customerId = $('#customer_id').val();
+            console.log("ASdasd", customerId);
+            if (customerId) {
+                $('#editCustomer').modal('show');
+
             }
         });
 
@@ -963,6 +988,16 @@
 
                     // Hide the modal after success
                     $("#editCustomer").modal('hide');
+
+
+                    $('#customer-name').text(response.name);
+                        $('#customer-email').text(response.email);
+                        $('#customer-phone-1').text(response.phone_number);
+                        $('#customer-phone-2').text(response.phone_number_2);
+                        $('#customer-address').text(response.address);
+                        $('#customer-city').text(response.city);
+                        $('#customer-details').show();
+
                     setCustomerGroupRate(key);
                 }
             });
@@ -1026,6 +1061,14 @@
                     $('select[name="customer_id"]').val(key);
                     $('.selectpicker').selectpicker('refresh');
                     $("#addCustomer").modal('hide');
+
+                    $('#customer-name').text(response.name);
+                        $('#customer-email').text(response.email);
+                        $('#customer-phone-1').text(response.phone_number);
+                        $('#customer-phone-2').text(response.phone_number_2);
+                        $('#customer-address').text(response.address);
+                        $('#customer-city').text(response.city);
+                         $('#customer-details').show();
                     setCustomerGroupRate(key);
                 }
             });

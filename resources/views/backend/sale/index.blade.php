@@ -110,6 +110,7 @@
             <thead>
                 <tr>
                     <th class="not-exported"></th>
+                    <th class="text-center">#</th>
                     <th>{{trans('file.date')}}</th>
                     <th>{{trans('file.reference')}}</th>
                     <th>{{trans('file.Biller')}}</th>
@@ -132,6 +133,7 @@
             <tfoot class="tfoot active">
                 <th></th>
                 <th>{{trans('file.Total')}}</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -600,12 +602,13 @@
     @endif
 
 
-    var columns = [{"data": "key"}, {"data": "date"}, {"data": "reference_no"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
+    var columns = [{"data": "key"}, {"data": "action"},{"data": "date"}, {"data": "reference_no"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
     var field_name = <?php echo json_encode($field_name) ?>;
     for(i = 0; i < field_name.length; i++) {
         columns.push({"data": field_name[i]});
     }
     columns.push({"data": "options"});
+
 
     @if($lims_pos_setting_data)
         var public_key = <?php echo json_encode($lims_pos_setting_data->stripe_public_key) ?>;
@@ -1048,6 +1051,7 @@
         }
     }
 
+    
     $('#sale-table').DataTable( {
         "processing": true,
         "serverSide": true,
@@ -1071,7 +1075,7 @@
         },*/
         "createdRow": function( row, data, dataIndex ) {
             $(row).addClass('sale-link');
-            $(row).attr('data-sale', data['sale']);
+            // $(row).attr('data-sale', data['sale']);
         },
         "columns": columns,
         'language': {

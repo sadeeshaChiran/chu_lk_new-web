@@ -1233,13 +1233,31 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-6 mt-1">
+                                        <div class="col-md-12 mt-1">
                                             <label>{{trans('file.Payment Receiver')}}</label>
                                             <input type="text" name="payment_receiver" class="form-control">
                                         </div>
                                         <div class="form-group col-md-12 mt-3">
-                                            <div class="card-element form-control">
-                                            </div>
+                                            <div class="row">
+                                    
+                                                <div class="col-md-5">
+                                                    <label>Card Number</label>
+                                                    <input class="form-control" name="card_number" class="card_name">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <label>Card Holder Name</label>
+                                                    <input class="form-control" name="card_holder_name">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>Card Type</label>
+                                                    <select class="form-control" name="card_type">
+                                                        <option>Visa</option>
+                                                        <option>Master Card</option>
+                                                    </select>
+                                                </div>
+                                            
+                                        </div>
+
                                             <div class="card-errors" role="alert"></div>
                                         </div>
                                         <div class="form-group col-md-12" id="gift-card">

@@ -2335,7 +2335,7 @@
                             </div>
                             <div class="col-md-4 col-6 mt-2 paying-amount-container">
                                 <label>{{ trans('file.Paying Amount') }} *</label>
-                                <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
+                                <input type="text" name="paid_amount[]" class="form-control paid_amount numkey"  step="any">
                             </div>
                             
                             <div class="col-1 mt-2">
@@ -3191,6 +3191,19 @@
             $('input[name="sale_status"]').val(3);
             $('input[name="paying_amount"]').prop('required', false);
             $('input[name="paid_amount"]').prop('required', false);
+
+            var form = $(".payment-form"); 
+
+    // Ensure the hidden inputs exist
+    if ($('input[name="paying_amount[]"]').length === 0) {
+        form.append('<input type="hidden" name="paying_amount[]" >');
+    }
+
+    if ($('input[name="paid_amount[]"]').length === 0) {
+        form.append('<input type="hidden" name="paid_amount[]" >');
+    }
+
+
             var rownumber = $('table.order-list tbody tr:last').index();
             if (rownumber < 0) {
                 alert("Please insert product to order table!")
@@ -3362,7 +3375,29 @@
                 appendElement = `<div class="form-group col-md-12 cheque remove-element">
                             <label>{{ trans('file.Cheque Number') }} *</label>
                             <input type="text" name="cheque_no" class="form-control" value="" required>
-                        </div>`;
+                        </div>
+                        
+                        <div class="form-group col-md-12 credit-card remove-element">
+                               
+                                
+                               <div class="row new-row">
+                                   <div class="col-6 mt-2 cash-received-container">
+                                       <label>{{ trans('file.Cash Received') }} *</label>
+                                       <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
+                                   </div>
+                           
+                                   <input type="hidden" value='1' name="paid_by_id[]">
+                              
+                          
+                                   <div class="col-6 mt-2 paying-amount-container">
+                                       <label>{{ trans('file.Paying Amount') }} *</label>
+                                       <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
+                                   </div>
+                           
+                               </div>
+                           </div>`;
+
+
 
                 $("#payment-select-row .row:eq(0)").append(appendElement);
                 $('.paid_amount').val($("#grand-total").text());
@@ -3373,7 +3408,27 @@
                                 <label> {{ trans('file.Gift Card') }} *</label>
                                 <input type="hidden" name="gift_card_id">
                                 <select id="gift_card_id_select" name="gift_card_id_select" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Gift Card..."></select>
-                            </div>`;
+                            </div>
+                            <div class="form-group col-md-12 credit-card remove-element">
+                               
+                                
+                               <div class="row new-row">
+                                   <div class="col-6 mt-2 cash-received-container">
+                                       <label>{{ trans('file.Cash Received') }} *</label>
+                                       <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
+                                   </div>
+                           
+                                   <input type="hidden" value='1' name="paid_by_id[]">
+                              
+                          
+                                   <div class="col-6 mt-2 paying-amount-container">
+                                       <label>{{ trans('file.Paying Amount') }} *</label>
+                                       <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
+                                   </div>
+                           
+                               </div>
+                           </div>
+                            `;
                 $.ajax({
                     url: '{{ url('/sales/get_gift_card') }}/',
                     type: "GET",
@@ -3404,12 +3459,53 @@
                 } else {
                     $('#add-payment').modal('show');
                 }
+
+                appendElement = `<div class="form-group col-md-12 credit-card remove-element">
+                               
+                                
+                               <div class="row new-row">
+                                   <div class="col-6 mt-2 cash-received-container">
+                                       <label>{{ trans('file.Cash Received') }} *</label>
+                                       <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
+                                   </div>
+                           
+                                   <input type="hidden" value='1' name="paid_by_id[]">
+                              
+                          
+                                   <div class="col-6 mt-2 paying-amount-container">
+                                       <label>{{ trans('file.Paying Amount') }} *</label>
+                                       <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
+                                   </div>
+                           
+                               </div>
+                           </div>
+                           `;
                 $("#payment-select-row .row:eq(0)").append(appendElement);
                 $('.paid_amount').val($("#grand-total").text());
 
             } else if (className == 'points') {
                 $('select[name="paid_by_id_select[]"]').val(7);
                 pointCalculation();
+                appendElement = `<div class="form-group col-md-12 credit-card remove-element">
+                               
+                                
+                               <div class="row new-row">
+                                   <div class="col-6 mt-2 cash-received-container">
+                                       <label>{{ trans('file.Cash Received') }} *</label>
+                                       <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
+                                   </div>
+                           
+                                   <input type="hidden" value='1' name="paid_by_id[]">
+                              
+                          
+                                   <div class="col-6 mt-2 paying-amount-container">
+                                       <label>{{ trans('file.Paying Amount') }} *</label>
+                                       <input type="text" name="paid_amount[]" class="form-control paid_amount numkey" readonly step="any">
+                                   </div>
+                           
+                               </div>
+                           </div>
+                           `; 
                 $("#payment-select-row .row:eq(0)").append(appendElement);
                 $('.paid_amount').val($("#grand-total").text());
 
@@ -3421,15 +3517,16 @@
                 $('.paying_amount').parent().removeClass('col-md-12 d-none').addClass('col-md-3');
                 $('.paying_amount').removeClass('cash_paying_amount')
                 $('.add-more').parent().removeClass('d-none');
-
-                appendElement = `
+                if ($('.add-more-row').length === 0) {
+                    appendElement = `
                 <div class="col-12">
                 <div class="row add-more-row mt-2">
                                                 <div class="col-md-12 text-center"><button type="button" class="btn btn-info add-more">+
                                                         {{ trans('file.Add More Payment') }}</button></div>
                                             </div></div>`;
 
-                $("#payment-select-row .row:eq(0)").append(appendElement);
+                    $("#payment-select-row .row:eq(0)").append(appendElement);
+                }
                 $('.paid_amount').val($("#grand-total").text());
             }
 
