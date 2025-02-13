@@ -329,7 +329,7 @@
         $.ajax({
             type: "post",
             data: data,
-            url: "{{url('pages/widget/store')}}/",
+            url: "{{url('widget/store')}}/",
             success: function(data) {
                 item.find('input[name="id"]').val(data.id);
                 item.removeClass('new');
