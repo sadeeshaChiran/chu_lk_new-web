@@ -33,7 +33,9 @@
 	Route::post('/session-renew', [FrontController::class, 'sessionRenew'])->name('session');
 	
 	if(config('database.connections.saleprosaas_landlord')) {
-    	Route::middleware(['common', 'auth', 'active', InitializeTenancyByDomain::class,PreventAccessFromCentralDomains::class])->group(function () {
+    	
+	} else {
+	    Route::middleware(['common', 'auth', 'active'])->group(function () {
     		// Sliders
     		Route::prefix('sliders')->group(function () {
     			Route::get('/', [SliderController::class, 'slidersShow'])->name('slider.index');
@@ -84,7 +86,7 @@
     			Route::post('ecommerce-setting/update', [EcommerceSettingController::class, 'update'])->name('setting.ecommerce.update');
     	
     			Route::get('payment-gateways', [EcommerceSettingController::class, 'gateway'])->name('setting.ecommerce.gateway');
-    			Route::post('payment-gateways/update', [EcommerceSettingController::class, 'gatewayUpdate'])->name('setting.ecommerce.gateway.update');
+    			//Route::post('payment-gateways/update', [EcommerceSettingController::class, 'gatewayUpdate'])->name('setting.ecommerce.gateway.update');
     		});
     	
     		Route::prefix('menu')->group(function () {
@@ -143,7 +145,7 @@
     		});
     	});
     
-    	Route::middleware(['ecommerce', InitializeTenancyByDomain::class,PreventAccessFromCentralDomains::class])->group(function () {
+    	Route::middleware(['ecommerce'])->group(function () {
     
     		Route::get('/', [FrontController::class, 'index']);
     
@@ -152,6 +154,7 @@
     
     		Route::get('product/{product_name}/{product_id}', [FrontController::class, 'productDetails']);
 			Route::get('product/{product_id}', [FrontController::class, 'productModal']);
+    	
     	
     		// Customer registration
     		Route::get('/customer/register', [AuthController::class, 'register']);
@@ -202,7 +205,7 @@
     		Route::get('checkout/payment', [OrdersController::class, 'onlinePayment'])->name('online.payment');
     		Route::post('stripe-payment', [OrdersController::class, 'stripePayment']);
 			Route::post('razorpay-payment', [OrdersController::class, 'razorpayPayment'])->name('razorpay.payment');
-    		Route::get('paystack-payment', [OrdersController::class, 'paystackPayment'])->name('paystack.payment');
+			Route::get('paystack-payment', [OrdersController::class, 'paystackPayment'])->name('paystack.payment');
     		Route::post('paypal-payment', [OrdersController::class, 'paypalPayment']);
 			Route::post('mollie-payment', [OrdersController::class, 'molliePayment'])->name('mollie.payment');
 			Route::get('mollie-success', [OrdersController::class, 'mollieSuccess'])->name('mollie.success');
@@ -230,7 +233,7 @@
     		Route::get('/{slug}', [FrontController::class, 'page']);
     	});
     
-    	Route::middleware(['ecommerce','customerauth', InitializeTenancyByDomain::class,PreventAccessFromCentralDomains::class])->prefix('customer')->group(function () {
+    	Route::middleware(['ecommerce','customerauth'])->prefix('customer')->group(function () {
     		Route::get('/profile', [CustomerController::class, 'index'])->name('customer.profile');
     		Route::get('/orders', [CustomerController::class, 'orders']);
     		Route::get('/order-details/{id}', [CustomerController::class, 'orderDetails']);
@@ -247,5 +250,5 @@
     		Route::get('/wishlist/{product_id}', [CustomerController::class, 'addToWishlist']);
     		Route::get('/wishlist/delete/{product_id}', [CustomerController::class, 'deleteFromWishlist']);
     	});
-	} 
+	}
 	
