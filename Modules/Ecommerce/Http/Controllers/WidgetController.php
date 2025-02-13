@@ -34,6 +34,8 @@ class WidgetController extends Controller
         }
 
         $data = $request->except('feature_icon');
+
+        dd($data, $request->all());
         $widget = Widgets::create($data);
 
         return response()->json(['id' => $widget->id]);
