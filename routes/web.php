@@ -146,7 +146,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::post('/update', [LanguageSettingController::class, 'update'])->name('language.translations.update');
 
         Route::get('/create', [LanguageSettingController::class, 'create'])->name('languages.create');
-        Route::post('/store', [LanguageSettingController::class, 'store'])->name('languages.store');
+        // Route::post('/store', [LanguageSettingController::class, 'store'])->name('languages.store');
         Route::get('/switch/{lang}', [LanguageSettingController::class, 'languageSwitch'])->name('language.switch');
         Route::get('/delete', [LanguageSettingController::class, 'languageDelete'])->name('language.delete');
     });
