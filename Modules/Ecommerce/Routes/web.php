@@ -20,15 +20,15 @@
 	use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 	use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-	Route::get('site-maintenance-on',function() {
-		Artisan::call('down --dashboard');
-		return redirect()->back();
-	});
+	// Route::get('site-maintenance-on',function() {
+	// 	Artisan::call('down --dashboard');
+	// 	return redirect()->back();
+	// });
 	
-	Route::get('site-maintenance-off',function() {
-		Artisan::call('up');
-		return redirect()->back();
-	});
+	// Route::get('site-maintenance-off',function() {
+	// 	Artisan::call('up');
+	// 	return redirect()->back();
+	// });
 
 	Route::post('/session-renew', [FrontController::class, 'sessionRenew'])->name('session');
 	
@@ -248,7 +248,7 @@
     		Route::get('/wishlist/delete/{product_id}', [CustomerController::class, 'deleteFromWishlist']);
     	});
 	} else {
-	    Route::middleware(['common', 'auth', 'active'])->group(function () {
+	    Route::middleware(['common', 'auth'])->group(function () {
     		// Sliders
     		Route::prefix('sliders')->group(function () {
     			Route::get('/', [SliderController::class, 'slidersShow'])->name('slider.index');
