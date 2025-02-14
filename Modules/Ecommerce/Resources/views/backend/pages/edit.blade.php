@@ -1153,13 +1153,12 @@
         var formData = new FormData(form);
 
         $.ajax({
-            url: "{{route('page.update')}}",
             type: "post",
             data: formData,
             dataType: 'JSON',
             processData: false,
             contentType: false,
-            
+            url: "{{route('page.update')}}",
             success: function(data) {
                 
                 var temp = $('#template').val();

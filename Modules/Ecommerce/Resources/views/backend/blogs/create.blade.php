@@ -185,13 +185,12 @@
         var formData = new FormData(form);
 
         $.ajax({
-            url: "{{route('blog.post.store')}}",
             type: "post",
             data: formData,
             dataType: 'JSON',
             processData: false,
             contentType: false,
-            
+            url: "{{route('blog.post.store')}}",
             success: function(data) {
                 var message = '<div class="ajax-message"><div class="alert alert-success alert-dismissible text-center mar-bot-30"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{trans("file.Page saved")}}</div></div>';
                 $('body section').append(message);

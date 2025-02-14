@@ -454,10 +454,9 @@
         var data = JSON.parse($("#serialize_output").text());
         $(this).attr('disabled','true').html('<span class="spinner-border text-light" role="status"></span> {{trans("file.Saving")}}...');
         $.ajax({
-            url: "{{url('menu/update')}}/",
             type: "post",
             data: {menuid:menuid,data:data},
-            
+            url: "{{url('menu/update')}}/",
             success: function(res) {
                 window.location.reload();
             }

@@ -327,10 +327,9 @@
         var data = item.find('form').serialize();
 
         $.ajax({
-            url: "{{url('widget/store')}}",
             type: "post",
             data: data,
-            
+            url: "{{url('widget/store')}}/",
             success: function(data) {
                 item.find('input[name="id"]').val(data.id);
                 item.removeClass('new');
@@ -367,13 +366,12 @@
         var formData = new FormData(item);
 
         $.ajax({
-            url: "{{url('widget/update')}}/",
             type: "post",
             data: formData,
             dataType: 'JSON',
             processData: false,
             contentType: false,
-            
+            url: "{{url('widget/update')}}/",
             success: function(result) {                
                 var message = '<div class="ajax-message"><div class="alert alert-success alert-dismissible text-center mar-bot-30"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{trans("file.Widget saved")}}</div></div>';
                 $('body section').append(message);
