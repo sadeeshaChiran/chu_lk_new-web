@@ -1,16 +1,16 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'salepropos',
-    'env' => 'local',
+    'name' => 'chuLK',
+    'env' => 'production',
     'debug' => true,
-    'url' => 'https://localhost',
+    'url' => 'https://chu.lk',
     'asset_url' => NULL,
     'timezone' => 'Asia/Colombo',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
-    'key' => 'base64:UrI+wnxgu1hCwfQcYjVYQC69xAtk/MrvqxeIRiO3Zxc=',
+    'key' => 'base64:JVMfH3ptrq+5O4Rjq5yYKODZVDpwy2uwgyxT9LjZzas=',
     'cipher' => 'AES-256-CBC',
     'providers' => 
     array (
@@ -166,7 +166,7 @@
   ),
   'cache' => 
   array (
-    'default' => 'array',
+    'default' => 'file',
     'stores' => 
     array (
       'apc' => 
@@ -186,7 +186,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/framework/cache/data',
+        'path' => '/var/www/system-chu_lk/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -225,7 +225,7 @@
         'endpoint' => NULL,
       ),
     ),
-    'prefix' => 'salepropos_cache',
+    'prefix' => 'chulk_cache',
   ),
   'database' => 
   array (
@@ -236,7 +236,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'chu_system_db',
+        'database' => 'chu_db',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -246,9 +246,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'chu_system_db',
-        'username' => 'root',
-        'password' => '7014158s',
+        'database' => 'chu_db',
+        'username' => 'chudb',
+        'password' => '7014158Sade@',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -274,9 +274,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'chu_system_db',
-        'username' => 'root',
-        'password' => '7014158s',
+        'database' => 'chu_db',
+        'username' => 'chudb',
+        'password' => '7014158Sade@',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -289,9 +289,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'chu_system_db',
-        'username' => 'root',
-        'password' => '7014158s',
+        'database' => 'chu_db',
+        'username' => 'chudb',
+        'password' => '7014158Sade@',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -304,14 +304,14 @@
       'options' => 
       array (
         'cluster' => 'redis',
-        'prefix' => 'salepropos_database_',
+        'prefix' => 'chulk_database_',
       ),
       'default' => 
       array (
         'url' => NULL,
         'host' => '127.0.0.1',
         'password' => NULL,
-        'port' => '6379',
+        'port' => '6379  ',
         'database' => '0',
       ),
       'cache' => 
@@ -319,7 +319,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'password' => NULL,
-        'port' => '6379',
+        'port' => '6379  ',
         'database' => '1',
       ),
     ),
@@ -337,7 +337,7 @@
     array (
       'enabled' => true,
       'driver' => 'file',
-      'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/debugbar',
+      'path' => '/var/www/system-chu_lk/storage/debugbar',
       'connection' => NULL,
       'provider' => '',
       'hostname' => '127.0.0.1',
@@ -445,13 +445,13 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/app',
+        'root' => '/var/www/system-chu_lk/storage/app',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/app/public',
-        'url' => 'https://localhost/storage',
+        'root' => '/var/www/system-chu_lk/storage/app/public',
+        'url' => 'https://chu.lk/storage',
         'visibility' => 'public',
       ),
       's3' => 
@@ -497,13 +497,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/logs/laravel.log',
+        'path' => '/var/www/system-chu_lk/storage/logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/logs/laravel.log',
+        'path' => '/var/www/system-chu_lk/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -553,7 +553,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/logs/laravel.log',
+        'path' => '/var/www/system-chu_lk/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -576,7 +576,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => '/Applications/personal/projects/web/laravel/system-chu_lk/resources/views/vendor/mail',
+        0 => '/var/www/system-chu_lk/resources/views/vendor/mail',
       ),
     ),
     'log_channel' => NULL,
@@ -587,7 +587,7 @@
     'stubs' => 
     array (
       'enabled' => false,
-      'path' => '/Applications/personal/projects/web/laravel/system-chu_lk/vendor/nwidart/laravel-modules/src/Commands/stubs',
+      'path' => '/var/www/system-chu_lk/vendor/nwidart/laravel-modules/src/Commands/stubs',
       'files' => 
       array (
         'routes/web' => 'Routes/web.php',
@@ -651,9 +651,9 @@
     ),
     'paths' => 
     array (
-      'modules' => '/Applications/personal/projects/web/laravel/system-chu_lk/Modules',
-      'assets' => '/Applications/personal/projects/web/laravel/system-chu_lk/public/modules',
-      'migration' => '/Applications/personal/projects/web/laravel/system-chu_lk/database/migrations',
+      'modules' => '/var/www/system-chu_lk/Modules',
+      'assets' => '/var/www/system-chu_lk/public/modules',
+      'migration' => '/var/www/system-chu_lk/database/migrations',
       'generator' => 
       array (
         'config' => 
@@ -846,7 +846,7 @@
       'enabled' => false,
       'paths' => 
       array (
-        0 => '/Applications/personal/projects/web/laravel/system-chu_lk/vendor/*/*',
+        0 => '/var/www/system-chu_lk/vendor/*/*',
       ),
     ),
     'composer' => 
@@ -875,7 +875,7 @@
       'file' => 
       array (
         'class' => 'Nwidart\\Modules\\Activators\\FileActivator',
-        'statuses-file' => '/Applications/personal/projects/web/laravel/system-chu_lk/modules_statuses.json',
+        'statuses-file' => '/var/www/system-chu_lk/modules_statuses.json',
         'cache-key' => 'activator.installed',
         'cache-lifetime' => 604800,
       ),
@@ -982,7 +982,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/framework/sessions',
+    'files' => '/var/www/system-chu_lk/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -991,7 +991,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'salepropos_session',
+    'cookie' => 'chulk_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => false,
@@ -1015,8 +1015,8 @@
     ),
     'scan_paths' => 
     array (
-      0 => '/Applications/personal/projects/web/laravel/system-chu_lk/app',
-      1 => '/Applications/personal/projects/web/laravel/system-chu_lk/resources',
+      0 => '/var/www/system-chu_lk/app',
+      1 => '/var/www/system-chu_lk/resources',
     ),
     'ui_url' => 'languages',
     'database' => 
@@ -1030,9 +1030,9 @@
   array (
     'paths' => 
     array (
-      0 => '/Applications/personal/projects/web/laravel/system-chu_lk/resources/views',
+      0 => '/var/www/system-chu_lk/resources/views',
     ),
-    'compiled' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/framework/views',
+    'compiled' => '/var/www/system-chu_lk/storage/framework/views',
   ),
   'excel' => 
   array (
@@ -1147,7 +1147,7 @@
     ),
     'temporary_files' => 
     array (
-      'local_path' => '/Applications/personal/projects/web/laravel/system-chu_lk/storage/framework/cache/laravel-excel',
+      'local_path' => '/var/www/system-chu_lk/storage/framework/cache/laravel-excel',
       'local_permissions' => 
       array (
       ),
@@ -1245,7 +1245,7 @@
     array (
     ),
     'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => '/Applications/personal/projects/web/laravel/system-chu_lk',
+    'remote_sites_path' => '/var/www/system-chu_lk',
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
     'settings_file_path' => '',
