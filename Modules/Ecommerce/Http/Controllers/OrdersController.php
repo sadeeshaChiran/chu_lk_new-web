@@ -110,7 +110,7 @@ class OrdersController extends Controller
                 );
             }
 
-            // $post_data['user_id'] = $user->id;
+            $post_data['user_id'] = $customer->id;
             $post_data['customer_id'] = $customer->id; // walk-in-customer / guest customer
         }
 

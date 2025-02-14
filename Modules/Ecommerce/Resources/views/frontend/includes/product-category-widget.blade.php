@@ -20,7 +20,7 @@
             <div class="product-slider-wrapper swiper-container" data-loop="{{$widget->category_slider_loop}}" data-autoplay="{{$widget->category_slider_autoplay}}">
                 <div class="swiper-wrapper">
                     @forelse ($products as $product)
-                    <div class="swiper-slide">
+                    <div class="swiper-slide p-1">
                     @include('ecommerce::frontend.includes.product-template')
                     </div>
                     @empty
