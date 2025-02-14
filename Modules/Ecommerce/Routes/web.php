@@ -20,15 +20,15 @@
 	use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 	use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-	// Route::get('site-maintenance-on',function() {
-	// 	Artisan::call('down --dashboard');
-	// 	return redirect()->back();
-	// });
+	Route::get('site-maintenance-on',function() {
+		Artisan::call('down --dashboard');
+		return redirect()->back();
+	});
 	
-	// Route::get('site-maintenance-off',function() {
-	// 	Artisan::call('up');
-	// 	return redirect()->back();
-	// });
+	Route::get('site-maintenance-off',function() {
+		Artisan::call('up');
+		return redirect()->back();
+	});
 
 	Route::post('/session-renew', [FrontController::class, 'sessionRenew'])->name('session');
 	
@@ -136,8 +136,8 @@
     		// Widget
     		Route::prefix('widget')->group(function () {
     			Route::get('/', [WidgetController::class, 'index'])->name('widget.index');
-    			Route::post('/store', [WidgetController::class, 'store'])->name('widget.store');
-    			Route::post('/update', [WidgetController::class, 'update'])->name('widget.update');
+    			Route::post('/store/', [WidgetController::class, 'store'])->name('widget.store');
+    			Route::post('/update/', [WidgetController::class, 'update'])->name('widget.update');
     			Route::post('/order', [WidgetController::class, 'order'])->name('widget.order');
     			Route::get('/delete/{id}', [WidgetController::class, 'delete'])->name('widget.delete');
     		});
@@ -248,7 +248,7 @@
     		Route::get('/wishlist/delete/{product_id}', [CustomerController::class, 'deleteFromWishlist']);
     	});
 	} else {
-	    Route::middleware(['common', 'auth'])->group(function () {
+	    Route::middleware(['common', 'auth', 'active'])->group(function () {
     		// Sliders
     		Route::prefix('sliders')->group(function () {
     			Route::get('/', [SliderController::class, 'slidersShow'])->name('slider.index');
@@ -351,8 +351,8 @@
     		// Widget
     		Route::prefix('widget')->group(function () {
     			Route::get('/', [WidgetController::class, 'index'])->name('widget.index');
-    			Route::post('/store', [WidgetController::class, 'store'])->name('widget.store');
-    			Route::post('/update', [WidgetController::class, 'update'])->name('widget.update');
+    			Route::post('/store/', [WidgetController::class, 'store'])->name('widget.store');
+    			Route::post('/update/', [WidgetController::class, 'update'])->name('widget.update');
     			Route::post('/order', [WidgetController::class, 'order'])->name('widget.order');
     			Route::get('/delete/{id}', [WidgetController::class, 'delete'])->name('widget.delete');
     		});
