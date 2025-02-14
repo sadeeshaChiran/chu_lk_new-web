@@ -85,6 +85,10 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
             align-items: center;
         }
 
+        .swiper-slide-bg {
+            background: #fff;
+        }
+
         .swiper-slide img {
             display: block;
             width: 100%;
