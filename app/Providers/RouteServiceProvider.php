@@ -7,6 +7,8 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
+    const HOME = '/home'; // or the correct redirect URL you want
+
     /**
      * This namespace is applied to your controller routes.
      *
