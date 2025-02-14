@@ -94,7 +94,7 @@
                             <li class="has-dropdown">
                                 <a class="category-button" href="#"><i class="material-symbols-outlined">menu</i>
                                     Categories</a>
-                                <ul class="dropdown sidebar {{ request()->is('/') ? 'show' : '' }}">
+                                <ul class="dropdown sidebar p-1 {{ request()->is('/') ? 'show' : '' }}">
                                     @php $i = 0 @endphp
                                     @foreach ($all_categories as $category)
                                         @if (in_array($category->id, $parents))
@@ -135,7 +135,7 @@
                                         @endif
                                         @php $i++ @endphp
                                     @endforeach
-                                    <li><a class="button style3 text-center" href="{{ url('shop') }}/"> All
+                                    <li><a class="button style3 text-center mb-4" href="{{ url('shop') }}/"> All
                                             Categories</a></li>
                                 </ul>
                             </li>

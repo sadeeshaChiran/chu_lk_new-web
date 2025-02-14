@@ -46,12 +46,12 @@ $product->image = $images[0];
                     <div class="slider-for">
                         @foreach($images as $image)
                         @if(!file_exists(url("images/product/xlarge")))
-                        <div class="slider-for__item ex1" data-src="{{ url('images/product/xlarge') }}/{{$image}}">
-                            <img src="{{ url('images/product/xlarge') }}/{{$image}}" alt="{{ $product->name }}" />
+                        <div class="slider-for__item ex1"  data-src="{{ url('images/product/xlarge') }}/{{$image}}">
+                            <img src="{{ url('images/product/xlarge') }}/{{$image}}" alt="{{ $product->name }}" style="width:50%; margin: 0 auto;"/>
                         </div>
                         @else
                         <div class="slider-for__item ex1" data-src="{{ url('images/product/large') }}/{{$image}}">
-                            <img src="{{ url('images/product/large') }}/{{$image}}" alt="{{ $product->name }}" />
+                            <img src="{{ url('images/product/large') }}/{{$image}}" alt="{{ $product->name }}" style="width:50%; margin: 0 auto;"/>
                         </div>
                         @endif
                         @endforeach

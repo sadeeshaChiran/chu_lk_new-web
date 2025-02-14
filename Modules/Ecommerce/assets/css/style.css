@@ -1072,6 +1072,7 @@ a.underline:after {
     height: 100%;
     opacity: 0;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-top: 15px;
     position: fixed;
     left: -110%;
