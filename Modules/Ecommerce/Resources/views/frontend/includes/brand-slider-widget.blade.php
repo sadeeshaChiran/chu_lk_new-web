@@ -16,7 +16,7 @@
             <div class="category-slider-wrapper swiper-container" data-loop="{{$widget->brand_slider_loop}}" data-autoplay="{{$widget->brand_slider_autoplay}}">
                 <div class="swiper-wrapper">
                     @forelse ($brands as $brand)
-                        <div class="swiper-slide p-1">
+                        <div class="swiper-slide">
                             <a href="{{url('brand')}}/{{$brand->slug}}">
                                 <div class="brand-container">
                                     <div class="brand-img">

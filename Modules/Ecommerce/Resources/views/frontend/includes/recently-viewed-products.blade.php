@@ -18,7 +18,7 @@
             <div class="product-slider-wrapper swiper-container" data-loop="0">
                 <div class="swiper-wrapper">
                     @forelse ($products as $product)
-                    <div class="swiper-slide p-1">
+                    <div class="swiper-slide">
                     @include('ecommerce::frontend.includes.product-template')
                     </div>
                     @empty

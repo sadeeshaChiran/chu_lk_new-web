@@ -221,7 +221,7 @@ $product->image = $images[0];
         <div class="product-slider-wrapper swiper-container" data-loop="" data-autoplay="" data-autoplay-speed="">
             <div class="swiper-wrapper">
                 @foreach($related_products as $product)
-                <div class="swiper-slide p-1">
+                <div class="swiper-slide">
                 @include('ecommerce::frontend.includes.product-template')
                 </div>
                 @endforeach

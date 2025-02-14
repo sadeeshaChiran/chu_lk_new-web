@@ -22,7 +22,7 @@
             <div class="category-slider-wrapper swiper-container" data-loop="{{$widget->category_slider_loop}}" data-autoplay="{{$widget->category_slider_autoplay}}">
                 <div class="swiper-wrapper">
                     @forelse ($parent_categories as $category)
-                        <div class="swiper-slide p-1">
+                        <div class="swiper-slide">
                             <a href="{{url('shop')}}/{{$category->slug}}">
                                 <div class="category-container">
                                     @if(isset($ecommerce_setting->theme) && $ecommerce_setting->theme == 'fashion')

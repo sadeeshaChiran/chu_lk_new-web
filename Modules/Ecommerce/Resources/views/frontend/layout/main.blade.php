@@ -79,7 +79,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
         .swiper-slide {
             text-align: center;
             font-size: 18px;
-            background: #fff;
+            /* background: #fff; */
             display: flex;
             justify-content: center;
             align-items: center;
