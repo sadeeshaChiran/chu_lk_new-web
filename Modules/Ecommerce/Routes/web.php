@@ -136,8 +136,8 @@
     		// Widget
     		Route::prefix('widget')->group(function () {
     			Route::get('/', [WidgetController::class, 'index'])->name('widget.index');
-    			Route::post('/store/', [WidgetController::class, 'store'])->name('widget.store');
-    			Route::post('/update/', [WidgetController::class, 'update'])->name('widget.update');
+    			Route::post('/store', [WidgetController::class, 'store'])->name('widget.store');
+    			Route::post('/update', [WidgetController::class, 'update'])->name('widget.update');
     			Route::post('/order', [WidgetController::class, 'order'])->name('widget.order');
     			Route::get('/delete/{id}', [WidgetController::class, 'delete'])->name('widget.delete');
     		});
@@ -351,8 +351,8 @@
     		// Widget
     		Route::prefix('widget')->group(function () {
     			Route::get('/', [WidgetController::class, 'index'])->name('widget.index');
-    			Route::post('/store/', [WidgetController::class, 'store'])->name('widget.store');
-    			Route::post('/update/', [WidgetController::class, 'update'])->name('widget.update');
+    			Route::post('/store', [WidgetController::class, 'store'])->name('widget.store');
+    			Route::post('/update', [WidgetController::class, 'update'])->name('widget.update');
     			Route::post('/order', [WidgetController::class, 'order'])->name('widget.order');
     			Route::get('/delete/{id}', [WidgetController::class, 'delete'])->name('widget.delete');
     		});
