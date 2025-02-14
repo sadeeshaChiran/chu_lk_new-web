@@ -531,12 +531,13 @@
         var formData = new FormData(form);
 
         $.ajax({
+            url: "{{route('page.store')}}",
             type: "post",
             data: formData,
             dataType: 'JSON',
             processData: false,
             contentType: false,
-            url: "{{route('page.store')}}",
+            
             success: function(data) {
                 $('#page_id').val(data);
                 var temp = $('#template').val();
