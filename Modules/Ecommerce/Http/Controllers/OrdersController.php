@@ -43,8 +43,8 @@ class OrdersController extends Controller
 
     public function create(Request $request)
     {
-       
-        if(auth()->user() && auth()->user()->role_id != 5) {
+
+        if (auth()->user() && auth()->user()->role_id != 5) {
             auth()->logout();
         }
         $post_data = array();
@@ -85,218 +85,221 @@ class OrdersController extends Controller
             $customer->address = $post_data['shipping_address'];
             $customer->city = $post_data['shipping_city'];
             $customer->is_active = 1;
-            
+
             $customer->save();
 
             $post_data['customer_id'] = $customer->id;
-        } else {
-            if(isset($request->register_guest) && ($request->register_guest == 0)){
-                // $user = User::firstOrCreate(
-                //     ['email' =>  'guest@customer.com'],
-                //     ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
-                // );
 
-                $customer = Customer::create(
-                    ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
-                );
-            }else{
-                // $user = User::firstOrCreate(
-                //     ['email' =>  $post_data['billing_email']],
-                //     ['name' => $post_data['billing_name'], 'password' => trim(bcrypt($request->input('password'))), 'phone' => $post_data['billing_phone'], 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
-                // );
+            // else {
+            //     if(isset($request->register_guest) && ($request->register_guest == 0)){
+            //         // $user = User::firstOrCreate(
+            //         //     ['email' =>  'guest@customer.com'],
+            //         //     ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
+            //         // );
 
-                $customer = Customer::create(
-                    ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
-                );
-            }
+            //         $customer = Customer::create(
+            //             ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
+            //         );
+            //     }else{
+            //         // $user = User::firstOrCreate(
+            //         //     ['email' =>  $post_data['billing_email']],
+            //         //     ['name' => $post_data['billing_name'], 'password' => trim(bcrypt($request->input('password'))), 'phone' => $post_data['billing_phone'], 'role_id' => 5, 'is_active' => 1, 'is_deleted' => 0]
+            //         // );
 
-            $post_data['user_id'] = null;
-            $post_data['customer_id'] = $customer->id; // walk-in-customer / guest customer
-        }
+            //         $customer = Customer::create(
+            //             ['email' =>  $post_data['shipping_email'], 'name' => $post_data['shipping_name'], 'phone_number' => $post_data['shipping_phone'], 'address' => $post_data['shipping_address'], 'city' => $post_data['shipping_city'], 'customer_group_id' => 1, 'is_active' => 1]
+            //         );
+            //     }
+
+            //     // $post_data['user_id'] = $user->id;
+            //     $post_data['customer_id'] = $customer->id; // walk-in-customer / guest customer
+            // }
 
 
-        # OPTIONAL PARAMETERS
-        $post_data['item'] = trim(htmlspecialchars($request->input('item')));
-        $post_data['total_qty'] = trim(htmlspecialchars($request->input('total_qty')));
-        $post_data['total_discount'] = 0;
-        $post_data['total_tax'] = 0;
-        $post_data['sub_total'] = trim(htmlspecialchars($request->input('sub_total')));
-        $post_data['grand_total'] = trim(htmlspecialchars($request->input('grand_total')));
+            # OPTIONAL PARAMETERS
+            $post_data['item'] = trim(htmlspecialchars($request->input('item')));
+            $post_data['total_qty'] = trim(htmlspecialchars($request->input('total_qty')));
+            $post_data['total_discount'] = 0;
+            $post_data['total_tax'] = 0;
+            $post_data['sub_total'] = trim(htmlspecialchars($request->input('sub_total')));
+            $post_data['grand_total'] = trim(htmlspecialchars($request->input('grand_total')));
 
-        if (!$request->input('coupon_id')) {
-            $post_data['coupon_id'] = NULL;
-            $post_data['coupon_discount'] = NULL;
-        } else {
-            $post_data['coupon_id'] = trim(htmlspecialchars($request->input('coupon_id')));
-            $post_data['coupon_discount'] = trim(htmlspecialchars($request->input('coupon_discount')));
-        }
-
-        $post_data['shipping_cost'] = trim(htmlspecialchars($request->input('shipping_cost')));
-
-        #Before  going to initiate the payment order status need to update as Pending.
-        $create_sale = Sale::create([
-            'reference_no'         => $post_data['reference_no'],
-            'user_id'              => $post_data['user_id'],
-            'customer_id'          => $post_data['customer_id'],
-            'shipping_name'        => $post_data['shipping_name'],
-            'shipping_email'       => $post_data['shipping_email'],
-            'shipping_phone'       => $post_data['shipping_phone'],
-            'shipping_address'     => $post_data['shipping_address'],
-            'shipping_city'        => $post_data['shipping_city'],
-            'shipping_state'       => $post_data['shipping_state'],
-            'shipping_zip'         => $post_data['shipping_zip'],
-            'shipping_country'     => $post_data['shipping_country'],
-            'warehouse_id'         => $post_data['warehouse_id'],
-            'biller_id'            => $post_data['biller_id'],
-            'item'                 => $post_data['item'],
-            'total_qty'            => $post_data['total_qty'],
-            'total_discount'       => $post_data['total_discount'],
-            'total_tax'            => $post_data['total_tax'],
-            'total_price'          => $post_data['sub_total'],
-            'grand_total'          => $post_data['grand_total'],
-            'coupon_id'            => $post_data['coupon_id'],
-            'coupon_discount'      => $post_data['coupon_discount'],
-            'shipping_cost'        => $post_data['shipping_cost'],
-            'sale_status'          => 2,
-            'payment_status'       => 1,
-            'sale_note'            => $post_data['sale_note'],
-            'sale_type'            => 'website',
-            'payment_mode'         => $post_data['payment_mode'],
-            'created_at'           => date('Y-m-d H:i:s')
-        ]);
-
-        $cart = session()->has('cart') ? session()->get('cart') : [];
-        foreach ($cart as $key => $product) {
-            if ($product['variant'] != 0) {
-                $product_variant = implode('/', $product['variant']);
-                $variant = DB::table('variants')->where('name', $product_variant)->first();
-                $variant_id = $variant->id;
+            if (!$request->input('coupon_id')) {
+                $post_data['coupon_id'] = NULL;
+                $post_data['coupon_discount'] = NULL;
             } else {
-                $variant_id = 0;
+                $post_data['coupon_id'] = trim(htmlspecialchars($request->input('coupon_id')));
+                $post_data['coupon_discount'] = trim(htmlspecialchars($request->input('coupon_discount')));
             }
-            Product_Sale::create([
-                'sale_id' => $create_sale->id,
-                'product_id' => $product['id'],
-                'variant_id' => $variant_id,
-                'qty' => $product['qty'],
-                'net_unit_price' => $product['unit_price'],
-                'sale_unit_id' => $product['sale_unit_id'],
-                'discount' => 0,
-                'tax_rate' => 0,
-                'tax' => 0,
-                'total' => $product['total_price'],
-            ]);
-        }
 
-        if (auth()->user()) {
-            $user_id = auth()->user()->id;
-        } else {
-            $user = User::where('role_id', 1)->where('is_active', 1)->first();
-            $user_id = $user->id;
-        }
+            $post_data['shipping_cost'] = trim(htmlspecialchars($request->input('shipping_cost')));
 
-        $account = Account::where('is_default', 1)->first();
-
-        if (strlen($request->input('gift_card_id')) > 0 && strlen($request->input('gift_card_amount')) > 0) {
-            $post_data['gift_card_id'] = trim(htmlspecialchars($request->input('gift_card_id')));
-            $post_data['gift_card_amount'] = trim(htmlspecialchars($request->input('gift_card_amount')));
-
-            $payment = Payment::create([
-                'payment_reference' => 'spr-' . date('Ymd-His'),
-                'user_id' => $user_id,
-                'sale_id' => $create_sale->id,
-                'account_id' => $account->id,
-                'amount' => $post_data['gift_card_amount'],
-                'change' => 0,
-                'paying_method' => 'Gift Card'
+            #Before  going to initiate the payment order status need to update as Pending.
+            $create_sale = Sale::create([
+                'reference_no'         => $post_data['reference_no'],
+                'user_id'              => $post_data['user_id'],
+                'customer_id'          => $post_data['customer_id'],
+                'shipping_name'        => $post_data['shipping_name'],
+                'shipping_email'       => $post_data['shipping_email'],
+                'shipping_phone'       => $post_data['shipping_phone'],
+                'shipping_address'     => $post_data['shipping_address'],
+                'shipping_city'        => $post_data['shipping_city'],
+                'shipping_state'       => $post_data['shipping_state'],
+                'shipping_zip'         => $post_data['shipping_zip'],
+                'shipping_country'     => $post_data['shipping_country'],
+                'warehouse_id'         => $post_data['warehouse_id'],
+                'biller_id'            => $post_data['biller_id'],
+                'item'                 => $post_data['item'],
+                'total_qty'            => $post_data['total_qty'],
+                'total_discount'       => $post_data['total_discount'],
+                'total_tax'            => $post_data['total_tax'],
+                'total_price'          => $post_data['sub_total'],
+                'grand_total'          => $post_data['grand_total'],
+                'coupon_id'            => $post_data['coupon_id'],
+                'coupon_discount'      => $post_data['coupon_discount'],
+                'shipping_cost'        => $post_data['shipping_cost'],
+                'sale_status'          => 2,
+                'payment_status'       => 1,
+                'sale_note'            => $post_data['sale_note'],
+                'sale_type'            => 'website',
+                'payment_mode'         => $post_data['payment_mode'],
+                'created_at'           => date('Y-m-d H:i:s')
             ]);
 
-            PaymentWithGiftCard::create([
-                'gift_card_id' => $post_data['gift_card_id'],
-                'payment_id' => $payment->id,
-            ]);
+            $cart = session()->has('cart') ? session()->get('cart') : [];
+            foreach ($cart as $key => $product) {
+                if ($product['variant'] != 0) {
+                    $product_variant = implode('/', $product['variant']);
+                    $variant = DB::table('variants')->where('name', $product_variant)->first();
+                    $variant_id = $variant->id;
+                } else {
+                    $variant_id = 0;
+                }
+                Product_Sale::create([
+                    'sale_id' => $create_sale->id,
+                    'product_id' => $product['id'],
+                    'variant_id' => $variant_id,
+                    'qty' => $product['qty'],
+                    'net_unit_price' => $product['unit_price'],
+                    'sale_unit_id' => $product['sale_unit_id'],
+                    'discount' => 0,
+                    'tax_rate' => 0,
+                    'tax' => 0,
+                    'total' => $product['total_price'],
+                ]);
+            }
 
-            $gift_card = GiftCard::where('id', $post_data['gift_card_id'])->first();
-            if($post_data['gift_card_amount'] > $post_data['grand_total']) {
-                $gift_card->amount = ($gift_card->amount - $post_data['grand_total']);
+            if (auth()->user()) {
+                $user_id = auth()->user()->id;
+            } else {
+                $user = User::where('role_id', 1)->where('is_active', 1)->first();
+                $user_id = $user->id;
+            }
+
+            $account = Account::where('is_default', 1)->first();
+
+            if (strlen($request->input('gift_card_id')) > 0 && strlen($request->input('gift_card_amount')) > 0) {
+                $post_data['gift_card_id'] = trim(htmlspecialchars($request->input('gift_card_id')));
+                $post_data['gift_card_amount'] = trim(htmlspecialchars($request->input('gift_card_amount')));
+
+                $payment = Payment::create([
+                    'payment_reference' => 'spr-' . date('Ymd-His'),
+                    'user_id' => $user_id,
+                    'sale_id' => $create_sale->id,
+                    'account_id' => $account->id,
+                    'amount' => $post_data['gift_card_amount'],
+                    'change' => 0,
+                    'paying_method' => 'Gift Card'
+                ]);
+
+                PaymentWithGiftCard::create([
+                    'gift_card_id' => $post_data['gift_card_id'],
+                    'payment_id' => $payment->id,
+                ]);
+
+                $gift_card = GiftCard::where('id', $post_data['gift_card_id'])->first();
+                if ($post_data['gift_card_amount'] > $post_data['grand_total']) {
+                    $gift_card->amount = ($gift_card->amount - $post_data['grand_total']);
+
+                    $sale_update = Sale::find($create_sale->id);
+                    $sale_update->payment_status = 4;
+                    $sale_update->save();
+                } else {
+                    $gift_card->amount = ($gift_card->amount - $post_data['gift_card_amount']);
+                }
+                $gift_card->save();
+
+                $post_data['grand_total'] = ($post_data['grand_total'] - $post_data['gift_card_amount']);
+            }
+
+            // if ($post_data['payment_mode'] != 'Cash on Delivery') {
+            //     session(['grand_total' => $post_data['grand_total'], 'sale_id' => $create_sale->id, 'mode' => $post_data['payment_mode'], 'user_id' => $user_id, 'account_id' => $account->id]);
+            //     return redirect()->route('online.payment');
+            // } 
+            if ($post_data['payment_mode'] == 'payhere') {
+                $payment = Payment::create([
+                    'payment_reference' => 'spr-' . date('Ymd-His'),
+                    'user_id' => $user_id,
+                    'sale_id' => $create_sale->id,
+                    'account_id' => $account->id,
+                    'amount' => $post_data['grand_total'],
+                    'change' => 0,
+                    'paying_method' => 'Credit Card'
+                ]);
+                // $charge = \Stripe\Charge::create([
+                //     'amount' => 1000 * 100,
+                //     'currency' => 'lkr',
+                //     'customer' => $post_data['customer_id']
+                // ]);
+
+                // PaymentWithCreditCard::create([
+                //     'payment_id' => $payment->id,
+                // ]);
 
                 $sale_update = Sale::find($create_sale->id);
                 $sale_update->payment_status = 4;
+                $sale_update->paid_amount = $post_data['grand_total'];
+
                 $sale_update->save();
+                session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0]);
+                return redirect()->route('order.success', $create_sale->reference_no);
             } else {
-                $gift_card->amount = ($gift_card->amount - $post_data['gift_card_amount']);
+                // if ($post_data['grand_total'] > 0) {
+                //     $payment = Payment::create([
+                //         'payment_reference' => 'spr-' . date('Ymd-His'),
+                //         'user_id' => $user_id,
+                //         'sale_id' => $create_sale->id,
+                //         'account_id' => $account->id,
+                //         'amount' => $post_data['grand_total'],
+                //         'change' => 0,
+                //         'paying_method' => 'Cash'
+                //     ]);
+                // }
+
+                session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0]);
+                return redirect()->route('order.success', $create_sale->reference_no);
             }
-            $gift_card->save();
 
-            $post_data['grand_total'] = ($post_data['grand_total'] - $post_data['gift_card_amount']);
+            //sms send start
+            $smsTemplate = SmsTemplate::where('is_default_ecommerce', 1)->latest()->first();
+            $smsProvider = ExternalService::where('active', true)->where('type', 'sms')->first();
+            $pos_setting_data = PosSetting::latest()->first();
+
+            if ($smsProvider && $smsTemplate && $pos_setting_data['send_sms'] == 1) {
+                $smsData['type'] = 'online';
+                $customerData['billing_name'] = $post_data['billing_name'];
+                $customerData['billing_phone'] = $post_data['billing_phone'];
+                $smsData['customer_id'] = $customerData;
+                $smsData['template_id'] = $smsTemplate['id'];
+                $smsData['sale_status'] = 2;
+                $smsData['payment_status'] = 1;
+                $smsData['reference_no'] = $post_data['reference_no'];
+                $this->_smsModel->initialize($smsData);
+            }
+            //sms send end
+        }else {
+            return redirect(url('customer/login'));
         }
-
-        // if ($post_data['payment_mode'] != 'Cash on Delivery') {
-        //     session(['grand_total' => $post_data['grand_total'], 'sale_id' => $create_sale->id, 'mode' => $post_data['payment_mode'], 'user_id' => $user_id, 'account_id' => $account->id]);
-        //     return redirect()->route('online.payment');
-        // } 
-        if($post_data['payment_mode'] == 'payhere'){
-            $payment = Payment::create([
-                'payment_reference' => 'spr-' . date('Ymd-His'),
-                'user_id' => $user_id,
-                'sale_id' => $create_sale->id,
-                'account_id' => $account->id,
-                'amount' => $post_data['grand_total'],
-                'change' => 0,
-                'paying_method' => 'Credit Card'
-            ]);
-            // $charge = \Stripe\Charge::create([
-            //     'amount' => 1000 * 100,
-            //     'currency' => 'lkr',
-            //     'customer' => $post_data['customer_id']
-            // ]);
-    
-            // PaymentWithCreditCard::create([
-            //     'payment_id' => $payment->id,
-            // ]);
-
-            $sale_update = Sale::find($create_sale->id);
-            $sale_update->payment_status = 4;
-            $sale_update->paid_amount = $post_data['grand_total'];
-
-            $sale_update->save();
-            session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0]);
-            return redirect()->route('order.success', $create_sale->reference_no);
-        } else {
-            // if ($post_data['grand_total'] > 0) {
-            //     $payment = Payment::create([
-            //         'payment_reference' => 'spr-' . date('Ymd-His'),
-            //         'user_id' => $user_id,
-            //         'sale_id' => $create_sale->id,
-            //         'account_id' => $account->id,
-            //         'amount' => $post_data['grand_total'],
-            //         'change' => 0,
-            //         'paying_method' => 'Cash'
-            //     ]);
-            // }
-
-            session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0]);
-            return redirect()->route('order.success', $create_sale->reference_no);
-        }
-
-        //sms send start
-        $smsTemplate = SmsTemplate::where('is_default_ecommerce',1)->latest()->first();
-        $smsProvider = ExternalService::where('active',true)->where('type','sms')->first();
-        $pos_setting_data = PosSetting::latest()->first();
-
-        if($smsProvider && $smsTemplate && $pos_setting_data['send_sms'] == 1)
-        {
-            $smsData['type'] = 'online';
-            $customerData['billing_name'] = $post_data['billing_name'];
-            $customerData['billing_phone'] = $post_data['billing_phone'];
-            $smsData['customer_id'] = $customerData;
-            $smsData['template_id'] = $smsTemplate['id'];
-            $smsData['sale_status'] = 2;
-            $smsData['payment_status'] = 1;
-            $smsData['reference_no'] = $post_data['reference_no'];
-            $this->_smsModel->initialize($smsData);
-        }
-        //sms send end
     }
 
     public function onlinePayment()
@@ -387,8 +390,8 @@ class OrdersController extends Controller
             Configuration::setXenditKey($key);
 
             $createInvoice = new CreateInvoiceRequest([
-                'external_id' => 'inv-'.$sale_id,
-                'amount' => ($grand_total*1000),
+                'external_id' => 'inv-' . $sale_id,
+                'amount' => ($grand_total * 1000),
                 'invoice_duration' => 172800,
                 //'items' => array($items)
             ]);
@@ -398,7 +401,7 @@ class OrdersController extends Controller
 
             $invoice_url = $generateInvoice['invoice_url'];
 
-            return view('ecommerce::frontend.checkout-online', compact('grand_total', 'sale_id', 'mode', 'payment_id','invoice_url'));
+            return view('ecommerce::frontend.checkout-online', compact('grand_total', 'sale_id', 'mode', 'payment_id', 'invoice_url'));
         }
 
         if ($mode == 'Razorpay') {
@@ -470,13 +473,11 @@ class OrdersController extends Controller
             }
 
             if ($request->status === 'PAID') {
-                $sale_id =  str_replace('inv-','',$request->external_id);
+                $sale_id =  str_replace('inv-', '', $request->external_id);
                 $sale = Sale::find($sale_id);
                 $sale->payment_status = 4;
                 $sale->save();
-
             }
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -486,9 +487,9 @@ class OrdersController extends Controller
     {
         $sale = Sale::find(session()->get('sale_id'));
 
-        if($sale->payment_status != 4){
+        if ($sale->payment_status != 4) {
             return redirect()->back();
-        }else{
+        } else {
             session(['cart' => [], 'total_qty' => 0, 'subTotal' => 0, 'grand_total' => 0, 'sale_id' => '', 'mode' => '', 'user_id' => '', 'account_id' => '']);
 
             return redirect()->route('order.success', ['sale_reference' => $sale->reference_no]);
@@ -565,7 +566,7 @@ class OrdersController extends Controller
         $payment = $mollie->payments->create([
             "amount" => [
                 "currency" => $currency,
-                "value" => $request->grand_total.'.00' // You must send the correct number of decimals, thus we enforce the use of strings
+                "value" => $request->grand_total . '.00' // You must send the correct number of decimals, thus we enforce the use of strings
             ],
             "description" => "Payment with Mollie",
             "redirectUrl" => route('mollie.success'),
@@ -578,7 +579,6 @@ class OrdersController extends Controller
         session()->put('paymentId', $payment->id);
 
         return redirect()->route('order.success', ['sale_reference' => $sale->reference_no]);
-
     }
 
     public function mollieSuccess()
@@ -640,7 +640,7 @@ class OrdersController extends Controller
         $reference = $request->reference;
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.paystack.co/transaction/verify/".$reference,
+            CURLOPT_URL => "https://api.paystack.co/transaction/verify/" . $reference,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -656,8 +656,7 @@ class OrdersController extends Controller
         curl_close($curl);
         $response = json_decode($response);
 
-        if($response->data->status == 'success')
-        {
+        if ($response->data->status == 'success') {
             $sale = Sale::find($request->sale_id);
             $sale->payment_status = 4;
             $sale->save();

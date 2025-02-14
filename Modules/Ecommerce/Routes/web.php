@@ -160,7 +160,7 @@
     		// Login routes
     		Route::get('/customer/login/{verify?}', [AuthController::class, 'login'])->name('customer.login');
     		Route::post('/login-customer', [AuthController::class, 'processLogin'])->name('customerLogin');
-    		Route::get('/customer/logout', [AuthController::class, 'logout'])->name('customer.logout');
+    		Route::get('/customer/logout', [AuthController::class, 'logout'])->name(name: 'customer.logout');
     	
     		Route::get('verify/{id}', [AuthController::class, 'verify'])->name('verify');
     	
@@ -376,7 +376,7 @@
     		// Login routes
     		Route::get('/customer/login/{verify?}', [AuthController::class, 'login'])->name('customer.login');
     		Route::post('/login-customer', [AuthController::class, 'processLogin'])->name('customerLogin');
-    		Route::get('/customer/logout', [AuthController::class, 'logout'])->name('customer.logout');
+    		Route::get('/customer/logout', [AuthController::class, 'logout'])->name(name: 'customer.logout');
     	
     		Route::get('verify/{id}', [AuthController::class, 'verify'])->name('verify');
     	
