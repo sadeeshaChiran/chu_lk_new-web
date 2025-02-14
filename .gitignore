@@ -1,14 +1,14 @@
-/node_modules
-/public/hot
-.env.backup
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
+# /node_modules
+# /public/hot
+# .env.backup
+# .phpunit.result.cache
+# Homestead.json
+# Homestead.yaml
+# npm-debug.log
+# yarn-error.log
 
-.env
-/vendor
-/storage/*
-!/storage/app/
-!/storage/logs/
+# .env
+# /vendor
+# /storage/*
+# !/storage/app/
+# !/storage/logs/

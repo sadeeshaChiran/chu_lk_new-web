@@ -1,0 +1,11 @@
+<li><a href="<?php echo e(route('slider.index')); ?>"><?php echo e(trans('file.Sliders')); ?></a></li>
+<li><a href="<?php echo e(route('menu.index')); ?>"><?php echo e(trans('file.Menu')); ?></a></li>
+<li><a href="<?php echo e(route('collection.index')); ?>"><?php echo e(trans('file.Collections')); ?></a></li>
+<li><a href="<?php echo e(route('page.index')); ?>"><?php echo e(trans('file.Pages')); ?></a></li>
+<li><a href="<?php echo e(route('widget.index')); ?>"><?php echo e(trans('file.Widgets')); ?></a></li>
+<li><a href="<?php echo e(route('faq.category.index')); ?>"><?php echo e(trans('file.Faq Category')); ?></a></li>
+<li><a href="<?php echo e(route('faq.index')); ?>"><?php echo e(trans('file.Faqs')); ?></a></li>
+<li><a href="<?php echo e(route('social.links')); ?>"><?php echo e(trans('file.Social Links')); ?></a></li>
+<li><a href="<?php echo e(route('blog.post')); ?>"><?php echo e(trans('file.Blog')); ?></a></li>
+<li><a href="<?php echo e(route('setting.ecommerce.gateway')); ?>"><?php echo e(trans('file.Payment Gateways')); ?></a></li>
+<li><a href="<?php echo e(route('setting.ecommerce')); ?>"><?php echo e(trans('file.settings')); ?></a></li><?php /**PATH /Applications/personal/projects/web/laravel/system-chu_lk/Modules/Ecommerce/Resources/views/backend/layout/sidebar-menu.blade.php ENDPATH**/ ?>
