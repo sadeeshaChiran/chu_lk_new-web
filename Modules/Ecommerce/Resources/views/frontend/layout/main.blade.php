@@ -223,6 +223,9 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
 </head>
 
 <body style="background-color: rgb(251 250 250);" class="@if(!empty($ecommerce_setting->is_rtl)) rtl @endif">
+
+
+    
     @if(env('USER_VERIFIED') == false)
     <div id="demo">
         <h6>Theme Colors</h6>
@@ -333,7 +336,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     <!--Scroll to top ends-->
 
     @if(isset($footer_top_widgets) && (count($footer_top_widgets) > 0))
-    <section class="promo-area mt-5 pt-5 pb-5">
+    <section class="promo-area mt-2 pt-2 pb-5">
         <div class="container-fluid">
             <div class="row">
                 @foreach($footer_top_widgets as $widget)
@@ -355,16 +358,16 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
     <div class="footer-wrapper">
         <div class="container-fluid">
             @if(isset($footer_widgets))
-            <div class="row">
+            <div class="row text-center">
                 @foreach($footer_widgets as $item)
                 @if($item->name == 'site-info-widget')
                 <div class="col-md-3 col-12">
-                    <div class="footer-logo">
+                    <div class="w-100">
                         <a href="#">
                             @if(isset($ecommerce_setting->logo))
-                            <img src="{{ url('frontend/images/') }}/{{$ecommerce_setting->logo}}" alt="{{$ecommerce_setting->site_title ?? ''}}">
+                            <img src="{{ url('frontend/images/') }}/{{$ecommerce_setting->logo}}" class="footer-logo" alt="{{$ecommerce_setting->site_title ?? ''}}">
                             @else
-                            <img src="{{ asset('logo') }}/{{$general_setting->site_logo}}" alt="{{$ecommerce_setting->site_title ?? ''}}">
+                            <img src="{{ asset('logo') }}/{{$general_setting->site_logo}}"  class="footer-logo" alt="{{$ecommerce_setting->site_title ?? ''}}">
                             @endif
                         </a>
                     </div>

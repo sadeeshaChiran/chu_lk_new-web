@@ -9,6 +9,26 @@
 @endsection
 
 @section('content')
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade show" id="homeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content ">
+                <div class="modal-body">
+                    <button type="button" class="close offsetmenu__close__btn" data-dismiss="modal" aria-label="Close">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <div class="row d-flex align-items-center p-2">
+                        <div class="col-12 modal-image">
+                            <img src="{{ url('images/popup/banner1.jpeg') }}" alt="banner" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     @if (isset($sliders))
         <!--Home Banner starts -->
         <section class="banner-area v3 pt-0 mb-3">
@@ -57,54 +77,54 @@
         <!--Home Banner Area ends-->
     @endif
 
-        @if (isset($widgets))
-            @foreach ($widgets as $widget)
-                @if ($widget->name == 'category-slider-widget')
-                    @include('ecommerce::frontend.includes.category-slider-widget')
-                @endif
+    @if (isset($widgets))
+        @foreach ($widgets as $widget)
+            @if ($widget->name == 'category-slider-widget')
+                @include('ecommerce::frontend.includes.category-slider-widget')
+            @endif
 
-                @if ($widget->name == 'brand-slider-widget')
-                    @include('ecommerce::frontend.includes.brand-slider-widget')
-                @endif
+            @if ($widget->name == 'brand-slider-widget')
+                @include('ecommerce::frontend.includes.brand-slider-widget')
+            @endif
 
-                @if ($widget->name == 'product-category-widget')
-                    @include('ecommerce::frontend.includes.product-category-widget')
-                @endif
+            @if ($widget->name == 'product-category-widget')
+                @include('ecommerce::frontend.includes.product-category-widget')
+            @endif
 
-                @if ($widget->name == 'product-collection-widget')
-                    @include('ecommerce::frontend.includes.product-collection-widget')
-                @endif
+            @if ($widget->name == 'product-collection-widget')
+                @include('ecommerce::frontend.includes.product-collection-widget')
+            @endif
 
-                @if ($widget->name == 'text-widget')
-                    @include('ecommerce::frontend.includes.text-widget')
-                @endif
+            @if ($widget->name == 'text-widget')
+                @include('ecommerce::frontend.includes.text-widget')
+            @endif
 
-                @if ($widget->name == 'three-c-banner-widget')
-                    @include('ecommerce::frontend.includes.three-c-banner-widget')
-                @endif
+            @if ($widget->name == 'three-c-banner-widget')
+                @include('ecommerce::frontend.includes.three-c-banner-widget')
+            @endif
 
-                @if ($widget->name == 'two-c-banner-widget')
-                    @include('ecommerce::frontend.includes.two-c-banner-widget')
-                @endif
+            @if ($widget->name == 'two-c-banner-widget')
+                @include('ecommerce::frontend.includes.two-c-banner-widget')
+            @endif
 
-                @if ($widget->name == 'one-c-banner-widget')
-                    @include('ecommerce::frontend.includes.one-c-banner-widget')
-                @endif
+            @if ($widget->name == 'one-c-banner-widget')
+                @include('ecommerce::frontend.includes.one-c-banner-widget')
+            @endif
 
-                @if ($widget->name == 'tab-product-category-widget')
-                    @include('ecommerce::frontend.includes.tab-product-category-widget')
-                @endif
+            @if ($widget->name == 'tab-product-category-widget')
+                @include('ecommerce::frontend.includes.tab-product-category-widget')
+            @endif
 
-                @if ($widget->name == 'tab-product-collection-widget')
-                    @include('ecommerce::frontend.includes.tab-product-collection-widget')
-                @endif
+            @if ($widget->name == 'tab-product-collection-widget')
+                @include('ecommerce::frontend.includes.tab-product-collection-widget')
+            @endif
 
-                @if ($widget->name == 'image-slider-widget')
-                    @include('ecommerce::frontend.includes.image-slider-widget')
-                @endif
-            @endforeach
-        @endif
-    
+            @if ($widget->name == 'image-slider-widget')
+                @include('ecommerce::frontend.includes.image-slider-widget')
+            @endif
+        @endforeach
+    @endif
+
 
     @if (isset($recently_viewed) && count($recently_viewed) > 0)
         @include('ecommerce::frontend.includes.recently-viewed-products')
@@ -112,6 +132,13 @@
 @endsection
 
 @section('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('homeModal'));
+            myModal.show();
+        });
+    </script>
+
     <script>
         {!! file_get_contents(Module::find('Ecommerce')->getPath() . '/assets/js/swiper.min.js') !!}
     </script>
