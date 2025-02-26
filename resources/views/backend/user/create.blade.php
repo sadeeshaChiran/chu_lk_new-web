@@ -184,6 +184,7 @@
     });
 
     $('select[name="role_id"]').on('change', function() {
+        console.log('www',$(this).val());
         if($(this).val() == 5) {
             $('#biller-id').hide(300);
             $('#warehouseId').hide(300);
@@ -192,7 +193,7 @@
             $('select[name="warehouse_id"]').prop('required',false);
             $('select[name="biller_id"]').prop('required',false);
         }
-        else if($(this).val() > 2 && $(this).val() != 5) {
+        else if(($(this).val() > 2 && $(this).val() != 5) || $(this).val() == 10 || $(this).val() == 11 || $(this).val() == 12) {
             $('select[name="warehouse_id"]').prop('required',true);
             $('select[name="biller_id"]').prop('required',true);
             $('#biller-id').show(300);
