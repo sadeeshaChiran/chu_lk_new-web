@@ -193,11 +193,18 @@
             $('select[name="warehouse_id"]').prop('required',false);
             $('select[name="biller_id"]').prop('required',false);
         }
-        else if(($(this).val() > 2 && $(this).val() != 5) || $(this).val() == 10 || $(this).val() == 11 || $(this).val() == 12) {
+        else if(($(this).val() > 2 && $(this).val() != 5) ) {
             $('select[name="warehouse_id"]').prop('required',true);
             $('select[name="biller_id"]').prop('required',true);
             $('#biller-id').show(300);
             $('#warehouseId').show(300);
+            $('.customer-section').hide(300);
+            $('.customer-input').prop('required',false);
+        } else if ($(this).val() == 10 || $(this).val() == 11 || $(this).val() == 12){
+            $('select[name="warehouse_id"]').prop('required',false);
+            $('select[name="biller_id"]').prop('required',false);
+            $('#biller-id').hide(300);
+            $('#warehouseId').hide(300);
             $('.customer-section').hide(300);
             $('.customer-input').prop('required',false);
         }
