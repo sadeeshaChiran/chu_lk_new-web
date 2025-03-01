@@ -184,7 +184,9 @@
     });
 
     $('select[name="role_id"]').on('change', function() {
+        console.log('www',$(this).val(),($(this).val() > 2 && $(this).val() != 5) && ($(this).val() != 10 || $(this).val() != 11 || $(this).val() != 12));
         if($(this).val() == 5) {
+            console.log('ww1w');
             $('#biller-id').hide(300);
             $('#warehouseId').hide(300);
             $('.customer-section').show(300);
@@ -192,15 +194,18 @@
             $('select[name="warehouse_id"]').prop('required',false);
             $('select[name="biller_id"]').prop('required',false);
         }
-        else if($(this).val() > 2 && $(this).val() != 5) {
+        else if(($(this).val() > 2 && $(this).val() != 5) && !($(this).val() == 10 || $(this).val() == 11 || $(this).val() == 12) ) {
+            console.log('ww3w');
             $('select[name="warehouse_id"]').prop('required',true);
             $('select[name="biller_id"]').prop('required',true);
             $('#biller-id').show(300);
             $('#warehouseId').show(300);
             $('.customer-section').hide(300);
             $('.customer-input').prop('required',false);
-        }
+        } 
         else {
+            console.log('ww4w');
+
             $('select[name="warehouse_id"]').prop('required',false);
             $('select[name="biller_id"]').prop('required',false);
             $('#biller-id').hide(300);
