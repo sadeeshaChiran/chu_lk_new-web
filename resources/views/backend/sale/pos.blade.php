@@ -4236,20 +4236,20 @@
                         total_qty = sale_qty * operation_value[0];
                     else if (operator[0] == '/')
                         total_qty = sale_qty / operation_value[0];
-                    if (total_qty > parseFloat(product_qty[pos])) {
-                        alert('Quantity exceeds stock quantity!');
-                        if (flag) {
-                            sale_qty = sale_qty.substring(0, sale_qty.length - 1);
-                            localStorageQty[rowindex] = sale_qty;
-                            localStorage.setItem("localStorageQty", localStorageQty);
-                            checkQuantity(sale_qty, true);
-                        } else {
-                            localStorageQty[rowindex] = sale_qty;
-                            localStorage.setItem("localStorageQty", localStorageQty);
-                            edit();
-                            return;
-                        }
-                    }
+                    // if (total_qty > parseFloat(product_qty[pos])) {
+                    //     alert('Quantity exceeds stock quantity!');
+                    //     if (flag) {
+                    //         sale_qty = sale_qty.substring(0, sale_qty.length - 1);
+                    //         localStorageQty[rowindex] = sale_qty;
+                    //         localStorage.setItem("localStorageQty", localStorageQty);
+                    //         checkQuantity(sale_qty, true);
+                    //     } else {
+                    //         localStorageQty[rowindex] = sale_qty;
+                    //         localStorage.setItem("localStorageQty", localStorageQty);
+                    //         edit();
+                    //         return;
+                    //     }
+                    // }
                     $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(sale_qty);
                 }
                 // else if(product_type[pos] == 'combo'){
