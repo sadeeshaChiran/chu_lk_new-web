@@ -67,6 +67,9 @@
                     <th>{{trans('file.Quantity')}}</th>
                     <th>{{trans('file.Unit')}}</th>
                     <th>{{trans('file.Price')}}</th>
+                    <th>{{trans('file.Wholesale Price')}}</th>
+                    <th>{{trans('file.Retail Price')}}</th>
+                    <th>{{trans('file.Online Price')}}</th>
                     <th>{{trans('file.Cost')}}</th>
                     <th>{{trans('file.Stock Worth (Price/Cost)')}}</th>
                     @foreach($custom_fields as $fieldName)
@@ -203,12 +206,14 @@
         return false;
     }
 
-    var columns = [{"data": "key"},{"data": "image"},{"data": "name"},{"data": "code"},{"data": "brand"},{"data": "category"},{"data": "qty"},{"data": "unit"},{"data": "price"},{"data": "cost"},{"data": "stock_worth"}];
+    var columns = [{"data": "key"},{"data": "image"},{"data": "name"},{"data": "code"},{"data": "brand"},{"data": "category"},{"data": "qty"},{"data": "unit"},{"data": "price"},{"data": "wholesale_price"},{"data": "retail_price"},{"data": "online_price"},{"data": "cost"},{"data": "stock_worth"}];
     var field_name = <?php echo json_encode($field_name) ?>;
     for(i = 0; i < field_name.length; i++) {
         columns.push({"data": field_name[i]});
     }
     columns.push({"data": "options"});
+
+    console.log(columns);
 
     var warehouse = [];
     var variant = [];

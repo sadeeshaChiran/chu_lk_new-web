@@ -82,8 +82,11 @@ class ProductController extends Controller
             6 => 'qty',
             7 => 'unit_id',
             8 => 'price',
-            9 => 'cost',
-            10 => 'stock_worth'
+            9 => 'wholesale_price',
+            10 => 'retail_price',
+            11 => 'online_price',
+            12 => 'cost',
+            13 => 'stock_worth'
         );
 
         $warehouse_id = $request->input('warehouse_id');
@@ -227,6 +230,9 @@ class ProductController extends Controller
                     $nestedData['unit'] = 'N/A';
 
                 $nestedData['price'] = $product->price;
+                $nestedData['wholesale_price'] = $product->wholesale_price;
+                $nestedData['retail_price'] = $product->retail_price;
+                $nestedData['online_price'] = $product->online_price;
                 $nestedData['cost'] = $product->cost;
 
                 if(config('currency_position') == 'prefix')
@@ -285,7 +291,7 @@ class ProductController extends Controller
                 else
                     $tax_method = trans('file.Inclusive');
 
-                $nestedData['product'] = array( '[ "'.$product->type.'"', ' "'.$product->name.'"', ' "'.$product->code.'"', ' "'.$nestedData['brand'].'"', ' "'.$nestedData['category'].'"', ' "'.$nestedData['unit'].'"', ' "'.$product->cost.'"', ' "'.$product->price.'"', ' "'.$tax.'"', ' "'.$tax_method.'"', ' "'.$product->alert_quantity.'"', ' "'.preg_replace('/\s+/S', " ", $product->product_details).'"', ' "'.$product->id.'"', ' "'.$product->product_list.'"', ' "'.$product->variant_list.'"', ' "'.$product->qty_list.'"', ' "'.$product->price_list.'"', ' "'.$nestedData['qty'].'"', ' "'.$product->image.'"', ' "'.$product->is_variant.'"]'
+                $nestedData['product'] = array( '[ "'.$product->type.'"', ' "'.$product->name.'"', ' "'.$product->code.'"', ' "'.$nestedData['brand'].'"', ' "'.$nestedData['category'].'"', ' "'.$nestedData['unit'].'"', ' "'.$product->cost.'"', ' "'.$product->price.'"', ' "'.$product->wholesale_price.'"', ' "'.$product->retail_price.'"', ' "'.$product->online_price.'"', ' "'.$tax.'"', ' "'.$tax_method.'"', ' "'.$product->alert_quantity.'"', ' "'.preg_replace('/\s+/S', " ", $product->product_details).'"', ' "'.$product->id.'"', ' "'.$product->product_list.'"', ' "'.$product->variant_list.'"', ' "'.$product->qty_list.'"', ' "'.$product->price_list.'"', ' "'.$nestedData['qty'].'"', ' "'.$product->image.'"', ' "'.$product->is_variant.'"]'
                 );
                 //$nestedData['imagedata'] = DNS1D::getBarcodePNG($product->code, $product->barcode_symbology);
                 $data[] = $nestedData;
@@ -297,6 +303,7 @@ class ProductController extends Controller
             "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
+
 
         echo json_encode($json_data);
     }
@@ -1558,6 +1565,7 @@ class ProductController extends Controller
         // Looping through other columns
         try {
             while ($columns = fgetcsv($file)) {
+               
                 if (count($escapedHeader) !== count($columns)) {
                     fclose($file);
                     return redirect()->back()->with('message', 'CSV file format is incorrect.');
@@ -1604,10 +1612,15 @@ class ProductController extends Controller
                     'sale_unit_id' => $lims_unit_data->id,
                     'cost' => $data['cost'],
                     'price' => $data['price'],
+                    'wholesale_price' => $data['wholesaleprice'],
+                    'retail_price' => $data['retailprice'],
+                    'online_price' => $data['onlineprice'],
+                    'product_weight' => $data['productweight'],
                     'tax_method' => 1,
                     'qty' => 0,
                     'product_details' => $data['productdetails'] ?? '',
                     'is_active' => true,
+                    'is_online' => 1,
                     'image' => $data['image'] ?? 'zummXD2dvAtI.png',
                 ]);
 
