@@ -289,7 +289,7 @@ return [
 	"Sale Unit" => "Sale Unit",
 	"Purchase Unit" => "Purchase Unit",
 	"Product Cost" => "Product Cost",
-	"Product Price" => "Product Price",
+	"Product Price" => "Pos Price",
 	"Alert Quantity" => "Alert Quantity",
 	"Add Promotional Price" => "Add Promotional Price",
 	"Product Tax" => "Product Tax",

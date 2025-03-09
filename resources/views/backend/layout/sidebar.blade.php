@@ -60,6 +60,8 @@
             <?php
                 $sale_index_permission_active = $role_has_permissions_list->where('name', 'sales-index')->first();
 
+                $sale_pos_permission_active = $role_has_permissions_list->where('name', 'pos-sales-index')->first();
+
                 $packing_slip_challan_active = $role_has_permissions_list->where('name', 'packing_slip_challan')->first();
 
                 $gift_card_permission_active = $role_has_permissions_list->where('name', 'gift_card')->first();
@@ -69,15 +71,24 @@
                 $delivery_permission_active = $role_has_permissions_list->where('name', 'delivery')->first();
 
                 $sale_add_permission_active = $role_has_permissions_list->where('name', 'sales-add')->first();
+
+                $pos_sale_add_permission_active = $role_has_permissions_list->where('name', 'pos-sales-add')->first();
             ?>
-            @if($sale_index_permission_active || $packing_slip_challan_active || $gift_card_permission_active || $coupon_permission_active || $delivery_permission_active)
+            @if($sale_index_permission_active || $sale_pos_permission_active || $packing_slip_challan_active || $gift_card_permission_active || $coupon_permission_active || $delivery_permission_active || $pos_sale_add_permission_active)
             <li><a href="#sale" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-cart"></i><span>{{trans('file.Sale')}}</span></a>
             <ul id="sale" class="collapse list-unstyled ">
                 @if($sale_index_permission_active)
                 <li id="sale-list-menu"><a href="{{route('sales.index')}}">{{trans('file.Sale List')}}</a></li>
                 @endif
+
+                @if($sale_pos_permission_active)
+                <li id="sale-pos-list-menu"><a href="{{route('sale.pos.list')}}">Pos {{trans('file.Sale List')}}</a></li>
+                @endif
+                
+                @if($pos_sale_add_permission_active)
+                 <li><a href="{{route('sale.pos')}}">POS</a></li>
+                @endif
                 @if($sale_add_permission_active)
-                <li><a href="{{route('sale.pos')}}">POS</a></li>
                 <li id="sale-create-menu"><a href="{{route('sales.create')}}">{{trans('file.Add Sale')}}</a></li>
                 <li id="sale-import-menu"><a href="{{url('sales/sale_by_csv')}}">{{trans('file.Import Sale By CSV')}}</a></li>
                 @endif

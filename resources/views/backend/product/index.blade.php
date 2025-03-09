@@ -66,7 +66,7 @@
                     <th>{{trans('file.category')}}</th>
                     <th>{{trans('file.Quantity')}}</th>
                     <th>{{trans('file.Unit')}}</th>
-                    <th>{{trans('file.Price')}}</th>
+                    <th>Pos {{trans('file.Price')}}</th>
                     <th>{{trans('file.Wholesale Price')}}</th>
                     <th>{{trans('file.Retail Price')}}</th>
                     <th>{{trans('file.Online Price')}}</th>
