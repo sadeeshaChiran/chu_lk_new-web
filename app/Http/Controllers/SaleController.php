@@ -87,7 +87,7 @@ class SaleController extends Controller
     public function posSaleList(Request $request)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('sales-index')) {
+        if ($role->hasPermissionTo('pos-sales-index')) {
             $permissions = Role::findByName($role->name)->permissions;
             foreach ($permissions as $permission)
                 $all_permission[] = $permission->name;
