@@ -268,13 +268,17 @@
         product[11] = product[11].replace(/@/g, '"');
         htmltext = slidertext = '';
 
-        htmltext = '<p><strong>{{trans("file.Type")}}: </strong>'+product[0]+'</p><p><strong>{{trans("file.name")}}: </strong>'+product[1]+'</p><p><strong>{{trans("file.Code")}}: </strong>'+product[2]+ '</p><p><strong>{{trans("file.Brand")}}: </strong>'+product[3]+'</p><p><strong>{{trans("file.category")}}: </strong>'+product[4]+'</p><p><strong>{{trans("file.Quantity")}}: </strong>'+product[17]+'</p><p><strong>{{trans("file.Unit")}}: </strong>'+product[5]+'</p><p><strong>{{trans("file.Cost")}}: </strong>'+product[6]+'</p><p><strong>{{trans("file.Price")}}: </strong>'+product[7]+'</p><p><strong>{{trans("file.Tax")}}: </strong>'+product[8]+'</p><p><strong>{{trans("file.Tax Method")}} : </strong>'+product[9]+'</p><p><strong>{{trans("file.Alert Quantity")}} : </strong>'+product[10]+'</p><p><strong>{{trans("file.Product Details")}}: </strong></p>'+product[11];
+        console.log(product);
 
-        if(product[18]) {
-            var product_image = product[18].split(",");
+        htmltext = '<p><strong>{{trans("file.Type")}}: </strong>'+product[0]+'</p><p><strong>{{trans("file.name")}}: </strong>'+product[1]+'</p><p><strong>{{trans("file.Code")}}: </strong>'+product[2]+ '</p><p><strong>{{trans("file.Brand")}}: </strong>'+product[3]+'</p><p><strong>{{trans("file.category")}}: </strong>'+product[4]+'</p><p><strong>{{trans("file.Quantity")}}: </strong>'+product[56]+'</p><p><strong>{{trans("file.Unit")}}: </strong>'+product[5]+'</p><p><strong>{{trans("file.Cost")}}: </strong>'+product[6]+'</p> <p><strong>Product Weight: </strong>'+product[7]+' KG</p>  <p><strong>Pos {{trans("file.Price")}}: </strong>'+product[8]+'</p> <p><strong>Wholesale {{trans("file.Price")}}: </strong>'+product[9]+'</p> <p><strong>Retail {{trans("file.Price")}}: </strong>'+product[10]+'</p> <p><strong>Online {{trans("file.Price")}}: </strong>'+product[11]+'</p> ';
+
+        if(product[22]) {
+            var product_image = product[22].split(",");
+
             if(product_image.length > 1) {
                 slidertext = '<div id="product-img-slider" class="carousel slide" data-ride="carousel"><div class="carousel-inner">';
                 for (var i = 0; i < product_image.length; i++) {
+                    console.log(product_image[i]);
                     if(!i)
                         slidertext += '<div class="carousel-item active"><img src="images/product/'+product_image[i]+'" height="300" width="100%"></div>';
                     else
@@ -283,12 +287,17 @@
                 slidertext += '</div><a class="carousel-control-prev" href="#product-img-slider" data-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Previous</span></a><a class="carousel-control-next" href="#product-img-slider" data-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Next</span></a></div>';
             }
             else {
-                slidertext = '<img src="images/product/'+product[18]+'" height="300" width="100%">';
+                slidertext = '<img src="images/product/'+product[22]+'" height="300" width="100%">';
             }
         }
         else {
             slidertext = '<img src="images/product/zummXD2dvAtI.png" height="300" width="100%">';
         }
+
+        if(product[15]){
+            slidertext += '<p><strong>{{trans("file.Product Details")}}: </strong></p>' + product[15]
+        }
+        
         $("#combo-header").text('');
         $("table.item-list thead").remove();
         $("table.item-list tbody").remove();
