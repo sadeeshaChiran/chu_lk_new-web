@@ -188,7 +188,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::get('products/product_warehouse/{id}', 'productWarehouseData');
         Route::get('products/print_barcode','printBarcode')->name('product.printBarcode');
         Route::get('products/lims_product_search', 'limsProductSearch')->name('product.search');
-        Route::post('products/deletebyselection', 'deleteBySelection');
+        Route::post('products/deletebyselection', 'deletebyselection');
         Route::post('products/update', 'updateProduct');
         Route::get('products/variant-data/{id}','variantData');
         Route::get('products/history', 'history')->name('products.history');
