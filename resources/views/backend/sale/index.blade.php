@@ -88,7 +88,7 @@
                             <label><strong>{{trans('file.Sale Type')}}</strong></label>
                             <select id="sale-type" class="form-control" name="sale_type">
                                 <option value="0">{{trans('file.All')}}</option>
-                                <option value="pos">{{trans('file.POS')}}</option>
+                                {{-- <option value="pos">{{trans('file.POS')}}</option> --}}
                                 <option value="online">{{trans('file.Sell Online')}}</option>
                                 <option value="website">{{trans('file.Website')}}</option>
 

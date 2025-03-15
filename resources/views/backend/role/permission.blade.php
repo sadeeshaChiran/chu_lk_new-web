@@ -245,6 +245,58 @@
 						            </td>
 						        </tr>
 
+								<tr>
+						            <td>Pos {{trans('file.Sale')}}</td>
+						            <td class="text-center">
+						                <div class="icheckbox_square-blue checked" aria-checked="false" aria-disabled="false">
+							                <div class="checkbox">
+								                @if(in_array("pos-sales-index", $all_permission))
+								                <input type="checkbox" value="1" id="pos-sales-index" name="pos-sales-index" checked />
+								                @else
+								                <input type="checkbox" value="1" id="pos-sales-index" name="pos-sales-index">
+								                @endif
+								                <label for="pos-sales-index"></label>
+								            </div>
+						            	</div>
+						            </td>
+						            <td class="text-center">
+						                <div class="icheckbox_square-blue checked" aria-checked="false" aria-disabled="false">
+							                <div class="checkbox">
+								                @if(in_array("pos-sales-add", $all_permission))
+								                <input type="checkbox" value="1" id="pos-sales-add" name="pos-sales-add" checked />
+								                @else
+								                <input type="checkbox" value="1" id="pos-sales-add" name="pos-sales-add">
+								                @endif
+								                <label for="pos-sales-add"></label>
+								            </div>
+						            	</div>
+						            </td>
+						            <td class="text-center">
+						                <div class="icheckbox_square-blue" aria-checked="false" aria-disabled="false">
+							                <div class="checkbox">
+								                @if(in_array("pos-sales-edit", $all_permission))
+								                <input type="checkbox" value="1" id="pos-sales-edit" name="pos-sales-edit" checked>
+								                @else
+								                <input type="checkbox" value="1" id="pos-sales-edit" name="pos-sales-edit">
+								                @endif
+								                <label for="pos-sales-edit"></label>
+								            </div>
+						            	</div>
+						            </td>
+						            <td class="text-center">
+						                <div class="icheckbox_square-blue" aria-checked="false" aria-disabled="false">
+							                <div class="checkbox">
+								                @if(in_array("pos-sales-delete", $all_permission))
+								                <input type="checkbox" value="1" id="pos-sales-delete" name="pos-sales-delete" checked>
+								                @else
+								                <input type="checkbox" value="1" id="pos-sales-delete" name="pos-sales-delete">
+								                @endif
+								                <label for="pos-sales-delete"></label>
+								            </div>
+						            	</div>
+						            </td>
+						        </tr>
+
 						        <tr>
 						            <td>{{trans('file.Sale Payment')}}</td>
 						            <td class="text-center">

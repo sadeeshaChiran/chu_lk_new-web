@@ -289,12 +289,14 @@
 
           $sale_add_permission_active = $role_has_permissions_list->where('name', 'sales-add')->first();
 
+          $pos_sale_add_permission_active = $role_has_permissions_list->where('name', 'pos-sales-add')->first();
+
           $product_qty_alert_active = $role_has_permissions_list->where('name', 'product-qty-alert')->first();
 
           $general_setting_permission_active = $role_has_permissions_list->where('name', 'general_setting')->first();
 
           ?>
-          @if($sale_add_permission_active)
+          @if($pos_sale_add_permission_active)
           <li class="nav-item"><a class="btn-pos btn-sm" href="{{route('sale.pos')}}"><i class="dripicons-shopping-bag"></i><span> POS</span></a></li>
           @endif
           <li class="nav-item d-none d-lg-block"><a id="switch-theme" data-toggle="tooltip" title="{{trans('file.Switch Theme')}}"><i class="dripicons-brightness-max"></i></a></li>

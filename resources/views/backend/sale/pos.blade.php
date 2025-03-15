@@ -3192,16 +3192,16 @@
             $('input[name="paying_amount"]').prop('required', false);
             $('input[name="paid_amount"]').prop('required', false);
 
-            var form = $(".payment-form"); 
+            var form = $(".payment-form");
 
-    // Ensure the hidden inputs exist
-    if ($('input[name="paying_amount[]"]').length === 0) {
-        form.append('<input type="hidden" name="paying_amount[]" >');
-    }
+            // Ensure the hidden inputs exist
+            if ($('input[name="paying_amount[]"]').length === 0) {
+                form.append('<input type="hidden" name="paying_amount[]" >');
+            }
 
-    if ($('input[name="paid_amount[]"]').length === 0) {
-        form.append('<input type="hidden" name="paid_amount[]" >');
-    }
+            if ($('input[name="paid_amount[]"]').length === 0) {
+                form.append('<input type="hidden" name="paid_amount[]" >');
+            }
 
 
             var rownumber = $('table.order-list tbody tr:last').index();
@@ -3222,17 +3222,18 @@
         });
 
 
-        $(document).on("keypress", ".paying_amount", function(event) {
-            var val = $('.paying_amount').val()
-            if (val > 0) {
-                if (event.which === 13) {
-                    event.preventDefault();
+        $(document).on("keydown", ".paying_amount", function(event) {
+            if (event.which === 13) { // Check if Enter key is pressed
+                event.preventDefault();
+                var val = $(this).val().trim(); // Get the value of the input
+                if (val > 0) {
                     $(".payment-form").submit();
+                } else {
+                    alert("Please Enter Amount");
                 }
-            } else {
-                alert("Please Enter Amount")
             }
         });
+
 
 
         $("#gift-card-btn").on("click", function() {
@@ -3469,7 +3470,7 @@
                                        <input type="text" name="paying_amount[]" class="form-control paying_amount numkey" required step="any">
                                    </div>
                            
-                                   <input type="hidden" value='1' name="paid_by_id[]">
+                                   <input type="hidden" value='6' name="paid_by_id[]">
                               
                           
                                    <div class="col-6 mt-2 paying-amount-container">
@@ -3505,7 +3506,7 @@
                            
                                </div>
                            </div>
-                           `; 
+                           `;
                 $("#payment-select-row .row:eq(0)").append(appendElement);
                 $('.paid_amount').val($("#grand-total").text());
 
@@ -3741,8 +3742,6 @@
                 }
             });
 
-            console.log("cardCost", cardCost);
-
             let balance = pTotal - total
 
             $('.change').text(balance);
@@ -3753,6 +3752,10 @@
                 <div class="mt-4 bank-3-section">
                     <h2>Bank 3%</h2>
                     <p class="bankchagers text-light">${cardCost.toFixed(2)}</p>
+                </div>
+                  <div class="mt-4 bank-3-section">
+                    <h2>Full Amount</h2>
+                    <p class="bankchagers text-light">${(total + cardCost).toFixed(2)}</p>
                 </div>
             `);
                 } else {
@@ -4233,20 +4236,20 @@
                         total_qty = sale_qty * operation_value[0];
                     else if (operator[0] == '/')
                         total_qty = sale_qty / operation_value[0];
-                    if (total_qty > parseFloat(product_qty[pos])) {
-                        alert('Quantity exceeds stock quantity!');
-                        if (flag) {
-                            sale_qty = sale_qty.substring(0, sale_qty.length - 1);
-                            localStorageQty[rowindex] = sale_qty;
-                            localStorage.setItem("localStorageQty", localStorageQty);
-                            checkQuantity(sale_qty, true);
-                        } else {
-                            localStorageQty[rowindex] = sale_qty;
-                            localStorage.setItem("localStorageQty", localStorageQty);
-                            edit();
-                            return;
-                        }
-                    }
+                    // if (total_qty > parseFloat(product_qty[pos])) {
+                    //     alert('Quantity exceeds stock quantity!');
+                    //     if (flag) {
+                    //         sale_qty = sale_qty.substring(0, sale_qty.length - 1);
+                    //         localStorageQty[rowindex] = sale_qty;
+                    //         localStorage.setItem("localStorageQty", localStorageQty);
+                    //         checkQuantity(sale_qty, true);
+                    //     } else {
+                    //         localStorageQty[rowindex] = sale_qty;
+                    //         localStorage.setItem("localStorageQty", localStorageQty);
+                    //         edit();
+                    //         return;
+                    //     }
+                    // }
                     $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(sale_qty);
                 }
                 // else if(product_type[pos] == 'combo'){

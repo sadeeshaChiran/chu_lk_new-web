@@ -129,8 +129,8 @@
         <div id="receipt-data">
             <div class="centered">
                 @if ($general_setting->site_logo)
-                    <img src="{{ url('logo', $general_setting->site_logo) }}" height="42" width="50"
-                        style="margin:10px 0;">
+                    <img src="{{ url('logo', $general_setting->site_logo) }}" height="75" width="75"
+                        style="margin:-20px;">
                 @endif
 
                 <h2>{{ $lims_biller_data->company_name }}</h2>
@@ -362,8 +362,7 @@
                     <tr>
                         <td class="centered" colspan="3">
                             <?php echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS1D::getBarcodePNG($lims_sale_data->reference_no, 'C128') . '" width="300" alt="barcode"   />'; ?>
-                            <br>
-                            <?php echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS2D::getBarcodePNG($qrText, 'QRCODE') . '" alt="QRcode"   />'; ?>
+                           
                         </td>
                     </tr>
                 </tbody>

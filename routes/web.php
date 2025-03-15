@@ -316,7 +316,11 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
 
 
     Route::controller(SaleController::class)->group(function () {
+        Route::get('sales/pos', 'posSaleList')->name('sale.pos.list');
         Route::post('sales/sale-data', 'saleData');
+        Route::post('sales/pos-data', 'posData');
+        Route::get('pos/{id?}/edit', 'posCreate')->name('sales.pos.edit');
+
         Route::post('sales/sendmail', 'sendMail')->name('sale.sendmail');
         Route::get('sales/sale_by_csv', 'saleByCsv');
         Route::get('sales/product_sale/{id}', 'productSaleData');
@@ -347,8 +351,10 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::get('sales/get-sold-items/{id}', 'getSoldItem');
         Route::post('sales/sendsms', 'sendSMS')->name('sale.sendsms');
         Route::post('sales/whatsapp-notification', 'whatsappNotificationSend')->name('sale.wappnotification');
+        Route::resource('sales', SaleController::class);
+
     });
-    Route::resource('sales', SaleController::class);
+    // Route::resource('sales', SaleController::class);
 
     Route::controller(PackingSlipController::class)->group(function () {
         Route::prefix('packing-slips')->group(function () {
