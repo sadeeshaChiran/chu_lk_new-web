@@ -593,7 +593,7 @@
                                 if(i){
                                     var product_data = $(this).closest('tr').data('product');
                                     if(product_data)
-                                        product_id[i-1] = product_data[12];
+                                        product_id[i-1] = product_data[16];
                                 }
                             });
                             if(product_id.length && confirmDelete()) {
@@ -604,7 +604,8 @@
                                         productIdArray: product_id
                                     },
                                     success:function(data) {
-                                        alert(data);
+
+                                        alert(data.message);
                                         //dt.rows({ page: 'current', selected: true }).deselect();
                                         dt.rows({ page: 'current', selected: true }).remove().draw(false);
                                     }

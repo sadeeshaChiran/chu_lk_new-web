@@ -1732,26 +1732,31 @@ class ProductController extends Controller
     }
 
     public function deleteBySelection(Request $request)
-    {
-        $product_id = $request['productIdArray'];
-        foreach ($product_id as $id) {
-            $lims_product_data = Product::findOrFail($id);
-            
-            // Delete product images if they exist
-            if ($lims_product_data->image) {
-                $images = explode(",", $lims_product_data->image);
-                foreach ($images as $image) {
-                    $this->fileDelete(public_path('images/product/'), $image);
-                }
+{
+    $product_id = $request['productIdArray'];
+    
+    foreach ($product_id as $id) {
+        $lims_product_data = Product::findOrFail($id);
+        
+        // Delete product images if they exist
+        if ($lims_product_data->image) {
+            $images = explode(",", $lims_product_data->image);
+            foreach ($images as $image) {
+                $this->fileDelete(public_path('images/product/'), $image);
             }
-            
-            // Permanently delete the product
-            $lims_product_data->delete();
         }
-        $this->cacheForget('product_list');
-        $this->cacheForget('product_list_with_variant');
-        return 'Product deleted successfully!';
+        
+        // Permanently delete the product
+        $lims_product_data->delete();
     }
+
+    // Clear cached product lists
+    $this->cacheForget('product_list');
+    $this->cacheForget('product_list_with_variant');
+
+    return response()->json(['message' => 'Products deleted successfully!']);
+}
+
 
     public function destroy($id)
     {
