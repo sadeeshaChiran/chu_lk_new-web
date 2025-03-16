@@ -11,14 +11,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <style>
+@media print {
+            * {
+                font-size: 12px;
+                line-height: 20px;
+            }
 
+            td,
+            th {
+                padding: 5px 0;
+            }
 
-        body {
+            .hidden-print {
+                display: none !important;
+            }
+
+            @page {
+                margin: 1.5cm 0.5cm 0.5cm;
+            }
+
+            @page: first {
+                margin-top: 0.5cm;
+            }
+
+            /*tbody::after {
+                content: ''; display: block;
+                page-break-after: always;
+                page-break-inside: avoid;
+                page-break-before: avoid;
+            }*/
+        }
+
+        /* body {
             width: 80mm;
             padding: 5mm;
             font-family: Arial, sans-serif;
             font-size: 8px;
-        }
+        } */
 
         .text-center {
             text-align: center;
