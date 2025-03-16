@@ -6,16 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ $general_setting->site_title }} | POS Bill</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="<?php echo asset('vendor/bootstrap/css/bootstrap.min.css'); ?>">
+    <link rel="icon" type="image/png" href="{{ url('logo', $general_setting->site_logo) }}" />
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
     <style>
         @page {
-            size: 80mm auto;
+            height: 100mm;
+            width: 74mm;
+            margin: 1mm;
         }
+
 
         body {
             width: 80mm;
             padding: 5mm;
             font-family: Arial, sans-serif;
+            font-size: 8px;
         }
 
         .text-center {
@@ -38,7 +45,7 @@
         td,
         th {
             padding: 5px;
-            font-size: 12px;
+            font-size: 8px;
         }
 
         .line {
@@ -49,10 +56,6 @@
         .barcode {
             margin-top: 10px;
             text-align: center;
-        }
-
-        .hidden-print {
-            display: none;
         }
     </style>
 </head>
