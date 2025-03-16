@@ -18,6 +18,25 @@
     @endif
 
     <style type="text/css">
+        @page {
+        size: 100mm 70mm;
+        margin: 0;
+    }
+
+    body {
+        width: 100mm;
+        height: 70mm;
+        overflow: hidden;
+    }
+
+    table {
+        width: 100mm;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
         * {
             font-size: 14px;
             line-height: 15px;
@@ -172,7 +191,7 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td class="centered" colspan="4">
+                        <td class="centered" colspan="2">
                             <?php echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS1D::getBarcodePNG($sale->reference_no, 'C128') . '" width="300" alt="barcode"   />'; ?>
                         </td>
                     </tr>
