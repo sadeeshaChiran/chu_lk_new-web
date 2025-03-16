@@ -11,15 +11,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <style>
-@media print {
+        @media print {
             * {
-                font-size: 12px;
-                line-height: 20px;
+                font-size: 10px;
+                line-height: 11px;
             }
 
             td,
             th {
-                padding: 5px 0;
+                padding: 1px 0;
             }
 
             .hidden-print {
@@ -27,11 +27,11 @@
             }
 
             @page {
-                margin: 1.5cm 0.5cm 0.5cm;
+                margin: 0.25cm 0.25cm 0.25cm;
             }
 
             @page: first {
-                margin-top: 0.5cm;
+                margin-top: 0.2cm;
             }
 
             /*tbody::after {
@@ -40,6 +40,9 @@
                 page-break-inside: avoid;
                 page-break-before: avoid;
             }*/
+        }
+        p{
+            font-size: 11px
         }
 
         /* body {
@@ -81,6 +84,7 @@
             margin-top: 10px;
             text-align: center;
         }
+
     </style>
 </head>
 
@@ -158,9 +162,7 @@
         @endforeach
     </table>
     <div class="line"></div>
-    <div class="barcode">
-        <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($sale->reference_no, 'C128') . '" width="200">'; ?>
-    </div>
+
     <div class="text-center">
         <p>Thank you for your purchase!</p>
     </div>

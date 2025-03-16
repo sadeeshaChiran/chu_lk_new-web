@@ -12,8 +12,9 @@
 
     <style type="text/css">
         * {
+            color: black;
             font-size: 14px;
-            line-height: 24px;
+            line-height: 15px;
             font-family: 'Ubuntu', sans-serif;
             text-transform: capitalize;
         }
@@ -76,7 +77,7 @@
         @media print {
             * {
                 font-size: 12px;
-                line-height: 20px;
+                line-height: 13px;
             }
 
             td,
@@ -89,7 +90,7 @@
             }
 
             @page {
-                margin: 1.5cm 0.5cm 0.5cm;
+                margin: 1.5cm 0.5cm 1.0cm;
             }
 
             @page: first {
@@ -128,10 +129,10 @@
 
         <div id="receipt-data">
             <div class="centered">
-                @if ($general_setting->site_logo)
+                {{-- @if ($general_setting->site_logo)
                     <img src="{{ url('logo', $general_setting->site_logo) }}" height="75" width="75"
                         style="margin:-20px;">
-                @endif
+                @endif --}}
 
                 <h2>{{ $lims_biller_data->company_name }}</h2>
 
@@ -142,6 +143,8 @@
                     @endif
                 </p>
             </div>
+            <hr/>
+
             <p>{{ trans('file.Date') }}:
                 {{ date($general_setting->date_format, strtotime($lims_sale_data->created_at->toDateString())) }}<br>
                 {{ trans('file.reference') }}: {{ $lims_sale_data->reference_no }}<br>
@@ -162,6 +165,8 @@
                 ?>
 
             </p>
+
+        <hr/>
             <table class="table-data">
                 <tbody>
                     <?php $total_product_tax = 0;
