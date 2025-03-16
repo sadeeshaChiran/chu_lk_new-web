@@ -2696,6 +2696,7 @@
         });
 
         function getProduct(warehouse_id) {
+          
             $.get('sales/getproduct/' + warehouse_id, function(data) {
                 lims_product_array = [];
                 product_code = data[0];
@@ -2711,7 +2712,7 @@
                 product_batch_id = data[9];
                 is_embeded = data[11];
                 imei_number = data[12];
-
+                console.log('dd', data);
                 $.each(product_code, function(index) {
                     lims_product_array.push(product_code[index] + '|' + product_name[index] + '|' +
                         imei_number[index] + '|' + is_embeded[index]);
@@ -3826,6 +3827,7 @@
             var product_info = data.split("|");
             var item_code = product_info[0];
             var pre_qty = 0;
+            
             $(".product-code").each(function(i) {
                 if ($(this).val() == item_code) {
                     rowindex = i;

@@ -1754,8 +1754,7 @@ class SaleController extends Controller
         if (config('without_stock') == 'no') {
             $query = $query->where([
                 ['products.is_active', true],
-                ['product_warehouse.warehouse_id', $id],
-                ['product_warehouse.qty', '>', 0]
+                ['product_warehouse.warehouse_id', $id]
             ]);
         } else {
             $query = $query->where([
@@ -1778,8 +1777,7 @@ class SaleController extends Controller
         if (config('without_stock') == 'no') {
             $query = $query->where([
                 ['products.is_active', true],
-                ['product_warehouse.warehouse_id', $id],
-                ['product_warehouse.qty', '>', 0]
+                ['product_warehouse.warehouse_id', $id]
             ]);
         } else {
             $query = $query->where([
@@ -1802,13 +1800,12 @@ class SaleController extends Controller
         if (config('without_stock') == 'no') {
             $query = $query->where([
                 ['products.is_active', true],
-                ['product_warehouse.warehouse_id', $id],
-                ['product_warehouse.qty', '>', 0]
+                ['product_warehouse.warehouse_id', $id]
             ]);
         } else {
             $query = $query->where([
                 ['products.is_active', true],
-                ['product_warehouse.warehouse_id', $id],
+                ['product_warehouse.warehouse_id', $id]
             ]);
         }
         $lims_product_with_variant_warehouse_data = $query->whereNotNull('product_warehouse.variant_id')
@@ -1820,7 +1817,7 @@ class SaleController extends Controller
                 ['products.is_active', true],
                 ['products.is_imei', true],
                 ['product_warehouse.warehouse_id', $id],
-                ['product_warehouse.qty', '>', 0]
+                
             ])
             ->whereNull('product_warehouse.variant_id')
             ->whereNotNull('product_warehouse.imei_number')

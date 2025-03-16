@@ -1522,6 +1522,7 @@ class ProductController extends Controller
                 ['product_batch_id', $product_batch_data->id],
                 ['warehouse_id', $warehouse_id]
             ])->first();
+            
             if($product_warehouse_data) {
                 $data['qty'] = $product_warehouse_data->qty;
                 $data['product_batch_id'] = $product_batch_data->id;
