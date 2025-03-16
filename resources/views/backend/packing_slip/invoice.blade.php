@@ -11,11 +11,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <style>
-        @page {
-            height: 100mm;
-            width: 74mm;
-            margin: 1mm;
-        }
 
 
         body {
