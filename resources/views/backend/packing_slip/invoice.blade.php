@@ -11,15 +11,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <style>
+        @page {
+            size: 70mm 95mm;
+            margin: 0;
+        }
         @media print {
             * {
-                font-size: 10px;
-                line-height: 11px;
+                font-size: 6px;
+                line-height: 8px;
             }
 
             td,
             th {
-                padding: 1px 0;
+                padding: 2mm 0;
             }
 
             .hidden-print {
@@ -42,7 +46,7 @@
             }*/
         }
         p{
-            font-size: 11px
+            font-size: 6px
         }
 
         /* body {
@@ -139,7 +143,7 @@
     </table>
     <tr>
         <div class="barcode">
-            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128') . '" width="300" alt="barcode">'; ?>
+            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128') . '" " alt="barcode">'; ?>
         </div>
     </tr>
     <div class="line"></div>

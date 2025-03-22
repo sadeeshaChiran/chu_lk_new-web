@@ -66,7 +66,7 @@ class CashRegisterController extends Controller
 								])->sum('amount');
 		$data['total_sale_return'] = Returns::where('cash_register_id', $cash_register_data->id)->sum('grand_total');
 		$data['total_expense'] = Expense::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['total_cash'] = $data['cash_in_hand'] + $data['total_payment'] - ($data['total_sale_return'] + $data['total_expense']);
+		$data['total_cash'] = $data['cash_in_hand'] + $data['cash_payment'] - ($data['total_sale_return'] + $data['total_expense']);
 		$data['status'] = $cash_register_data->status;
 		return $data;
 	}
@@ -111,7 +111,7 @@ class CashRegisterController extends Controller
 								])->sum('amount');
 		$data['total_sale_return'] = Returns::where('cash_register_id', $cash_register_data->id)->sum('grand_total');
 		$data['total_expense'] = Expense::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['total_cash'] = $data['cash_in_hand'] + $data['total_payment'] - ($data['total_sale_return'] + $data['total_expense']);
+		$data['total_cash'] = $data['cash_in_hand'] + $data['cash_payment'] - ($data['total_sale_return'] + $data['total_expense']);
 		$data['id'] = $cash_register_data->id;
 		return $data;
 	}
