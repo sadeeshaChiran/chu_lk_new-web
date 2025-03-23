@@ -18,7 +18,7 @@
         @media print {
             * {
                 font-size: 7px;
-                line-height: 8px;
+                line-height: 9px;
             }
 
             td,
@@ -46,7 +46,7 @@
             }*/
         }
         p{
-            font-size: 9px
+            font-size: 9.5px
         }
 
         /* body {
@@ -75,17 +75,17 @@
 
         td,
         th {
-            padding: 5px;
+            padding: 1px;
             font-size: 8px;
         }
 
         .line {
             border-bottom: 1px dashed #000;
-            margin: 5px 0;
+            margin: 3px 0;
         }
 
         .barcode {
-            margin-top: 10px;
+            margin-top: 0px;
             text-align: center;
         }
 
@@ -106,7 +106,11 @@
             {{ $sale->shipping_address }}, {{ $sale->shipping_city }}
         @else
             {{ $sale->customer->name }}<br>
-            {{ $sale->customer->phone_number }}<br>
+            {{ $sale->customer->phone_number }} 
+            @if($sale->customer->phone_number_2)
+                / {{$sale->customer->phone_number_2}}
+            @endif
+            <br>
             {{ $sale->customer->address }}, {{ $sale->customer->city }}
         @endif
     </p>
@@ -132,7 +136,7 @@
         </tr> --}}
         <tr>
             <td>COD:</td>
-            <td class="text-right text-bold">BDT {{ $sale->grand_total - $sale->paid_amount }}</td>
+            <td class="text-right text-bold"><p>Rs.{{ $sale->grand_total - $sale->paid_amount }}.00</p></td>
         </tr>
         {{-- <tr>
             <td>Courier Name:</td>
@@ -151,7 +155,7 @@
         <tr>
             <th>Item</th>
             <th class="text-right">Qty</th>
-            <th class="text-right">Total</th>
+            {{-- <th class="text-right">Total</th> --}}
         </tr>
         @foreach ($packing_slip_product_data as $packing_slip_product)
             <?php
@@ -161,7 +165,7 @@
             <tr>
                 <td>{{ $product->name }}</td>
                 <td class="text-right">{{ $sale_product->qty }}</td>
-                <td class="text-right">{{ $sale_product->total }}</td>
+                {{-- <td class="text-right">{{ $sale_product->total }}</td> --}}
             </tr>
         @endforeach
     </table>
