@@ -1390,7 +1390,7 @@ class SaleController extends Controller
                     $data['payment_reference'] = 'spr-' . date("Ymd") . '-' . date("his");
                     $lims_payment_data->payment_reference = $data['payment_reference'];
                     $lims_payment_data->amount = $data['paid_amount'][$key];
-                    $lims_payment_data->change = $data['paying_amount'][0] - $data['paid_amount'][$key];
+                    $lims_payment_data->change = $data['paying_amount'][$key] - $data['paid_amount'][$key];
                     $lims_payment_data->paying_method = $paying_method;
                     $lims_payment_data->payment_note = $data['payment_note'];
                     if (isset($data['payment_receiver'])) {

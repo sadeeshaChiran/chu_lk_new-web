@@ -12,18 +12,18 @@
     <meta name="robots" content="all,follow">
     <style>
         @page {
-            size: 70mm 95mm;
+            size: 75mm 100mm;
             margin: 0;
         }
         @media print {
             * {
-                font-size: 6px;
+                font-size: 7px;
                 line-height: 8px;
             }
 
             td,
             th {
-                padding: 2mm 0;
+                padding: 1mm 0;
             }
 
             .hidden-print {
@@ -31,11 +31,11 @@
             }
 
             @page {
-                margin: 0.25cm 0.25cm 0.25cm;
+                margin: 0.15cm 0.15cm 0.15cm;
             }
 
             @page: first {
-                margin-top: 0.2cm;
+                margin-top: 0.05cm;
             }
 
             /*tbody::after {
@@ -46,7 +46,7 @@
             }*/
         }
         p{
-            font-size: 6px
+            font-size: 9px
         }
 
         /* body {
@@ -94,9 +94,9 @@
 
 <body>
     <div class="text-center">
-        <img src="{{ url('logo', $general_setting->site_logo) }}" height="50">
-        <h3>{{ $general_setting->site_title }}</h3>
-        <p>{{ $sale->warehouse->phone }} | {{ $sale->warehouse->address }}</p>
+        {{-- <img src="{{ url('logo', $general_setting->site_logo) }}" height="50"> --}}
+        <p>{{ $general_setting->site_title }}</p>
+        <h4>{{ $sale->warehouse->phone }} | {{ $sale->warehouse->address }}</h4>
     </div>
     <div class="line"></div>
     <p><strong>To:</strong><br>
@@ -112,11 +112,11 @@
     </p>
     <div class="line"></div>
     <table>
-        <tr>
+        {{-- <tr>
             <td>Invoice No:</td>
             <td class="text-right"><strong>{{ $sale->reference_no }}</strong></td>
-        </tr>
-        <tr>
+        </tr> --}}
+        {{-- <tr>
             <td>Payment Status:</td>
             <td class="text-right text-bold">
                 @if ($sale->payment_status == 1)
@@ -129,16 +129,16 @@
                     Paid
                 @endif
             </td>
-        </tr>
+        </tr> --}}
         <tr>
             <td>COD:</td>
             <td class="text-right text-bold">BDT {{ $sale->grand_total - $sale->paid_amount }}</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td>Courier Name:</td>
             <td class="text-right text-bold">{{ $delivery_details->courier->name }}</td>
 
-        </tr>
+        </tr> --}}
 
     </table>
     <tr>
@@ -167,9 +167,9 @@
     </table>
     <div class="line"></div>
 
-    <div class="text-center">
+    {{-- <div class="text-center">
         <p>Thank you for your purchase!</p>
-    </div>
+    </div> --}}
     <script>
         window.onload = function() {
             window.print();
