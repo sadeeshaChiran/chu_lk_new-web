@@ -17,8 +17,8 @@
         }
         @media print {
             * {
-                font-size: 7px;
-                line-height: 9px;
+                font-size: 8px;
+                line-height: 11px;
             }
 
             td,
@@ -46,7 +46,7 @@
             }*/
         }
         p{
-            font-size: 9.5px
+            font-size: 11.5px
         }
 
         /* body {
@@ -81,7 +81,7 @@
 
         .line {
             border-bottom: 1px dashed #000;
-            margin: 3px 0;
+            margin: 2px 0;
         }
 
         .barcode {
@@ -95,11 +95,15 @@
 <body>
     <div class="text-center">
         {{-- <img src="{{ url('logo', $general_setting->site_logo) }}" height="50"> --}}
-        <p>{{ $general_setting->site_title }}</p>
-        <h4>{{ $sale->warehouse->phone }} | {{ $sale->warehouse->address }}</h4>
+        <span style="font-weight: bolder; font-size: 13px;">{{ $general_setting->site_title }}</span>
+        <br/>
+        <span>{{ $sale->warehouse->phone }} | {{ $sale->warehouse->address }}</span>
+        <br/>
+
     </div>
     <div class="line"></div>
-    <p><strong>To:</strong><br>
+    <span style="font-size: 12px">
+        <strong>To:</strong><br>
         @if ($sale->is_online)
             {{ $sale->shipping_name }}<br>
             {{ $sale->shipping_phone }}<br>
@@ -113,7 +117,7 @@
             <br>
             {{ $sale->customer->address }}, {{ $sale->customer->city }}
         @endif
-    </p>
+    </span>
     <div class="line"></div>
     <table>
         {{-- <tr>
@@ -134,10 +138,11 @@
                 @endif
             </td>
         </tr> --}}
-        <tr>
-            <td>COD:</td>
-            <td class="text-right text-bold"><p>Rs.{{ $sale->grand_total - $sale->paid_amount }}.00</p></td>
-        </tr>
+        <div style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 6px; margin-bottom: 6px;">
+            <span>COD:</span>
+            <span class="text-right text-bold" style="margin-left: 5px; font-size: 13px;">Rs.{{ $sale->grand_total - $sale->paid_amount }}.00</span>
+        </div>
+        
         {{-- <tr>
             <td>Courier Name:</td>
             <td class="text-right text-bold">{{ $delivery_details->courier->name }}</td>
@@ -150,6 +155,9 @@
             <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128') . '" " alt="barcode">'; ?>
         </div>
     </tr>
+    <div style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 3px; margin-bottom: 3px;">
+        <span class="text-right text-bold" style="margin-left: 5px; font-size: 11px;">{{ $packing_slip->waybill_id }}</span>
+    </div>
     <div class="line"></div>
     <table>
         <tr>
