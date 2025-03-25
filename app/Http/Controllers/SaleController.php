@@ -238,7 +238,7 @@ class SaleController extends Controller
         $payment_method = $request->input('payment_method');
 
         // $q = Sale::whereDate('sales.created_at', '>=' ,$request->input('starting_date'))->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
-        $q = Sale::join('payments', 'sales.id', '=', 'payments.sale_id')
+        $q = Sale::leftJoin('payments', 'sales.id', '=', 'payments.sale_id')
             ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
             ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
             ->select('sales.id', 'sales.*');
@@ -626,10 +626,11 @@ class SaleController extends Controller
         $payment_method = $request->input('payment_method');
 
         // $q = Sale::whereDate('sales.created_at', '>=' ,$request->input('starting_date'))->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
-        $q = Sale::join('payments', 'sales.id', '=', 'payments.sale_id')
-            ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
-            ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
-            ->select('sales.id', 'sales.*');
+        $q = Sale::leftJoin('payments', 'sales.id', '=', 'payments.sale_id')
+    ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
+    ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+    ->select('sales.id', 'sales.*');
+
 
         if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
             $q = $q->where('user_id', Auth::id());
@@ -992,6 +993,7 @@ class SaleController extends Controller
                 $data[] = $nestedData;
             }
         }
+      
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
