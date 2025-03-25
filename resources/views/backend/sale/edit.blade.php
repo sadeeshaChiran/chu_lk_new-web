@@ -1482,7 +1482,8 @@
 
 
             if ($('#use_shipping_cost').is(':checked')) {
-                var shipping_cost = $('input[name="shipping_cost"]').val() || 0;
+                shipping_cost = $('input[name="shipping_cost"]').val() || 0;
+                shipping_cost = parseFloat(shipping_cost);
             } else {
                 var total_weight = 0;
                 $('input[name="product_weight[]"]').each(function(index) {
