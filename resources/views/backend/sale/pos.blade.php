@@ -4497,9 +4497,6 @@
             if (rownumber < 0) {
                 alert("Please insert product to order table!")
                 e.preventDefault();
-            } else if (parseFloat($('input[name="total_qty"]').val()) <= 0) {
-                alert('Product quantity is 0');
-                e.preventDefault();
             } else {
                 if ($('input[name="sale_status"]').val() == 1) {
                     $("#submit-btn").prop('disabled', true).html(
