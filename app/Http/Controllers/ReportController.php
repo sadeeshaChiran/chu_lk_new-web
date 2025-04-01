@@ -3101,7 +3101,7 @@ class ReportController extends Controller
         $start = $request->input('start');
         $order = 'sales.'.$columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
-        $q = $q->select('sales.id', 'sales.reference_no', 'sales.grand_total', 'sales.paid_amount', 'sales.sale_status', 'sales.created_at', 'customers.name as customer', 'warehouses.name as warehouse')
+        $q = $q->select('sales.id', 'sales.reference_no', 'sales.grand_total', 'sales.total_price', 'sales.paid_amount', 'sales.sale_status', 'sales.created_at', 'customers.name as customer', 'warehouses.name as warehouse')
             ->offset($start)
             ->limit($limit)
             ->orderBy($order, $dir);
@@ -3165,7 +3165,7 @@ class ReportController extends Controller
                     else
                         $nestedData['product'] = $product_sale->product_name.' ('.number_format($product_sale->qty, cache()->get('general_setting')->decimal).' '.$unitCode.')';
                 }
-                $nestedData['grand_total'] = number_format($sale->grand_total, cache()->get('general_setting')->decimal);
+                $nestedData['grand_total'] = number_format($sale->total_price, cache()->get('general_setting')->decimal);
                 $nestedData['paid'] = number_format($sale->paid_amount, cache()->get('general_setting')->decimal);
                 $nestedData['due'] = number_format($sale->grand_total - $sale->paid_amount, cache()->get('general_setting')->decimal);
                 if($sale->sale_status == 1){
