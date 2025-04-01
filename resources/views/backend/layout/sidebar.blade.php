@@ -119,10 +119,10 @@
             </li>
             @endif
             <?php
-            $index_permission_active = $role_has_permissions_list->where('name', 'expenses-index')->first();
+            $expenses_index_permission_active = $role_has_permissions_list->where('name', 'expenses-index')->first();
             $income_index_permission_active = $role_has_permissions_list->where('name', 'incomes-index')->first();
             ?>
-            @if($index_permission_active)
+            @if($expenses_index_permission_active)
             <li><a href="#expense" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-wallet"></i><span>{{trans('file.Expense')}}</span></a>
             <ul id="expense" class="collapse list-unstyled ">
                 <li id="exp-cat-menu"><a href="{{route('expense_categories.index')}}">{{trans('file.Expense Category')}}</a></li>
