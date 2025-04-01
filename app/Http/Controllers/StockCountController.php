@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product_Warehouse;
 use Illuminate\Http\Request;
 use App\Models\Warehouse;
 use App\Models\Brand;
@@ -95,6 +96,32 @@ class StockCountController extends Controller
         $data['final_file'] = $documentName;
         $lims_stock_count_data = StockCount::find($data['stock_count_id']);
         $lims_stock_count_data->update($data);
+       
+        $lims_stock_count_data = StockCount::find($data['stock_count_id']);
+        $warehouse_id = $lims_stock_count_data->warehouse_id;
+        $file_handle = fopen('stock_count/'.$lims_stock_count_data->final_file, 'r');
+        $i = 0;
+        $product_id = [];
+        while( !feof($file_handle) ) {
+            $current_line = fgetcsv($file_handle);
+            if( $current_line && $i > 0 && ($current_line[3] != $current_line[4]) ){
+                $product_data = Product::where('code', $current_line[1])->first();
+                $product_id[] = $product_data->id;
+                $names[] = $current_line[0];
+                $code[] = $current_line[1];
+               
+
+                if($current_line[4] != ''){
+                    $temp_qty = $current_line[4] - $current_line[3];
+                    $product_count = Product_Warehouse::where('product_id', $product_data->id)->where('warehouse_id', $lims_stock_count_data->warehouse_id)->first();
+                    $product_count->qty = intval($current_line[4]);
+                    $product_count->save();
+                }else
+                    $temp_qty = $current_line[3] * (-1);
+                   
+            }
+            $i++;
+        }
         return redirect()->back()->with('message', 'Stock Count finalized successfully!');
     }
 
