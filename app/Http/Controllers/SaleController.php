@@ -123,7 +123,7 @@ class SaleController extends Controller
                 $starting_date = $request->input('starting_date');
                 $ending_date = $request->input('ending_date');
             } else {
-                $starting_date = date("Y-m-d", strtotime(date('Y-m-d', strtotime('-1 year', strtotime(date('Y-m-d'))))));
+                $starting_date = date("Y-m-d");
                 $ending_date = date("Y-m-d");
             }
 
@@ -191,7 +191,7 @@ class SaleController extends Controller
                 $starting_date = $request->input('starting_date');
                 $ending_date = $request->input('ending_date');
             } else {
-                $starting_date = date("Y-m-d", strtotime(date('Y-m-d', strtotime('-1 year', strtotime(date('Y-m-d'))))));
+                $starting_date = date("Y-m-d");
                 $ending_date = date("Y-m-d");
             }
 
@@ -627,9 +627,9 @@ class SaleController extends Controller
 
         // $q = Sale::whereDate('sales.created_at', '>=' ,$request->input('starting_date'))->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
         $q = Sale::leftJoin('payments', 'sales.id', '=', 'payments.sale_id')
-    ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
-    ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
-    ->select('sales.id', 'sales.*');
+            ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
+            ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+            ->select('sales.id', 'sales.*');
 
 
         if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
@@ -643,7 +643,7 @@ class SaleController extends Controller
         if ($sale_type)
             $q = $q->where('sale_type', $sale_type);
         if (!$sale_type)
-           $q = $q->whereIn('sale_type', ['online', 'website']);
+            $q = $q->whereIn('sale_type', ['online', 'website', 'wholesale']);
         if ($payment_method)
             $q = $q->where('paying_method', $payment_method);
 
@@ -667,7 +667,7 @@ class SaleController extends Controller
             $field_names[] = str_replace(" ", "_", strtolower($fieldName));
         }
         if (empty($request->input('search.value'))) {
-            $q = Sale::with('biller', 'customer', 'warehouse', 'user')
+            $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                 ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
                 ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
                 ->offset($start)
@@ -686,7 +686,7 @@ class SaleController extends Controller
             if ($sale_type)
                 $q = $q->where('sale_type', $sale_type);
             if (!$sale_type)
-               $q = $q->whereIn('sale_type', ['online', 'website']);
+                $q = $q->whereIn('sale_type', ['online', 'website', 'wholesale']);
             if ($payment_method)
                 $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
             $sales = $q->get();
@@ -695,13 +695,14 @@ class SaleController extends Controller
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->join('billers', 'sales.biller_id', '=', 'billers.id')
                 ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+                ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
                 ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
             if (Auth::user()->role_id > 2 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
+                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                     ->where('sales.user_id', Auth::id())
                     ->orwhere([
                         ['sales.reference_no', 'LIKE', "%{$search}%"],
@@ -717,6 +718,10 @@ class SaleController extends Controller
                     ])
                     ->orwhere([
                         ['billers.name', 'LIKE', "%{$search}%"],
+                        ['sales.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['packing_slips.waybill_id', 'LIKE', "%{$search}%"],
                         ['sales.user_id', Auth::id()]
                     ])
                     ->orwhere([
@@ -731,7 +736,7 @@ class SaleController extends Controller
                 }
             } elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
                 $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
+                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                     ->where('sales.user_id', Auth::id())
                     ->orwhere([
                         ['sales.reference_no', 'LIKE', "%{$search}%"],
@@ -750,6 +755,10 @@ class SaleController extends Controller
                         ['sales.warehouse_id', Auth::user()->warehouse_id]
                     ])
                     ->orwhere([
+                        ['packing_slips.waybill_id', 'LIKE', "%{$search}%"],
+                        ['sales.warehouse_id', Auth::user()->warehouse_id]
+                    ])
+                    ->orwhere([
                         ['product_sales.imei_number', 'LIKE', "%{$search}%"],
                         ['sales.warehouse_id', Auth::user()->warehouse_id]
                     ]);
@@ -761,34 +770,59 @@ class SaleController extends Controller
                 }
             } else {
                 $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
+                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                     ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
                     ->orwhere('customers.name', 'LIKE', "%{$search}%")
                     ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
                     ->orwhere('billers.name', 'LIKE', "%{$search}%")
+                    ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                     ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
                 foreach ($field_names as $key => $field_name) {
                     $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
                 }
             }
+
             $sales = $q->groupBy('sales.id')->get();
             $totalFiltered = $q->groupBy('sales.id')->count();
         }
+
+
         $data = array();
         if (!empty($sales)) {
             foreach ($sales as $key => $sale) {
-
 
                 $nestedData['id'] = $sale->id;
                 $nestedData['key'] = $key;
                 $nestedData['date'] = date(config('date_format') . ' h:i:s', strtotime($sale->created_at));
                 //$nestedData['date'] = $sale->created_at;
                 $nestedData['reference_no'] = $sale->reference_no;
+                $nestedData['reference_no'] = $sale->reference_no;
+                $nestedData['waybill_id'] = $sale->packingSlip?->waybill_id ?? 'N/A';
+                $nestedData['product_list'] = '';
+                $product_Sale = Product_Sale::where([
+                    ['sale_id', $sale->id],
+                ])->get();
+                $nestedData['product_list'] = '<ul class="list-disc  pl-1 m-0">';
+                foreach ($sale->products as $index => $product) {
+                    $variant_id = $product_Sale[$index]->variant_id ?? null;
+                    $qty = $product_Sale[$index]->qty ?? 0;
+
+                    $productName = $product->name;
+
+                    if ($variant_id) {
+                        $variant = Variant::find($variant_id);
+                        $productName .= ' [' . $variant->name . ']';
+                    }
+
+                    $nestedData['product_list'] .= '<li class="ml-0">' . '[ ' . $productName . ' ] x ' . $qty . ' ' . 'APQ: (' . $product->qty . ')' . '' . '</li>';
+                }
+                $nestedData['product_list'] .= '</ul>';
                 $nestedData['biller'] = $sale->biller->name;
                 $nestedData['customer'] = $sale->customer->name . '<br>' . $sale->customer->phone_number . '<input type="hidden" class="deposit" value="' . ($sale->customer->deposit - $sale->customer->expense) . '" />' . '<input type="hidden" class="points" value="' . $sale->customer->points . '" />';
                 // $nestedData['payment_method'] = $nestedData['payment_method'] ? '' 'N/A';
                 $payments = Payment::where('sale_id', $sale->id)->pluck('paying_method')->toArray();
-                $nestedData['payment_method'] = implode(",", $payments);
+
+                $nestedData['payment_method'] = $payments ? (implode(",", $payments)) : 'N/A';
                 if ($sale->sale_status == 1) {
                     $nestedData['sale_status'] = '<div class="badge badge-success">' . trans('file.Completed') . '</div>';
                     $sale_status = trans('file.Completed');
@@ -825,6 +859,9 @@ class SaleController extends Controller
                 } else
                     $nestedData['delivery_status'] = 'N/A';
 
+
+                $nestedData['total_amount'] = number_format($sale->total_price, config('decimal'));
+                $nestedData['delivery_amount'] = number_format($sale->shipping_cost, config('decimal'));
                 $nestedData['grand_total'] = number_format($sale->grand_total, config('decimal'));
                 //$nestedData['grand_total'] = \Illuminate\Support\Number::format($sale->grand_total, locale: 'id');
                 $returned_amount = DB::table('returns')->where('sale_id', $sale->id)->sum('grand_total');
@@ -958,6 +995,7 @@ class SaleController extends Controller
                 $nestedData['sale'] = array(
                     '[ "' . date(config('date_format'), strtotime($sale->created_at->toDateString())) . '"',
                     ' "' . $sale->reference_no . '"',
+                    ' "' . $sale->packingSlip?->waybill_id ?? 'N/A' . '"',
                     ' "' . $sale_status . '"',
                     ' "' . $sale->biller->name . '"',
                     ' "' . $sale->biller->company_name . '"',
@@ -993,13 +1031,15 @@ class SaleController extends Controller
                 $data[] = $nestedData;
             }
         }
-      
+
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
             "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
+
+        // dd($json_data);
         echo json_encode($json_data);
     }
 
@@ -1043,7 +1083,6 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-
 
         /*DB::beginTransaction();
         try {*/
@@ -1110,7 +1149,12 @@ class SaleController extends Controller
             }
             $data['sale_type'] = 'pos';
         } else {
-            $data['sale_type'] = 'online';
+
+            if ($data['saleType'] == 'retail') {
+                $data['sale_type'] = 'online';
+            } else if ($data['saleType'] == 'wholesale') {
+                $data['sale_type'] = 'wholesale';
+            }
             if (!isset($data['reference_no']))
                 $data['reference_no'] = 'sr-' . date("Ymd") . '-' . date("his");
         }
@@ -1819,7 +1863,7 @@ class SaleController extends Controller
                 ['products.is_active', true],
                 ['products.is_imei', true],
                 ['product_warehouse.warehouse_id', $id],
-                
+
             ])
             ->whereNull('product_warehouse.variant_id')
             ->whereNotNull('product_warehouse.imei_number')
@@ -2319,7 +2363,7 @@ class SaleController extends Controller
         $customer_id = $request->input('customer_id');
         $warehouse_id = $request->input('warehouse_id');
 
-        $lims_product_data = Product::select('id', 'price', 'promotion', 'promotion_price', 'last_date', 'online_price')->find($request->input('product_id'));
+        $lims_product_data = Product::select('id', 'price', 'promotion', 'promotion_price', 'last_date', 'online_price', 'wholesale_price')->find($request->input('product_id'));
         $lims_product_warehouse_data = Product_Warehouse::where([
             ['product_id', $request->input('product_id')],
             ['warehouse_id', $warehouse_id]
@@ -2347,8 +2391,10 @@ class SaleController extends Controller
             if (($discount->applicable_for == 'All' || in_array($lims_product_data->id, $product_list)) && ($todayDate >= $discount->valid_from && $todayDate <= $discount->valid_till && in_array(date('D'), $days) && $qty >= $discount->minimum_qty && $qty <= $discount->maximum_qty)) {
                 if ($discount->type == 'flat') {
                     $price = $lims_product_data->online_price - $discount->value;
+                    $wholesale_price = $lims_product_data->wholesale_price - $discount->value;
                 } elseif ($discount->type == 'percentage') {
                     $price = $lims_product_data->online_price - ($lims_product_data->online_price * ($discount->value / 100));
+                    $wholesale_price = $lims_product_data->wholesale_price - ($lims_product_data->wholesale_price * ($discount->value / 100));
                 }
                 $no_discount = 0;
                 break;
@@ -2359,10 +2405,12 @@ class SaleController extends Controller
 
         if ($lims_product_data->promotion && $todayDate <= $lims_product_data->last_date && $no_discount) {
             $price = $lims_product_data->promotion_price;
-        } elseif ($no_discount)
+            $wholesale_price = $lims_product_data->promotion_price;
+        } elseif ($no_discount) {
             $price = $lims_product_data->online_price;
-
-        $data = [$price, $lims_product_data->promotion];
+            $wholesale_price = $lims_product_data->wholesale_price;
+        }
+        $data = [$price, $lims_product_data->promotion, $wholesale_price];
         return $data;
     }
 
@@ -2635,7 +2683,11 @@ class SaleController extends Controller
         //return dd($data);
         $document = $request->document;
         $lims_sale_data = Sale::find($id);
-
+        if ($data['saleType'] == 'retail') {
+            $lims_sale_data['sale_type'] = 'online';
+        } else if ($data['saleType'] == 'wholesale') {
+            $lims_sale_data['sale_type'] = 'wholesale';
+        }
         if ($document) {
             $v = Validator::make(
                 [
@@ -3129,6 +3181,7 @@ class SaleController extends Controller
             $data['amount'] = 0.00;
 
         $lims_sale_data = Sale::find($data['sale_id']);
+
         $lims_customer_data = Customer::find($lims_sale_data->customer_id);
         $lims_sale_data->paid_amount += $data['amount'];
         $balance = $lims_sale_data->grand_total - $lims_sale_data->paid_amount;

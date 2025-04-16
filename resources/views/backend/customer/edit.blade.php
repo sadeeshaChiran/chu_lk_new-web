@@ -46,7 +46,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{trans('file.Phone Number')}} *</label>
-                                    <input type="text" name="phone_number" required value="{{$lims_customer_data->phone_number}}" class="form-control">
+                                    <input type="text" name="phone_number" required value="{{$lims_customer_data->phone_number}}" class="form-control" pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$"
+                                    minlength="10" maxlength="10"
+                                    title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     @if($errors->has('phone_number'))
                                    <span>
                                        <strong>{{ $errors->first('phone_number') }}</strong>
@@ -57,7 +59,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{trans('file.Phone Number')}} - 2  </label>
-                                    <input type="text" name="phone_number_2" value="{{$lims_customer_data->phone_number_2}}" class="form-control">
+                                    <input type="text" name="phone_number_2" value="{{$lims_customer_data->phone_number_2}}" class="form-control" pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$"
+                                    minlength="10" maxlength="10"
+                                    title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     @if($errors->has('phone_number_2'))
                                    <span>
                                        <strong>{{ $errors->first('phone_number_2') }}</strong>

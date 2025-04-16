@@ -59,7 +59,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{trans('file.Phone Number')}} *</label>
-                                    <input type="text" name="phone_number" required class="form-control">
+                                    <input type="text" name="phone_number" required class="form-control" pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$"
+                                    minlength="10" maxlength="10"
+                                    title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                 </div>
                             </div>
                             <div class="col-md-6">

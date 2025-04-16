@@ -59,6 +59,7 @@ class PackingSlipController extends Controller
                 ->join('sales', 'packing_slips.sale_id', '=', 'sales.id')
                 ->where('packing_slips.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy(DB::raw('CAST(' . $order . ' AS SIGNED)'), $dir)
@@ -67,6 +68,7 @@ class PackingSlipController extends Controller
             $totalFiltered = PackingSlip::join('sales', 'packing_slips.sale_id', '=', 'sales.id')
                 ->where('packing_slips.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                 ->count();
         }
 
@@ -78,6 +80,7 @@ class PackingSlipController extends Controller
                 $nestedData['reference'] = 'P' . $packing_slip->reference_no;
                 $nestedData['sale_reference'] = $packing_slip->sale->reference_no;
                 $nestedData['delivery_reference'] = $packing_slip->delivery->reference_no;
+                $nestedData['waybill_id'] = $packing_slip->waybill_id ? $packing_slip->waybill_id : 'N/A';
                 //$nestedData['delivery_reference'] = 'j';
                 $nestedData['amount'] = $packing_slip->amount;
                 $nestedData['item_list'] = '';
@@ -155,7 +158,7 @@ class PackingSlipController extends Controller
             'recipient_address' => $recipient_address,
             'recipient_city' => $recipient_city,
             'amount' => $amount,
-            'exchange' => '0'
+            'exchange' => $data['is_exchange'],
         ]);
 
 
@@ -188,6 +191,7 @@ class PackingSlipController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $data['is_exchange'] = Sale::where('id', $data['sale_id'])->first()->is_exchange;
         $waybill_id = null;
         $courier_id = $data['courier_id'];
         $courier = Courier::where('id', $courier_id)->first();
@@ -279,7 +283,7 @@ class PackingSlipController extends Controller
                             $child_warehouse_data = Product_Warehouse::where([
                                 ['product_id', $child_id],
                                 ['variant_id', $variant_list[$index]],
-                                ['warehouse_id', $sale->warehouse_id],
+                                ['warehouse_id', $request->warehouse_id],
                             ])->first();
 
                             $child_product_variant_data->qty -= $product_sale_data->qty * $qty_list[$index];
@@ -287,7 +291,7 @@ class PackingSlipController extends Controller
                         } else {
                             $child_warehouse_data = Product_Warehouse::where([
                                 ['product_id', $child_id],
-                                ['warehouse_id', $sale->warehouse_id],
+                                ['warehouse_id', $request->warehouse_id],
                             ])->first();
                         }
 
@@ -301,7 +305,7 @@ class PackingSlipController extends Controller
                     //deduct qty from product_warehouses table
                     $product_warehouse_data = Product_Warehouse::where([
                         ['product_id', $product_data->id],
-                        ['warehouse_id', $sale->warehouse_id],
+                        ['warehouse_id', $request->warehouse_id],
                         // ['variant_id', $variant_id],
                     ])->first();
                     if ($product_warehouse_data) {

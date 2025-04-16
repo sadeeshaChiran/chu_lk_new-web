@@ -24,6 +24,21 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Sale type *</label>
+                                                <select name="saleType" id="saleType" class="form-control selectpicker"
+                                                    data-toggle="tooltip" title="" data-original-title="Sale type">
+                                                    <option value="retail"
+                                                        {{ $lims_sale_data->sale_type != 'wholesale' ? 'selected' : '' }}>
+                                                        Retail</option>
+                                                    <option value="wholesale"
+                                                        {{ $lims_sale_data->sale_type == 'wholesale' ? 'selected' : '' }}>
+                                                        Wholesale</option>
+                                                </select>
+
+                                            </div>
+                                        </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Date') }}</label>
@@ -179,7 +194,8 @@
                                                                         data-toggle="modal" data-target="#editModal"> <i
                                                                             class="dripicons-document-edit"></i></button>
                                                                     <input type="hidden" class="product-type"
-                                                                        value="{{ $product_data->type }}" /></td>
+                                                                        value="{{ $product_data->type }}" />
+                                                                </td>
                                                                 <td>{{ $product_data->code }}</td>
                                                                 <td><input type="number" class="form-control qty"
                                                                         name="qty[]" value="{{ $product_sale->qty }}"
@@ -189,7 +205,8 @@
                                                                         <input type="hidden" class="product-batch-id"
                                                                             name="product_batch_id[]"
                                                                             value="{{ $product_sale->product_batch_id }}">
-                                                                        <input type="text" class="form-control batch-no"
+                                                                        <input type="text"
+                                                                            class="form-control batch-no"
                                                                             name="batch_no[]"
                                                                             value="{{ $product_batch_data->batch_no }}"
                                                                             required />
@@ -321,7 +338,7 @@
                                                 id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
                                         </td>
                                     </table>
-                                    
+
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
@@ -588,10 +605,21 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Is Exchange</label>
+                                                <select id="is_exchange" name="is_exchange"
+                                                    class="form-control">
+                                                    <option value="0" {{ $lims_sale_data->is_exchange == 0 ? 'selected' : ''}} >No</option>
+                                                    <option value="1" {{ $lims_sale_data->is_exchange == 1 ? 'selected' : ''}}>Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="form-group">
                                         <input type="submit" value="{{ trans('file.submit') }}"
-                                            class="btn btn-primary" id="submit-button">
+                                            class="btn btn-primary col-12" id="submit-button">
                                     </div>
                                 </div>
                             </div>
@@ -768,11 +796,25 @@
 
         var rownumber = $('table.order-list tbody tr:last').index();
 
+        $('#saleType').on('change', function() {
+            $("table.order-list tbody .qty").each(function(index) {
+                rowindex = index;
+                currencyChange = true;
+                checkDiscount($(this).val(), true);
+            });
+        });
+
+        $('[name="sale_status"]').on('change', function() {
+            console.log("Sale status changed");
+            calculateGrandTotal();
+        });
+
+
         for (rowindex = 0; rowindex <= rownumber; rowindex++) {
             product_price.push(parseFloat($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
                 '.product-price').val()));
             exist_code.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(2)')
-        .text());
+                .text());
             exist_type.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.product-type').val());
             var total_discount = parseFloat($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find(
                 '.discount').text());
@@ -780,7 +822,7 @@
             exist_qty.push(quantity);
             product_discount.push((total_discount / quantity).toFixed({{ $general_setting->decimal }}));
             tax_rate.push(parseFloat($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate')
-            .val()));
+                .val()));
             tax_name.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-name').val());
             tax_method.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-method').val());
             temp_unit_name = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.sale-unit').val()
@@ -1106,9 +1148,12 @@
                                     currencyExchangeRate) + parseFloat(product_warehouse_price[pos] *
                                     currencyExchangeRate * customer_group_rate);
                             } else {
-                                product_price[rowindex] = parseFloat(data['online_price'] *
-                                    currencyExchangeRate) + parseFloat(data['online_price'] *
-                                    currencyExchangeRate * customer_group_rate);
+                                var saleType = $('select[name="saleType"]').val();
+                                if (saleType == 'wholesale') {
+                                    product_price[rowindex] = parseFloat(data[16] * currencyExchangeRate) + parseFloat(data[16] * currencyExchangeRate * customer_group_rate);
+                                } else if (saleType == 'retail') {
+                                    product_price[rowindex] = parseFloat(data['online_price'] * currencyExchangeRate) + parseFloat(data['online_price'] * currencyExchangeRate * customer_group_rate);
+                                }
                             }
                             flag = 0;
                             checkQuantity(String(qty), true);
@@ -1171,9 +1216,19 @@
                                     currencyExchangeRate) + parseFloat(product_warehouse_price[pos] *
                                     currencyExchangeRate * customer_group_rate));
                             } else {
-                                product_price.splice(rowindex, 0, parseFloat(data['online_price'] *
+                                var saleType = $('select[name="saleType"]').val();
+                                if (saleType == 'wholesale') {
+                                    product_price.splice(rowindex, 0, parseFloat(data[16] * currencyExchangeRate) + parseFloat([16] * currencyExchangeRate *
+                                        customer_group_rate));
+                                } else if (saleType == 'retail') {
+                                    product_price.splice(rowindex, 0, parseFloat(data['online_price'] *
                                     currencyExchangeRate) + parseFloat(data['online_price'] *
-                                    currencyExchangeRate * customer_group_rate));
+                                    currencyExchangeRate *
+                                        customer_group_rate));
+                                }
+
+
+
                             }
                             product_discount.splice(rowindex, 0,
                                 '{{ number_format(0, $general_setting->decimal, '.', '') }}');
@@ -1208,7 +1263,7 @@
             $(".imei-section").remove();
             if (is_imei[rowindex]) {
                 var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number')
-                .val();
+                    .val();
                 if (imeiNumbers.length) {
                     imeiArrays = imeiNumbers.split(",");
                     htmlText = `<div class="col-md-8 form-group imei-section">
@@ -1296,8 +1351,16 @@
                         console.log(data);
                         pos = product_code.indexOf($('table.order-list tbody tr:nth-child(' + (rowindex + 1) +
                             ') .product-code').val());
-                        product_price[rowindex] = parseFloat(data[0] * currencyExchangeRate) + parseFloat(data[
-                            0] * currencyExchangeRate * customer_group_rate);
+                        var saleType = $('select[name="saleType"]').val();
+                        if (saleType == 'wholesale') {
+                            product_price[rowindex] = parseFloat(data[2] * currencyExchangeRate) +
+                                parseFloat(
+                                    data[2] * currencyExchangeRate * customer_group_rate);
+                        } else if (saleType == 'retail') {
+                            product_price[rowindex] = parseFloat(data[0] * currencyExchangeRate) +
+                                parseFloat(
+                                    data[0] * currencyExchangeRate * customer_group_rate);
+                        }
                     }
                 });
             }
@@ -1498,15 +1561,21 @@
                 } else {
                     total_weight = Math.round(total_weight);
                 }
-                console.log('total_weight2', total_weight);
-                var shipping_cost_per_kg = 50;
-                var first_kg_cost = 350;
+                var sale_status = $('select[name="sale_status"]').val();
 
-                if (total_weight <= 1) {
-                    shipping_cost = first_kg_cost;
+                if (sale_status == 1) {
+                    var shipping_cost = 0;
                 } else {
-                    shipping_cost = first_kg_cost + (total_weight - 1) * shipping_cost_per_kg;
+                    var shipping_cost_per_kg = 50;
+                    var first_kg_cost = 350;
+
+                    if (total_weight <= 1) {
+                        shipping_cost = first_kg_cost;
+                    } else {
+                        shipping_cost = first_kg_cost + (total_weight - 1) * shipping_cost_per_kg;
+                    }
                 }
+
 
 
 

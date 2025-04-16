@@ -88,7 +88,7 @@
 
         .edit-product {
             white-space: break-spaces;
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 500;
             text-align: left;
             padding: 0 0 !important
@@ -1558,8 +1558,20 @@
                                     </div>
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} *</label>
-                                        <input type="text" name="phone_number" required class="form-control">
+                                        <input type="text" name="phone_number" required class="form-control"
+                                            pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10"
+                                            maxlength="10"
+                                            title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     </div>
+
+                                    <div class="form-group">
+                                        <label>{{ trans('file.Phone Number') }} - 2</label>
+                                        <input type="text" name="phone_number_2" class="form-control"
+                                            pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10"
+                                            maxlength="10"
+                                            title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
+                                    </div>
+
                                     <div class="form-group">
                                         <label>{{ trans('file.Address') }}</label>
                                         <input type="text" name="address" required class="form-control">
@@ -1770,12 +1782,21 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="col-md-6" id="closing-section">
+                                        <div class="col-md-12" id="closing-section">
                                             <form action="{{ route('cashRegister.close') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="cash_register_id">
-                                                <button type="submit"
-                                                    class="btn btn-primary">{{ trans('file.Close Register') }}</button>
+                                                <div class="row">
+
+                                                    <input type="number" step="any" name="closing_balance"
+                                                        class="form-control col-md-12 p-2" step="any"
+                                                        placeholder="Closing Balance" required>
+                                              
+                                                            <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
+                                                      
+                                                    <button type="submit"
+                                                        class="btn btn-primary  col-md-12 p-2">{{ trans('file.Close Register') }}</button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -2365,20 +2386,48 @@
         });
 
         $('.customer-submit-btn').on("click", function() {
-            $.ajax({
-                type: 'POST',
-                url: '{{ route('customer.store') }}',
-                data: $("#customer-form").serialize(),
-                success: function(response) {
-                    key = response['id'];
-                    value = response['name'] + ' [' + response['phone_number'] + ']';
-                    $('select[name="customer_id"]').append('<option value="' + key + '">' + value +
-                        '</option>');
-                    $('select[name="customer_id"]').val(key);
-                    $('.selectpicker').selectpicker('refresh');
-                    $("#addCustomer").modal('hide');
-                }
-            });
+            const form = document.getElementById("customer-form");
+            $(".form-error").remove();
+            if (form.checkValidity()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('customer.store') }}',
+                    data: $("#customer-form").serialize(),
+                    success: function(response) {
+                        key = response['id'];
+                        value = response['name'] + ' [' + response['phone_number'] + ']';
+                        $('select[name="customer_id"]').append('<option value="' + key + '">' + value +
+                            '</option>');
+                        $('select[name="customer_id"]').val(key);
+                        $('.selectpicker').selectpicker('refresh');
+                        document.getElementById("customer-form").reset();
+
+                        $("#addCustomer").modal('hide');
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+
+                            // Clear previous error messages
+                            $(".form-error").remove();
+
+                            // Loop through each error and display it
+                            for (const field in errors) {
+                                const message = errors[field][0];
+                                const input = $(`[name="${field}"]`);
+
+                                // Append error message after the input field
+                                input.after(`<div class="text-danger form-error">${message}</div>`);
+                            }
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    }
+                });
+            } else {
+                // If not valid, show native validation error
+                form.reportValidity();
+            }
         });
 
         $("li#notification-icon").on("click", function(argument) {
@@ -2696,7 +2745,7 @@
         });
 
         function getProduct(warehouse_id) {
-          
+
             $.get('sales/getproduct/' + warehouse_id, function(data) {
                 lims_product_array = [];
                 product_code = data[0];
@@ -3827,7 +3876,7 @@
             var product_info = data.split("|");
             var item_code = product_info[0];
             var pre_qty = 0;
-            
+
             $(".product-code").each(function(i) {
                 if ($(this).val() == item_code) {
                     rowindex = i;

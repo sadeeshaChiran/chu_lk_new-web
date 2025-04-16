@@ -7,7 +7,7 @@ ALTER TABLE ⁠ products ⁠
 
 -- 2025/02/03
 ALTER TABLE `sales` ADD `delivery_type` VARCHAR(255) NULL DEFAULT NULL AFTER `woocommerce_order_id`;
-ALTER TABLE `packing_slips` ADD `waybill_id` VARCHAR(255) NULL DEFAULT NULL AFTER `reference_no`;
+ALTER TABLE `packing_slips` ADD `l_id` VARCHAR(255) NULL DEFAULT NULL AFTER `reference_no`;
 ALTER TABLE `customers` ADD `phone_number_2` VARCHAR(191) NULL DEFAULT NULL AFTER `phone_number`;
 
 -- 2025/02/06

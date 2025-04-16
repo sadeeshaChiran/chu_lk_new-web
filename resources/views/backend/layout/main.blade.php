@@ -911,6 +911,7 @@
           </div>
           <div class="modal-body">
             <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
+            {!! Form::open(['route' => 'report.biller', 'method' => 'post']) !!}
             <?php
             $lims_biller_list = DB::table('billers')->where('is_active', true)->get();
             ?>

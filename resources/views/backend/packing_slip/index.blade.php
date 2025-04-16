@@ -32,6 +32,7 @@
                     <th>{{ trans('file.reference') }}</th>
                     <th>{{ trans('file.Sale Reference') }}</th>
                     <th>{{ trans('file.Delivery Reference') }}</th>
+                    <th>Waybill Id</th>
                     <th>{{ trans('file.product_list')}}</th>
                     <th>{{ trans('file.Amount') }}</th>
                     <th>{{ trans('file.Status') }}</th>
@@ -92,6 +93,7 @@
                 {"data": "reference"},
                 {"data": "sale_reference"},
                 {"data": "delivery_reference"},
+                {"data": "waybill_id"},
                 {"data": "item_list"},
                 {"data": "amount"},
                 {"data": "status"},

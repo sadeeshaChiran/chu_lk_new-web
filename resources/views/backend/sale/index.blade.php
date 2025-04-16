@@ -18,8 +18,8 @@
             <h3 class="text-center mt-3">{{trans('file.Filter Sales')}}</h3>
             <div class="card-body">
                 {!! Form::open(['route' => 'sales.index', 'method' => 'get']) !!}
-                <div class="row mt-2">
-                    <div class="col-md-3">
+                <div class="row mt-0 justify-content-center">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label><strong>{{trans('file.Date')}}</strong></label>
                             <input type="text" class="daterangepicker-field form-control" value="{{$starting_date}} To {{$ending_date}}" required />
@@ -27,7 +27,7 @@
                             <input type="hidden" name="ending_date" value="{{$ending_date}}" />
                         </div>
                     </div>
-                    <div class="col-md-3 @if(\Auth::user()->role_id > 2){{'d-none'}}@endif">
+                    <div class="col-md-6 @if(\Auth::user()->role_id > 2){{'d-none'}}@endif">
                         <div class="form-group">
                             <label><strong>{{trans('file.Warehouse')}}</strong></label>
                             <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" >
@@ -38,7 +38,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label><strong>{{trans('file.Sale Status')}}</strong></label>
                             <select id="sale-status" class="form-control" name="sale_status">
@@ -49,7 +49,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label><strong>{{trans('file.Payment Status')}}</strong></label>
                             <select id="payment-status" class="form-control" name="payment_status">
@@ -62,7 +62,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label><strong>{{trans('file.Payment Method')}}</strong></label>
                             <select id="payment-method" class="form-control" name="payment_method">
@@ -83,21 +83,22 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2 @if(!in_array('ecommerce',explode(',',$general_setting->modules))) d-none @endif">
+                    <div class="col-md-3 @if(!in_array('ecommerce',explode(',',$general_setting->modules))) d-none @endif">
                         <div class="form-group">
                             <label><strong>{{trans('file.Sale Type')}}</strong></label>
                             <select id="sale-type" class="form-control" name="sale_type">
                                 <option value="0">{{trans('file.All')}}</option>
                                 {{-- <option value="pos">{{trans('file.POS')}}</option> --}}
                                 <option value="online">{{trans('file.Sell Online')}}</option>
+                                <option value="wholesale">{{trans('Wholesale')}}</option>
                                 <option value="website">{{trans('file.Website')}}</option>
 
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 mt-3">
+                    <div class="col-md-12 mt-3">
                         <div class="form-group">
-                            <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
+                            <button class="btn btn-primary col-12" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
                         </div>
                     </div>
                 </div>
@@ -113,12 +114,16 @@
                     <th class="text-center">#</th>
                     <th>{{trans('file.date')}}</th>
                     <th>{{trans('file.reference')}}</th>
+                    <th>Waybill Id</th>
+                    <th  style="min-width: 300px;">{{ trans('file.product_list')}}</th>
                     <th>{{trans('file.Biller')}}</th>
                     <th>{{trans('file.customer')}}</th>
                     <th>{{trans('file.Sale Status')}}</th>
                     <th>{{trans('file.Payment Status')}}</th>
                     <th>{{trans('file.Payment Method')}}</th>
                     <th>{{trans('file.Delivery Status')}}</th>
+                    <th>{{trans('Total Amount')}}</th>
+                    <th>{{trans('Delivery Amount')}}</th>
                     <th>{{trans('file.grand total')}}</th>
                     <th>{{trans('file.Returned Amount')}}</th>
                     <th>{{trans('file.Paid')}}</th>
@@ -143,6 +148,11 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+
                 <th></th>
                 <th></th>
                 @foreach($custom_fields as $fieldName)
@@ -602,7 +612,7 @@
     @endif
 
 
-    var columns = [{"data": "key"}, {"data": "action"},{"data": "date"}, {"data": "reference_no"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
+    var columns = [{"data": "key"}, {"data": "action"},{"data": "date"}, {"data": "reference_no"},{"data": "waybill_id"},{"data": "product_list"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"},{"data": "total_amount"},{"data": "delivery_amount"},{"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
     var field_name = <?php echo json_encode($field_name) ?>;
     for(i = 0; i < field_name.length; i++) {
         columns.push({"data": field_name[i]});
@@ -654,15 +664,26 @@
     // console.log(payment_method);
 
     $(".daterangepicker-field").daterangepicker({
-      callback: function(startDate, endDate, period){
-        var starting_date = startDate.format('YYYY-MM-DD');
-        var ending_date = endDate.format('YYYY-MM-DD');
-        var title = starting_date + ' To ' + ending_date;
-        $(this).val(title);
-        $('input[name="starting_date"]').val(starting_date);
-        $('input[name="ending_date"]').val(ending_date);
-      }
+        autoUpdateInput: false,
+        ranges: {
+            'Today': [moment().startOf('day'), moment().endOf('day')],
+        'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
+        'Last 7 Days': [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')],
+        'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
+        },
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        callback: function(startDate, endDate, period) {
+            var starting_date = startDate.format('YYYY-MM-DD');
+            var ending_date = endDate.format('YYYY-MM-DD');
+            var title = starting_date + ' To ' + ending_date;
+            $(this).val(title);
+            $('input[name="starting_date"]').val(starting_date);
+            $('input[name="ending_date"]').val(ending_date);
+        }
     });
+
 
     $(".gift-card").hide();
     $(".card-element").hide();
@@ -1217,19 +1238,24 @@
     } );
 
     function datatable_sum(dt_selector, is_calling_first) {
+     
         if (dt_selector.rows( '.selected' ).any() && is_calling_first) {
             var rows = dt_selector.rows( '.selected' ).indexes();
 
-            $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 10 ).footer() ).html(dt_selector.cells( rows, 10, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 11 ).footer() ).html(dt_selector.cells( rows, 11, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 12 ).footer() ).html(dt_selector.cells( rows, 12, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 14 ).footer() ).html(dt_selector.cells( rows, 14, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 15 ).footer() ).html(dt_selector.cells( rows, 15, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 16 ).footer() ).html(dt_selector.cells( rows, 16, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 17 ).footer() ).html(dt_selector.cells( rows, 17, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
         }
         else {
-            $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 10 ).footer() ).html(dt_selector.cells( rows, 10, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 11 ).footer() ).html(dt_selector.cells( rows, 11, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 12 ).footer() ).html(dt_selector.cells( rows, 12, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 14 ).footer() ).html(dt_selector.cells( rows, 14, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 15 ).footer() ).html(dt_selector.cells( rows, 15, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 16 ).footer() ).html(dt_selector.cells( rows, 16, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 17 ).footer() ).html(dt_selector.cells( rows, 17, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
         }
     }
 

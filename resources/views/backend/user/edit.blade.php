@@ -45,7 +45,9 @@
                                     </div>
                                     <div class="form-group mt-3">
                                         <label><strong>{{trans('file.Phone Number')}} *</strong></label>
-                                        <input type="text" name="phone" required class="form-control" value="{{$lims_user_data->phone}}">
+                                        <input type="text" name="phone" required class="form-control"  pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$"
+                                        minlength="10" maxlength="10"
+                                        title="Enter a valid 10-digit Sri Lankan mobile number starting with 07" value="{{$lims_user_data->phone}}">
                                     </div>
                                     <div class="form-group">
                                         @if($lims_user_data->is_active)

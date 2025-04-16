@@ -32,6 +32,19 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Sale type *</label>
+                                                <select name="saleType" id="saleType" class="form-control selectpicker"
+                                                    data-toggle="tooltip" title="" data-original-title="Sale type">
+                                                    <option value="retail" selected>Retail</option>
+                                                    <option value="wholesale">Wholesale</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
                                         @if (isset(auth()->user()->warehouse_id))
                                             <input type="hidden" name="warehouse_id" id="warehouse_id"
                                                 value="{{ auth()->user()->warehouse_id }}" />
@@ -240,7 +253,7 @@
                                     </div>
 
 
-                                    <div >
+                                    <div>
                                         <table class="table table-bordered table-condensed totals">
                                             <td><strong>{{ trans('file.Items') }}</strong>
                                                 <span class="pull-right"
@@ -472,6 +485,16 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Is Exchange</label>
+                                                <select id="is_exchange" name="is_exchange"
+                                                    class="form-control">
+                                                    <option value="0" selected>No</option>
+                                                    <option value="1">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div id="payment">
                                         <div class="row">
@@ -604,7 +627,7 @@
                                     <div class="form-group">
                                         {{-- <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button"> --}}
                                         <button id="submit-button" type="button"
-                                            class="btn btn-primary">{{ trans('file.submit') }}</button>
+                                            class="btn btn-primary col-12">{{ trans('file.submit') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -717,12 +740,19 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} *</label>
-                            <input type="text" name="phone_number" required class="form-control">
+                            <input type="text" name="phone_number" required class="form-control"
+                                pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10" maxlength="10"
+                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
+
                         <div class="form-group">
-                            <label>{{ trans('file.Phone Number') }} - 2 </label>
-                            <input type="text" name="phone_number_2" class="form-control">
+                            <label>{{ trans('file.Phone Number') }} - 2</label>
+                            <input type="text" name="phone_number_2" class="form-control"
+                                pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10" maxlength="10"
+                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
+
+
                         <div class="form-group">
                             <label>{{ trans('file.Address') }}</label>
                             <input type="text" name="address" class="form-control">
@@ -785,15 +815,16 @@
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} *</label>
                             <input type="text" name="phone_number" required class="form-control"
-                                value="{{ $customer->phone_number }}">
+                                pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10" maxlength="10"
+                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
 
                         <div class="form-group">
-                            <label>{{ trans('file.Phone Number') }} - 2 </label>
+                            <label>{{ trans('file.Phone Number') }} - 2</label>
                             <input type="text" name="phone_number_2" class="form-control"
-                                value="{{ $customer->phone_number_2 }}">
+                                pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10" maxlength="10"
+                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
-
                         <div class="form-group">
                             <label>{{ trans('file.Address') }}</label>
                             <input type="text" name="address" class="form-control"
@@ -865,6 +896,7 @@
         // $(document).on("change", "#customer_id", function() {
         //     localStorage.setItem("sale_customer_id", $(this).val());
         // });
+
         $(document).on("change", "#warehouse_id", function() {
             localStorage.setItem("sale_warehouse_id", $(this).val());
         });
@@ -906,6 +938,18 @@
 
         });
 
+        $('#saleType').on('change', function() {
+            $("table.order-list tbody .qty").each(function(index) {
+                rowindex = index;
+                currencyChange = true;
+                checkDiscount($(this).val(), true);
+            });
+        });
+
+        $('[name="sale_status"]').on('change', function() {
+            console.log("Sale status changed");
+            calculateGrandTotal();
+        });
 
 
         $('.addCustomer').on('click', function() {
@@ -967,30 +1011,33 @@
         $('.customer-edit-btn').on("click", function() {
             var customerId = $('#customer_id').val(); // Assuming the form has an input with the name 'customer_id'
             var updateUrl = '{{ route('customer.update', ':id') }}'.replace(':id', customerId);
+            const form = document.getElementById("customer-edit-form");
+            $(".form-error").remove();
+            if (form.checkValidity()) {
+                $.ajax({
+                    type: 'PUT',
+                    url: updateUrl,
+                    data: $("#customer-edit-form").serialize(),
+                    success: function(response) {
+                        var key = response.id;
+                        var value = response.name + ' [' + response.phone_number + '/' + response
+                            .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response
+                            .city;
 
-            $.ajax({
-                type: 'PUT',
-                url: updateUrl,
-                data: $("#customer-edit-form").serialize(),
-                success: function(response) {
-                    var key = response.id;
-                    var value = response.name + ' [' + response.phone_number + '/' + response
-                        .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response.city;
+                        // Update the select picker
+                        var dropdownButton = $('button[data-id="customer_id"]');
 
-                    // Update the select picker
-                    var dropdownButton = $('button[data-id="customer_id"]');
+                        // Update the title attribute with the new value
+                        dropdownButton.attr('title', value);
 
-                    // Update the title attribute with the new value
-                    dropdownButton.attr('title', value);
+                        // Also update the text inside the button (visible label)
+                        dropdownButton.find('.filter-option').text(value);
 
-                    // Also update the text inside the button (visible label)
-                    dropdownButton.find('.filter-option').text(value);
-
-                    // Hide the modal after success
-                    $("#editCustomer").modal('hide');
+                        // Hide the modal after success
+                        $("#editCustomer").modal('hide');
 
 
-                    $('#customer-name').text(response.name);
+                        $('#customer-name').text(response.name);
                         $('#customer-email').text(response.email);
                         $('#customer-phone-1').text(response.phone_number);
                         $('#customer-phone-2').text(response.phone_number_2);
@@ -998,9 +1045,32 @@
                         $('#customer-city').text(response.city);
                         $('#customer-details').show();
 
-                    setCustomerGroupRate(key);
-                }
-            });
+                        setCustomerGroupRate(key);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+
+                            // Clear previous error messages
+                            $(".form-error").remove();
+
+                            // Loop through each error and display it
+                            for (const field in errors) {
+                                const message = errors[field][0];
+                                const input = $(`[name="${field}"]`);
+
+                                // Append error message after the input field
+                                input.after(`<div class="text-danger form-error">${message}</div>`);
+                            }
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    }
+                });
+            } else {
+                // If not valid, show native validation error
+                form.reportValidity();
+            }
         });
 
 
@@ -1048,30 +1118,58 @@
         });
 
         $('.customer-submit-btn').on("click", function() {
-            $.ajax({
-                type: 'POST',
-                url: '{{ route('customer.store') }}',
-                data: $("#customer-form").serialize(),
-                success: function(response) {
-                    key = response['id'];
-                    var value = response.name + ' [' + response.phone_number + '/' + response
-                        .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response.city;
-                    $('select[name="customer_id"]').append('<option value="' + key + '">' + value +
-                        '</option>');
-                    $('select[name="customer_id"]').val(key);
-                    $('.selectpicker').selectpicker('refresh');
-                    $("#addCustomer").modal('hide');
+            const form = document.getElementById("customer-form");
+            $(".form-error").remove();
+            if (form.checkValidity()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('customer.store') }}',
+                    data: $("#customer-form").serialize(),
+                    success: function(response) {
+                        key = response['id'];
+                        var value = response.name + ' [' + response.phone_number + '/' + response
+                            .phone_number_2 + '] ' + "\n -: " + response.address + "\n -- " + response
+                            .city;
+                        $('select[name="customer_id"]').append('<option value="' + key + '">' + value +
+                            '</option>');
+                        $('select[name="customer_id"]').val(key);
+                        $('.selectpicker').selectpicker('refresh');
+                        $("#addCustomer").modal('hide');
 
-                    $('#customer-name').text(response.name);
+                        $('#customer-name').text(response.name);
                         $('#customer-email').text(response.email);
                         $('#customer-phone-1').text(response.phone_number);
                         $('#customer-phone-2').text(response.phone_number_2);
                         $('#customer-address').text(response.address);
                         $('#customer-city').text(response.city);
-                         $('#customer-details').show();
-                    setCustomerGroupRate(key);
-                }
-            });
+                        $('#customer-details').show();
+                        setCustomerGroupRate(key);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+
+                            // Clear previous error messages
+                            $(".form-error").remove();
+
+                            // Loop through each error and display it
+                            for (const field in errors) {
+                                const message = errors[field][0];
+                                const input = $(`[name="${field}"]`);
+
+                                // Append error message after the input field
+                                input.after(`<div class="text-danger form-error">${message}</div>`);
+                            }
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    }
+                });
+            } else {
+                // If not valid, show native validation error
+                form.reportValidity();
+            }
+
         });
 
         function setCustomerGroupRate(id) {
@@ -1428,10 +1526,16 @@
                                     'exchange_rate']) + parseFloat(product_warehouse_price[pos] * currency[
                                     'exchange_rate'] * customer_group_rate);
                             } else {
-                                product_price[rowindex] = parseFloat(data['online_price'] * currency[
-                                        'exchange_rate']) +
-                                    parseFloat(data['online_price'] * currency['exchange_rate'] *
-                                        customer_group_rate);
+                                var saleType = $('select[name="saleType"]').val();
+                                if (saleType == 'wholesale') {
+                                    product_price[rowindex] = parseFloat(data[16] * currency[
+                                        'exchange_rate']) + parseFloat(data[16] * currency[
+                                        'exchange_rate'] * customer_group_rate);
+                                } else if (saleType == 'retail') {
+                                    product_price[rowindex] = parseFloat(data['online_price'] * currency[
+                                        'exchange_rate']) + parseFloat(data['online_price'] * currency[
+                                        'exchange_rate'] * customer_group_rate);
+                                }
                             }
                             flag = 0;
                             checkQuantity(String(qty), true);
@@ -1500,10 +1604,22 @@
                                     currency['exchange_rate']) + parseFloat(product_warehouse_price[
                                     pos] * currency['exchange_rate'] * customer_group_rate));
                             } else {
-                                product_price.splice(rowindex, 0, parseFloat(data['online_price'] * currency[
-                                    'exchange_rate']) + parseFloat(data['online_price'] * currency[
-                                        'exchange_rate'] *
-                                    customer_group_rate));
+                                var saleType = $('select[name="saleType"]').val();
+                                if (saleType == 'wholesale') {
+                                    product_price.splice(rowindex, 0, parseFloat(data[16] * currency[
+                                        'exchange_rate']) + parseFloat([16] * currency[
+                                            'exchange_rate'] *
+                                        customer_group_rate));
+                                } else if (saleType == 'retail') {
+                                    product_price.splice(rowindex, 0, parseFloat(data['online_price'] *
+                                        currency[
+                                            'exchange_rate']) + parseFloat(data['online_price'] *
+                                        currency[
+                                            'exchange_rate'] *
+                                        customer_group_rate));
+                                }
+
+
                             }
                             if (data[16])
                                 wholesale_price.splice(rowindex, 0, parseFloat(data[16] * currency[
@@ -1643,11 +1759,20 @@
                     url: '../sales/check-discount?qty=' + qty + '&customer_id=' + customer_id + '&product_id=' +
                         product_id + '&warehouse_id=' + warehouse_id,
                     success: function(data) {
-                        console.log('data2213', data);
                         pos = product_code.indexOf($('table.order-list tbody tr:nth-child(' + (rowindex + 1) +
                             ') .product-code').val());
-                        product_price[rowindex] = parseFloat(data[0] * currency['exchange_rate']) + parseFloat(
-                            data[0] * currency['exchange_rate'] * customer_group_rate);
+
+                        console.log('pos', pos);
+                        var saleType = $('select[name="saleType"]').val();
+                        if (saleType == 'wholesale') {
+                            product_price[rowindex] = parseFloat(data[2] * currency['exchange_rate']) +
+                                parseFloat(
+                                    data[2] * currency['exchange_rate'] * customer_group_rate);
+                        } else if (saleType == 'retail') {
+                            product_price[rowindex] = parseFloat(data[0] * currency['exchange_rate']) +
+                                parseFloat(
+                                    data[0] * currency['exchange_rate'] * customer_group_rate);
+                        }
                     }
                 });
             }
@@ -1828,7 +1953,7 @@
             if ($('#use_shipping_cost').is(':checked')) {
                 shipping_cost = $('input[name="shipping_cost"]').val() || 0;
                 shipping_cost = parseFloat(shipping_cost);
-             
+
             } else {
                 var total_weight = 0;
                 $('input[name="product_weight[]"]').each(function(index) {
@@ -1837,21 +1962,27 @@
                     total_weight += weight * qty;
                 });
 
-                console.log('total_weight1', total_weight);
                 if (total_weight < 2) {
                     total_weight = Math.ceil(total_weight);
                 } else {
                     total_weight = Math.round(total_weight);
                 }
-                console.log('total_weight2', total_weight);
-                var shipping_cost_per_kg = 50;
-                var first_kg_cost = 350;
 
-                if (total_weight <= 1) {
-                    shipping_cost = first_kg_cost;
+                var sale_status = $('select[name="sale_status"]').val();
+
+                if (sale_status == 1) {
+                    var shipping_cost = 0;
                 } else {
-                    shipping_cost = first_kg_cost + (total_weight - 1) * shipping_cost_per_kg;
+                    var shipping_cost_per_kg = 50;
+                    var first_kg_cost = 350;
+
+                    if (total_weight <= 1) {
+                        shipping_cost = first_kg_cost;
+                    } else {
+                        shipping_cost = first_kg_cost + (total_weight - 1) * shipping_cost_per_kg;
+                    }
                 }
+
 
 
 

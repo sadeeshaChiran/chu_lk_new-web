@@ -14,13 +14,73 @@ class CashRegisterController extends Controller
 {
 	public function index()
 	{
-		if(Auth::user()->role_id <= 2) {
+		if (Auth::user()->role_id <= 2) {
 			$lims_cash_register_all = CashRegister::with('user', 'warehouse')->get();
+	
+			foreach ($lims_cash_register_all as $register) {
+				$total_sale_amount = Sale::where([
+					['cash_register_id', $register->id],
+					['sale_status', 1]
+				])->sum('grand_total');
+	
+				$total_payment = Payment::where('cash_register_id', $register->id)->sum('amount');
+	
+				$cash_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Cash']
+				])->sum('amount');
+	
+				$credit_card_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Credit Card']
+				])->sum('amount');
+	
+				$gift_card_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Gift Card']
+				])->sum('amount');
+	
+				$deposit_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Deposit']
+				])->sum('amount');
+	
+				$cheque_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Cheque']
+				])->sum('amount');
+	
+				$paypal_payment = Payment::where([
+					['cash_register_id', $register->id],
+					['paying_method', 'Paypal']
+				])->sum('amount');
+	
+				$total_sale_return = Returns::where('cash_register_id', $register->id)->sum('grand_total');
+				$total_expense = Expense::where('cash_register_id', $register->id)->sum('amount');
+	
+				$total_cash = $register->cash_in_hand + $cash_payment - ($total_sale_return + $total_expense);
+	
+				// Inject custom attributes into the model
+				$register->total_sale_amount = $total_sale_amount;
+				$register->total_payment = $total_payment;
+				$register->cash_payment = $cash_payment;
+				$register->credit_card_payment = $credit_card_payment;
+				$register->gift_card_payment = $gift_card_payment;
+				$register->deposit_payment = $deposit_payment;
+				$register->cheque_payment = $cheque_payment;
+				$register->paypal_payment = $paypal_payment;
+				$register->total_sale_return = $total_sale_return;
+				$register->total_expense = $total_expense;
+				$register->total_cash = $total_cash;
+			}
+	
 			return view('backend.cash_register.index', compact('lims_cash_register_all'));
-		}
-		else
+		} else {
 			return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
+		}
 	}
+	
+	
 	public function store(Request $request)
 	{
 		$data = $request->all();
@@ -35,6 +95,7 @@ class CashRegisterController extends Controller
 		$cash_register_data = CashRegister::find($id);
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
+		$data['closing_balance'] = $cash_register_data->closing_balance;
 		$data['total_sale_amount'] = Sale::where([
 										['cash_register_id', $cash_register_data->id],
 										['sale_status', 1]
@@ -80,6 +141,7 @@ class CashRegisterController extends Controller
 					    	])->first();
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
+		$data['closing_balance'] = $cash_register_data->closing_balance;
 		$data['total_sale_amount'] = Sale::where([
 										['cash_register_id', $cash_register_data->id],
 										['sale_status', 1]
@@ -119,6 +181,8 @@ class CashRegisterController extends Controller
 	public function close(Request $request)
 	{
 		$cash_register_data = CashRegister::find($request->cash_register_id);
+		$cash_register_data->closing_balance = $request->closing_balance;
+		$cash_register_data->note = $request->note;
 		$cash_register_data->status = 0;
 		$cash_register_data->save();
 		return redirect()->back()->with('message', 'Cash register closed successfully');

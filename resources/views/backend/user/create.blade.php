@@ -50,7 +50,9 @@
                                     </div>
                                     <div class="form-group">
                                         <label><strong>{{trans('file.Phone Number')}} *</strong></label>
-                                        <input type="text" name="phone_number" required class="form-control">
+                                        <input type="text" name="phone_number" required class="form-control" pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$"
+                                        minlength="10" maxlength="10"
+                                        title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                         @if($errors->has('phone_number'))
                                             <small>
                                                <strong>{{ $errors->first('phone_number') }}</strong>
