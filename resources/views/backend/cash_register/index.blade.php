@@ -30,9 +30,9 @@
                         <th>Total Sale Return</th>
                         <th>Total Expense</th>
                         <th>Total Cash</th>
+                        <th>Next Day Opening Balance</th>
                         <th>Closing Balance</th>
-                        <th>Balance</th>
-                        
+                        <th>Shortage Balance</th>
                         <th>Note</th>
                         <th>{{ trans('file.Opened at') }}</th>
                         <th>{{ trans('file.Closed at') }}</th>
@@ -59,8 +59,9 @@
                             <td>{{ $cash_register->total_sale_return }}</td>
                             <td>{{ $cash_register->total_expense }}</td>
                             <td>{{ $cash_register->total_cash }}</td>
+                            <td>{{ $cash_register->next_day_opening_balance }}</td>
                             <td>{{ $cash_register->closing_balance }}</td>
-                            <td>{{ $cash_register->total_cash - $cash_register->closing_balance }}</td>
+                            <td>{{  ($cash_register->closing_balance + $cash_register->next_day_opening_balance) - $cash_register->total_cash}}</td>
 
                             @if ($cash_register->note)
                                 <td>{{ $cash_register->note }}</td>
@@ -157,12 +158,25 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-md-6" id="closing-section">
+                            <div class="col-md-12" id="closing-section">
                                 <form action="{{ route('cashRegister.close') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="cash_register_id">
-                                    <button type="submit" class="btn btn-primary"
-                                        onclick="return confirmClose()">{{ trans('file.Close Register') }}</button>
+                                    <div class="row">
+
+                                        <input type="number" step="any" name="next_day_opening_balance"
+                                            class="form-control col-md-12 p-2 " step="any"
+                                            placeholder="Next Day Opening Balance" required>
+                                        <input type="number" step="any" name="closing_balance"
+                                            class="form-control col-md-12 p-2 mt-2" step="any"
+                                            placeholder="Closing Balance" required>
+                                        
+                                  
+                                                <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
+                                          
+                                        <button type="submit"
+                                            class="btn btn-primary  col-md-12 p-2">{{ trans('file.Close Register') }}</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

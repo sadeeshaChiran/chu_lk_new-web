@@ -656,8 +656,10 @@ class ProductController extends Controller
         $q = DB::table('sales')
             ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
             ->where('product_sales.product_id', $product_id)
+            ->where('sales.sale_status', 1)
             ->whereDate('sales.created_at', '>=' ,$request->input('starting_date'))
             ->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
+
         if($warehouse_id)
             $q = $q->where('warehouse_id', $warehouse_id);
         if(Auth::user()->role_id > 2 && config('staff_access') == 'own')
@@ -720,10 +722,11 @@ class ProductController extends Controller
                     $nestedData['qty'] .= ' '.$unit_data->unit_code;
                 }
                 $nestedData['unit_price'] = number_format(($sale->total / $sale->qty), config('decimal'));
-                $nestedData['sub_total'] = number_format($sale->total, config('decimal'));
+                $nestedData['sub_total'] = number_format($sale->total, decimals: config('decimal'));
                 $data[] = $nestedData;
             }
         }
+        
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
@@ -746,6 +749,7 @@ class ProductController extends Controller
         $q = DB::table('purchases')
             ->join('product_purchases', 'purchases.id', '=', 'product_purchases.purchase_id')
             ->where('product_purchases.product_id', $product_id)
+            ->where('purchases.status', 1)
             ->whereDate('purchases.created_at', '>=' ,$request->input('starting_date'))
             ->whereDate('purchases.created_at', '<=' ,$request->input('ending_date'));
         if($warehouse_id)

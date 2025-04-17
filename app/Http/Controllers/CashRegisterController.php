@@ -96,6 +96,8 @@ class CashRegisterController extends Controller
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
 		$data['closing_balance'] = $cash_register_data->closing_balance;
+		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
+
 		$data['total_sale_amount'] = Sale::where([
 										['cash_register_id', $cash_register_data->id],
 										['sale_status', 1]
@@ -142,6 +144,8 @@ class CashRegisterController extends Controller
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
 		$data['closing_balance'] = $cash_register_data->closing_balance;
+		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
+
 		$data['total_sale_amount'] = Sale::where([
 										['cash_register_id', $cash_register_data->id],
 										['sale_status', 1]
@@ -182,6 +186,7 @@ class CashRegisterController extends Controller
 	{
 		$cash_register_data = CashRegister::find($request->cash_register_id);
 		$cash_register_data->closing_balance = $request->closing_balance;
+		$cash_register_data->next_day_opening_balance = $request->next_day_opening_balance;
 		$cash_register_data->note = $request->note;
 		$cash_register_data->status = 0;
 		$cash_register_data->save();

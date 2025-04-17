@@ -1788,9 +1788,13 @@
                                                 <input type="hidden" name="cash_register_id">
                                                 <div class="row">
 
+                                                    <input type="number" step="any" name="next_day_opening_balance"
+                                                        class="form-control col-md-12 p-2 " step="any"
+                                                        placeholder="Next Day Opening Balance" required>
                                                     <input type="number" step="any" name="closing_balance"
-                                                        class="form-control col-md-12 p-2" step="any"
+                                                        class="form-control col-md-12 p-2 mt-2" step="any"
                                                         placeholder="Closing Balance" required>
+                                                    
                                               
                                                             <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
                                                       
