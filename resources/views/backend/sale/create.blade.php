@@ -1,20 +1,22 @@
-@extends('backend.layout.main') @section('content')
-    @push('css')
-        <style>
-            @media print {
-                .hidden-print {
-                    display: none !important;
-                }
+@extends('backend.layout.main')
+@push('css')
+    <style type="text/css">
+        @media print {
+            .hidden-print {
+                display: none !important;
             }
-        </style>
-    @endpush
+        }
+    </style>
+@endpush
+@section('content')
     @if (session()->has('not_permitted'))
         <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close" data-dismiss="alert"
                 aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ session()->get('not_permitted') }}</div>
     @endif
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close" data-dismiss="alert"
-                aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ session()->get('error') }}</div>
+        <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('error') }}</div>
     @endif
     <section id="pos-layout" class="forms hidden-print">
         <div class="container-fluid">
@@ -488,8 +490,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Is Exchange</label>
-                                                <select id="is_exchange" name="is_exchange"
-                                                    class="form-control">
+                                                <select id="is_exchange" name="is_exchange" class="form-control">
                                                     <option value="0" selected>No</option>
                                                     <option value="1">Yes</option>
                                                 </select>
@@ -2254,7 +2255,6 @@
                     type: $('.payment-form').attr('method'),
                     data: $('.payment-form').serialize(),
                     success: function(response) {
-                        console.log(response);
 
                         if (response.payment_method === 'pesapal' && response.redirect_url) {
                             // Redirect to the URL returned for Pesapal payment method
@@ -2262,6 +2262,9 @@
                         } else if ($('select[name="sale_status"]').val() == 1 && response !==
                             'pesapal') {
                             let link = "{{ url('sales/gen_invoice/') }}" + '/' + response;
+                            $('#pos-layout').css('display', 'none');
+                            var head = $('head').html();
+                            $('head').html('');
                             $('#print-layout').load(link, function() {
                                 setTimeout(function() {
                                     window.print();

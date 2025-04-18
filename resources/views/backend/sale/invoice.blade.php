@@ -382,9 +382,6 @@
     <script type="text/javascript">
         localStorage.clear();
 
-        function auto_print() {
-            window.print();
-        }
         //setTimeout(auto_print, 1000);
     </script>
 
