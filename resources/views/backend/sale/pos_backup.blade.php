@@ -1813,7 +1813,7 @@
         $('#today-profit-modal').modal('show');
     }
 
-    if(role_id > 2){
+    if(role_id > 8){
         //$('#biller_id').parent().parent().parent().addClass('d-none');
         //$('#warehouse_id').parent().parent().parent().addClass('d-none');
         $('select[name=warehouse_id]').val(warehouse_id);

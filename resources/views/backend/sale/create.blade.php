@@ -2262,9 +2262,9 @@
                         } else if ($('select[name="sale_status"]').val() == 1 && response !==
                             'pesapal') {
                             let link = "{{ url('sales/gen_invoice/') }}" + '/' + response;
-                            $('#pos-layout').css('display', 'none');
-                            var head = $('head').html();
-                            $('head').html('');
+                            // $('#pos-layout').css('display', 'none');
+                            // var head = $('head').html();
+                            // $('head').html('');
                             $('#print-layout').load(link, function() {
                                 setTimeout(function() {
                                     window.print();

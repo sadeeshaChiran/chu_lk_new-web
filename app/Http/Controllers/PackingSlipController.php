@@ -43,7 +43,7 @@ class PackingSlipController extends Controller
         $order = 'packing_slips.' . $columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
         if (empty($request->input('search.value'))) {
-            $packing_slips = PackingSlip::with('sale', 'delivery', 'products')->offset($start)
+            $packing_slips = PackingSlip::with('sale', 'delivery', 'products', 'user')->offset($start)
                 ->limit($limit)
                 ->orderBy(DB::raw('CAST(' . $order . ' AS SIGNED)'), $dir)
                 ->get();
@@ -57,6 +57,8 @@ class PackingSlipController extends Controller
             $packing_slips = PackingSlip::select('packing_slips.*')
                 ->with('sale', 'delivery', 'products')
                 ->join('sales', 'packing_slips.sale_id', '=', 'sales.id')
+                ->join('users', 'packing_slips.user_id', '=', 'users.id')
+                ->where('users.name', 'LIKE', "%{$search}%")
                 ->where('packing_slips.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
@@ -81,6 +83,8 @@ class PackingSlipController extends Controller
                 $nestedData['sale_reference'] = $packing_slip->sale->reference_no;
                 $nestedData['delivery_reference'] = $packing_slip->delivery->reference_no;
                 $nestedData['waybill_id'] = $packing_slip->waybill_id ? $packing_slip->waybill_id : 'N/A';
+                $nestedData['created_by'] = $packing_slip->user->name;
+                $nestedData['created_at'] = date('d-m-Y', strtotime($packing_slip->created_at));
                 //$nestedData['delivery_reference'] = 'j';
                 $nestedData['amount'] = $packing_slip->amount;
                 $nestedData['item_list'] = '';
@@ -127,6 +131,7 @@ class PackingSlipController extends Controller
 
     public function createWaybillId($data)
     {
+  
         $sale_id = $data['sale_id'];
         $amount = $data['amount'];
         $weight = $data['weight'];
@@ -194,6 +199,7 @@ class PackingSlipController extends Controller
         $data['is_exchange'] = Sale::where('id', $data['sale_id'])->first()->is_exchange;
         $waybill_id = null;
         $courier_id = $data['courier_id'];
+        $user_id = \Auth::id();
         $courier = Courier::where('id', $courier_id)->first();
         if ($courier->name == 'Main Courier') {
             $waybillId_response = $this->createWaybillId($data);
@@ -231,7 +237,8 @@ class PackingSlipController extends Controller
                 "sale_id" => $data['sale_id'],
                 "amount" => $data['amount'],
                 "status" => "Pending",
-                "waybill_id" => $waybill_id
+                "waybill_id" => $waybill_id,
+                "user_id" => $user_id,
             ]);
 
             foreach ($data['products'] as $key => $product_info) {

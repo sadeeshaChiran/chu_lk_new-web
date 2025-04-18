@@ -152,7 +152,7 @@ class PurchaseController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir);
-            if(Auth::user()->role_id > 2 && config('staff_access') == 'own') {
+            if(Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q =  $q->with('supplier', 'warehouse')
                         ->where('purchases.user_id', Auth::id())
                         ->orwhere([
@@ -320,7 +320,7 @@ class PurchaseController extends Controller
         $role = Role::find(Auth::user()->role_id);
         if($role->hasPermissionTo('purchases-add')){
             $lims_supplier_list = Supplier::where('is_active', true)->get();
-            if(Auth::user()->role_id > 2) {
+            if(Auth::user()->role_id > 8) {
                 $lims_warehouse_list = Warehouse::where([
                     ['is_active', true],
                     ['id', Auth::user()->warehouse_id]

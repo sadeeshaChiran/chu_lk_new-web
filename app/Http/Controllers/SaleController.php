@@ -243,9 +243,9 @@ class SaleController extends Controller
             ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
             ->select('sales.id', 'sales.*');
 
-        if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
+        if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
             $q = $q->where('user_id', Auth::id());
-        elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse')
+        elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
             $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
         if ($sale_status)
             $q = $q->where('sale_status', $sale_status);
@@ -282,9 +282,9 @@ class SaleController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
                 $q = $q->where('user_id', Auth::id());
-            elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse')
+            elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
                 $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
             if ($warehouse_id)
                 $q = $q->where('warehouse_id', $warehouse_id);
@@ -306,7 +306,7 @@ class SaleController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            if (Auth::user()->role_id > 2 && config('staff_access') == 'own') {
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user')
                     ->where('sales.user_id', Auth::id())
@@ -336,7 +336,7 @@ class SaleController extends Controller
                         ['sales.' . $field_name, 'LIKE', "%{$search}%"]
                     ]);
                 }
-            } elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
+            } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user')
                     ->where('sales.user_id', Auth::id())
@@ -632,9 +632,9 @@ class SaleController extends Controller
             ->select('sales.id', 'sales.*');
 
 
-        if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
+        if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
             $q = $q->where('user_id', Auth::id());
-        elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse')
+        elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
             $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
         if ($sale_status)
             $q = $q->where('sale_status', $sale_status);
@@ -673,9 +673,9 @@ class SaleController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
                 $q = $q->where('user_id', Auth::id());
-            elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse')
+            elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
                 $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
             if ($warehouse_id)
                 $q = $q->where('warehouse_id', $warehouse_id);
@@ -700,7 +700,7 @@ class SaleController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            if (Auth::user()->role_id > 2 && config('staff_access') == 'own') {
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                     ->where('sales.user_id', Auth::id())
@@ -734,7 +734,7 @@ class SaleController extends Controller
                         ['sales.' . $field_name, 'LIKE', "%{$search}%"]
                     ]);
                 }
-            } elseif (Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
+            } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                     ->where('sales.user_id', Auth::id())
@@ -1048,7 +1048,7 @@ class SaleController extends Controller
         $role = Role::find(Auth::user()->role_id);
         if ($role->hasPermissionTo('sales-add')) {
             $lims_customer_list = Customer::where('is_active', true)->get();
-            if (Auth::user()->role_id > 2) {
+            if (Auth::user()->role_id > 8 ) {
                 $lims_warehouse_list = Warehouse::where([
                     ['is_active', true],
                     ['id', Auth::user()->warehouse_id]
@@ -1112,7 +1112,7 @@ class SaleController extends Controller
             $data['created_at'] = date("Y-m-d H:i:s");
         //return dd($data);
 
-        if ($data['paid_amount'] > 0) {
+        if ($data['paid_amount']) {
             //set the paid_amount value to $new_data variable
             $new_data['paid_amount'] = $data['paid_amount'];
 
@@ -1129,7 +1129,7 @@ class SaleController extends Controller
                 $balance = $balance - $paid_amount;
             }
 
-            if ($data['paid_amount'] > 0) {
+            if ($data['paid_amount'] ) {
                 if (is_array($data['paid_amount'])) {
                     $data['paid_amount'] = array_sum($data['paid_amount']);
                 }
@@ -1201,7 +1201,7 @@ class SaleController extends Controller
         $lims_sale_data = Sale::create($data);
 
         // add the $new_data variable value to $data['paid_amount'] variable
-        if ($data['paid_amount'] > 0) {
+        if ($data['paid_amount'] ) {
             $data['paid_amount'] = $new_data['paid_amount'];
         }
         //inserting data for custom fields
@@ -1400,9 +1400,10 @@ class SaleController extends Controller
         }
 
 
-        if ($data['payment_status'] == 3 || $data['payment_status'] == 4 || ($data['payment_status'] == 2 && $data['pos'] && $data['paid_amount'] > 0)) {
+        if ($data['payment_status'] == 3 || $data['payment_status'] == 4 || ($data['payment_status'] == 2 && $data['pos'] && $data['paid_amount'])) {
             foreach ($data['paid_by_id'] as $key => $value) {
-                if ($data['paid_amount'][$key] > 0) {
+
+                if ($data['paid_amount'][$key]) {
                     $lims_payment_data = new Payment();
                     $lims_payment_data->user_id = Auth::id();
                     $paying_method = '';

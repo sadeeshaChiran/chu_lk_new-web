@@ -60,7 +60,7 @@ class OrdersController extends Controller
         } else {
             $user = User::firstOrCreate(
                 ['email' =>  'guest@customer.com'],
-                ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 5, 'is_active' => 1]
+                ['name' => 'Guest', 'password' => '12345678', 'phone' => '12345678', 'role_id' => 10, 'is_active' => 1]
             );
 
             $customer = Customer::firstOrCreate(

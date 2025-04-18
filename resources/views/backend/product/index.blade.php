@@ -33,7 +33,7 @@
             <div class="card-body">
                 {!! Form::open(['route' => 'products.index', 'method' => 'get']) !!}
                 <div class="row">
-                    <div class="col-md-3 offset-3 @if(\Auth::user()->role_id > 2){{'d-none'}}@endif">
+                    <div class="col-md-3 offset-3 @if(\Auth::user()->role_id > 8){{'d-none'}}@endif">
                         <div class="form-group">
                             <label><strong>{{trans('file.Warehouse')}}</strong></label>
                             <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" >

@@ -1687,7 +1687,7 @@
         })
 
 
-        if(role_id > 2) {
+        if(role_id > 8) {
             $('#biller_id').addClass('d-none');
             $('#warehouse_id').addClass('d-none');
         }

@@ -1779,6 +1779,12 @@
                                                         <td><strong>{{ trans('file.Total Cash') }}:</strong></td>
                                                         <td id="total_cash" class="text-right"></td>
                                                     </tr>
+                                                    <tr>
+                                                        <td><strong>Shortage Balance:</strong></td>
+                                                        <td id="shortage_balance"
+                                                            class="text-right font-weight-bold text-danger"></td>
+                                                    </tr>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1788,16 +1794,19 @@
                                                 <input type="hidden" name="cash_register_id">
                                                 <div class="row">
 
-                                                    <input type="number" step="any" name="next_day_opening_balance"
+                                                    <input type="number" step="any"
+                                                        id="next_day_opening_balance"
+                                                        name="next_day_opening_balance"
                                                         class="form-control col-md-12 p-2 " step="any"
                                                         placeholder="Next Day Opening Balance" required>
                                                     <input type="number" step="any" name="closing_balance"
+                                                        id="closing_balance"
                                                         class="form-control col-md-12 p-2 mt-2" step="any"
                                                         placeholder="Closing Balance" required>
-                                                    
-                                              
-                                                            <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
-                                                      
+
+
+                                                    <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
+
                                                     <button type="submit"
                                                         class="btn btn-primary  col-md-12 p-2">{{ trans('file.Close Register') }}</button>
                                                 </div>
@@ -2140,6 +2149,26 @@
                 $("#tbody-id").html(localStorage.getItem("tbody-id"));
             }
         @endif
+
+
+        // adding shortage balance in enter nextdaybalance
+        $(document).ready(function() {
+
+            function calculateShortage() {
+                
+                let totalCash = parseFloat($('#register-details-modal #total_cash').text()) || 0;
+                console.log('ssss',totalCash)
+                const closing = parseFloat($('#closing_balance').val()) || 0;
+                const opening = parseFloat($('#next_day_opening_balance').val()) || 0;
+                const shortage = (closing + opening) - totalCash;
+                console.log('Total Cash:', totalCash);
+                $('#shortage_balance').text(shortage.toFixed(2));
+            }
+            // $('select[name="customer_id"]').on('change', function() {
+
+            $('#next_day_opening_balance , #closing_balance').on('input', calculateShortage);
+        });
+        // ==
 
         function saveValue(e) {
             var id = e.id; // get the sender's id to save it.
@@ -2509,7 +2538,7 @@
             $('#today-profit-modal').modal('show');
         }
 
-        if (role_id > 2) {
+        if (role_id > 8) {
             //$('#biller_id').parent().parent().parent().addClass('d-none');
             //$('#warehouse_id').parent().parent().parent().addClass('d-none');
             $('select[name=warehouse_id]').val(warehouse_id);
@@ -3267,7 +3296,7 @@
 
         $("#submit-btn").on("click", function() {
             var val = $('.paying_amount').val()
-            if (val > 0) {
+            if (val) {
                 $('.payment-form').submit();
             } else {
                 alert("Please Enter Amount")
@@ -3280,7 +3309,7 @@
             if (event.which === 13) { // Check if Enter key is pressed
                 event.preventDefault();
                 var val = $(this).val().trim(); // Get the value of the input
-                if (val > 0) {
+                if (val) {
                     $(".payment-form").submit();
                 } else {
                     alert("Please Enter Amount");

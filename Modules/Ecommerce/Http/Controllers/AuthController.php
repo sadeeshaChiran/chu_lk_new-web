@@ -34,7 +34,7 @@ class AuthController extends Controller
                 'email'       => trim(htmlspecialchars($request->input('email'))),
                 'password'    => trim(bcrypt($request->input('password'))),
                 'phone'       => '',
-                'role_id'     => 5,
+                'role_id'     => 10,
                 'is_active'   => 0,
                 'is_deleted'  => 0
             ];

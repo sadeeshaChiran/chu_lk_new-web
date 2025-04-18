@@ -103,7 +103,7 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
         ]);
 
-        if($data['role_id'] == 5) {
+        if($data['role_id'] == 10) {
             $data['name'] = $data['customer_name'];
             $data['user_id'] = $user->id;
             $data['is_active'] = true;

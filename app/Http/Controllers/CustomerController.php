@@ -308,7 +308,7 @@ class CustomerController extends Controller
         $prefixMessage = 'Customer';
         if (isset($request->user)) {
             $customer_data['phone'] = $customer_data['phone_number'];
-            $customer_data['role_id'] = 5;
+            $customer_data['role_id'] = 10;
             $customer_data['is_deleted'] = false;
             $customer_data['password'] = bcrypt($customer_data['password']);
             $user = User::create($customer_data);
@@ -427,7 +427,7 @@ class CustomerController extends Controller
             ]);
 
             $input['phone'] = $input['phone_number'];
-            $input['role_id'] = 5;
+            $input['role_id'] = 10;
             $input['is_active'] = true;
             $input['is_deleted'] = false;
             $input['password'] = bcrypt($input['password']);

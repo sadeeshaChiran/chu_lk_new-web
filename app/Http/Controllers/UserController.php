@@ -106,7 +106,7 @@ class UserController extends Controller
         $data['password'] = bcrypt($data['password']);
         $data['phone'] = $data['phone_number'];
         $user_data = User::create($data);
-        if($data['role_id'] == 5) {
+        if($data['role_id'] == 10) {
             $data['user_id'] = $user_data->id;
             $data['name'] = $data['customer_name'];
             $data['phone_number'] = $data['phone'];

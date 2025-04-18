@@ -110,7 +110,7 @@ class ProductionController extends Controller
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir);
-            if(Auth::user()->role_id > 2 && config('staff_access') == 'own') {
+            if(Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q =  $q->with('warehouse', 'user')
                         ->where('productions.user_id', Auth::id())
                         ->orwhere([
@@ -118,7 +118,7 @@ class ProductionController extends Controller
                             ['productions.user_id', Auth::id()]
                         ]);
             }
-            elseif(Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
+            elseif(Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
                 $q =  $q->with('warehouse', 'user')
                 ->where('productions.user_id', Auth::id())
                 ->orwhere([
@@ -188,7 +188,7 @@ class ProductionController extends Controller
 
     public function create()
     {
-        if(Auth::user()->role_id > 2) {
+        if(Auth::user()->role_id > 8) {
             $lims_warehouse_list = Warehouse::where([
                 ['is_active', true],
                 ['id', Auth::user()->warehouse_id]

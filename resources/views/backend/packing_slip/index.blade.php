@@ -33,8 +33,10 @@
                     <th>{{ trans('file.Sale Reference') }}</th>
                     <th>{{ trans('file.Delivery Reference') }}</th>
                     <th>Waybill Id</th>
+                    <th>Created By</th>
                     <th>{{ trans('file.product_list')}}</th>
                     <th>{{ trans('file.Amount') }}</th>
+                    <th>Created At</th>
                     <th>{{ trans('file.Status') }}</th>
                     <th>{{ trans('file.Option') }}</th>
                 </tr>
@@ -94,8 +96,10 @@
                 {"data": "sale_reference"},
                 {"data": "delivery_reference"},
                 {"data": "waybill_id"},
+                {"data": "created_by"},
                 {"data": "item_list"},
                 {"data": "amount"},
+                {"data": "created_at"},
                 {"data": "status"},
                 {"data": "options"},
             ],
