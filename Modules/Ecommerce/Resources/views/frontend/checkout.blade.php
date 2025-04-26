@@ -7,7 +7,7 @@
     $total_qty = session()->has('total_qty') ? session()->get('total_qty') : 0;
     $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
 
-    if (auth()->user() && auth()->user()->role_id != 5) {
+    if (auth()->user() && auth()->user()->role_id != 10) {
         auth()->logout();
     }
 @endphp
@@ -37,8 +37,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-        <script src="https://www.payhere.lk/lib/payhere.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://www.payhere.lk/lib/payhere.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     @if (!config('database.connections.saleprosaas_landlord'))
         <!-- Plugins CSS -->
         <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'"
@@ -22425,7 +22425,7 @@
         </div>
     </div>
 
-    
+
     <!-- Content Wrapper -->
     <section class="content-wrapper pt-0">
         <div class="container ">
@@ -22462,7 +22462,8 @@
                 @if (isset($stripe)) data-cc-on-file="false" data-stripe-publishable-key="{{ $publishable_key }}" @endif>
                 @csrf
 
-                <input type="hidden" name="user_id" id="user_id" value="{{(Auth::user()  ? Auth::user()->id : null)}}"/>
+                <input type="hidden" name="user_id" id="user_id"
+                    value="{{ Auth::user() ? Auth::user()->id : null }}" />
                 <div class="row">
                     <div class="col-md-7 mt-3 cus-details">
                         @guest
@@ -22474,7 +22475,7 @@
                         @endguest
                         <h5>{{ trans('file.Shipping Details') }}</h5>
 
-                        @if (auth()->user() && auth()->user()->role_id == 5)
+                        @if (auth()->user() && auth()->user()->role_id == 10)
                             @if (isset($def_address->address))
                                 <div class="res-box mb-3 default_address">
                                     <strong>{{ trans('file.Default Address') }}</strong>
@@ -22492,41 +22493,48 @@
                                     <p>{{ $def_address->phone ?? ($customer->phone ?? '') }}</p>
                                 </div>
                             @endif
-                           
+
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label>{{ trans('file.Address') }} *</label>
                                     <select class=" form-control" name="address_list" id="address_list">
                                         <option value="0">{{ trans('file.Add a different address') }}</option>
                                         @foreach ($addresses as $address)
-                                        <option value="{{ $address->id }}" data-name="{{ $address->name }}" 
-                                            data-phone="{{ $address->phone }}" data-email="{{ $address->email }}"
-                                            data-address="{{ $address->address }}" data-city="{{ $address->city }}">
-                                            {{ $address->address }}, {{ $address->city }}
-                                        </option>
+                                            <option value="{{ $address->id }}" data-name="{{ $address->name }}"
+                                                data-phone="{{ $address->phone }}"
+                                                data-email="{{ $address->email }}"
+                                                data-address="{{ $address->address }}"
+                                                data-city="{{ $address->city }}">
+                                                {{ $address->address }}, {{ $address->city }}
+                                            </option>
                                         @endforeach
-                                      
+
                                     </select>
                                     <input type="hidden" name="default_address"
                                         value="@if (isset($def_address->address)) {{ $def_address->id }} @endif" />
                                 </div>
                             </div>
                         @endif
-
-                        <div class="row shipping_details @if (auth()->user() && auth()->user()->role_id == 5) d-none @endif">
+                        <div class="row shipping_details @if (auth()->user() && auth()->user()->role_id == 10) d-none @endif">
                             <div class="col-12 mb-3 mt-2">
                                 <label>{{ trans('file.name') }} *</label>
                                 <input class="form-control" type="text" name="shipping_name" id="name"
                                     value="{{ $customer->name ?? ($def_address->name ?? '') }}" required>
                             </div>
                             <div class="col-md-6 mb-3 mt-2">
-                                <label>{{ trans('file.Phone') }}</label>
+                                <label>{{ trans('file.Phone') }} 1 *</label>
                                 <input class="form-control" type="number" name="shipping_phone" id="phone"
                                     value="{{ $def_address->phone ?? ($customer->phone_number ?? '') }}"
-                                    minlength="11">
+                                    minlength="11" required>
                             </div>
                             <div class="col-md-6 mb-3 mt-2">
-                                <label>{{ trans('file.email') }}</label>
+                                <label>{{ trans('file.Phone') }} 2</label>
+                                <input class="form-control" type="number" name="shipping_phone_2" id="phone"
+                                    value="{{ $def_address->phone ?? ($customer->phone_number_2 ?? '') }}"
+                                    minlength="11" maxlength="10">
+                            </div>
+                            <div class="col-md-12 mb-3 mt-2">
+                                <label>{{ trans('file.email') }} *</label>
                                 <input class="form-control" type="email" name="shipping_email" id="email"
                                     value="{{ $def_address->email ?? ($customer->email ?? '') }}" required>
                             </div>
@@ -22538,61 +22546,62 @@
 
                             <div class="col-12 mb-3 mt-2">
                                 <label>{{ trans('file.City') }} *</label>
-                  
-                                    <select class="form-control" name="shipping_city" id="city" required>
-                                        <option value="">Select country</option>
-                                        <option value="Colombo">Colombo</option>
-                                        <option value="Kandy">Kandy</option>
-                                        <option value="Galle">Galle</option>
-                                        <option value="Jaffna">Jaffna</option>
-                                        <option value="Trincomalee">Trincomalee</option>
-                                        <option value="Anuradhapura">Anuradhapura</option> 
-                                        <option value="Polonnaruwa">Polonnaruwa</option>
-                                        <option value="Matara">Matara</option>
-                                        <option value="Negombo">Negombo</option>
-                                        <option value="Batticaloa">Batticaloa</option>
-                                        <option value="Ambalangoda">Ambalangoda</option>
-                                        <option value="Badulla">Badulla</option>
-                                        <option value="Bandarawela">Bandarawela</option>
-                                        <option value="Bentota">Bentota</option>
-                                        <option value="Beruwala">Beruwala</option>
-                                        <option value="Dambulla">Dambulla</option>
-                                        <option value="Dehiwala-Mount Lavinia">Dehiwala-Mount Lavinia</option>
-                                        <option value="Ella">Ella</option>
-                                        <option value="Gampaha">Gampaha</option>
-                                        <option value="Gampola">Gampola</option>
-                                        <option value="Hambantota">Hambantota</option>
-                                        <option value="Hatton">Hatton</option>
-                                        <option value="Ja-Ela">Ja-Ela</option>
-                                        <option value="Kalmunai">Kalmunai</option>
-                                        <option value="Kalutara">Kalutara</option>
-                                        <option value="Katunayake">Katunayake</option>
-                                        <option value="Kegalle">Kegalle</option>
-                                        <option value="Kurunegala">Kurunegala</option>
-                                        <option value="Maharagama">Maharagama</option>
-                                        <option value="Mannar">Mannar</option>
-                                        <option value="Matale">Matale</option>
-                                        <option value="Nuwara Eliya">Nuwara Eliya</option>
-                                        <option value="Panadura">Panadura</option>
-                                        <option value="Puttalam">Puttalam</option>
-                                        <option value="Ratnapura">Ratnapura</option>
-                                        <option value="Tangalle">Tangalle</option>
-                                        <option value="Vavuniya">Vavuniya</option>
-                                        <option value="Weligama">Weligama</option>
-                                        <option value="Wattala">Wattala</option>
-                                    </select>
+
+                                <select class="form-control" name="shipping_city" id="city" required>
+                                    <option value="">Select country</option>
+                                    <option value="Colombo">Colombo</option>
+                                    <option value="Kandy">Kandy</option>
+                                    <option value="Galle">Galle</option>
+                                    <option value="Jaffna">Jaffna</option>
+                                    <option value="Trincomalee">Trincomalee</option>
+                                    <option value="Anuradhapura">Anuradhapura</option>
+                                    <option value="Polonnaruwa">Polonnaruwa</option>
+                                    <option value="Matara">Matara</option>
+                                    <option value="Negombo">Negombo</option>
+                                    <option value="Batticaloa">Batticaloa</option>
+                                    <option value="Ambalangoda">Ambalangoda</option>
+                                    <option value="Badulla">Badulla</option>
+                                    <option value="Bandarawela">Bandarawela</option>
+                                    <option value="Bentota">Bentota</option>
+                                    <option value="Beruwala">Beruwala</option>
+                                    <option value="Dambulla">Dambulla</option>
+                                    <option value="Dehiwala-Mount Lavinia">Dehiwala-Mount Lavinia</option>
+                                    <option value="Ella">Ella</option>
+                                    <option value="Gampaha">Gampaha</option>
+                                    <option value="Gampola">Gampola</option>
+                                    <option value="Hambantota">Hambantota</option>
+                                    <option value="Hatton">Hatton</option>
+                                    <option value="Ja-Ela">Ja-Ela</option>
+                                    <option value="Kalmunai">Kalmunai</option>
+                                    <option value="Kalutara">Kalutara</option>
+                                    <option value="Katunayake">Katunayake</option>
+                                    <option value="Kegalle">Kegalle</option>
+                                    <option value="Kurunegala">Kurunegala</option>
+                                    <option value="Maharagama">Maharagama</option>
+                                    <option value="Mannar">Mannar</option>
+                                    <option value="Matale">Matale</option>
+                                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                    <option value="Panadura">Panadura</option>
+                                    <option value="Puttalam">Puttalam</option>
+                                    <option value="Ratnapura">Ratnapura</option>
+                                    <option value="Tangalle">Tangalle</option>
+                                    <option value="Vavuniya">Vavuniya</option>
+                                    <option value="Weligama">Weligama</option>
+                                    <option value="Wattala">Wattala</option>
+                                </select>
                             </div>
 
 
                         </div>
+
                         <div class="row">
                             <div class="col-12 mt-3">
                                 <label>{{ trans('file.Order Notes') }}</label>
                                 <textarea class="form-control mar-top-20" name="sale_note" id="sale_note"></textarea>
                             </div>
                         </div>
-                        
-                        @if (!auth()->user())
+
+                        /* @if (!auth()->user())
                             <div class="row billing_details">
                                 <div class="col-12 mb-3 mt-1">
                                     <div class="custom-control custom-checkbox">
@@ -22607,7 +22616,7 @@
                                     <input class="form-control" type="password" name="password">
                                 </div>
                             </div>
-                        @endif
+                        @endif */
                     </div>
                     <div class="col-md-5 mt-3 cart">
                         <h5>{{ trans('file.Your order') }}</h5>
@@ -22627,7 +22636,7 @@
                             <div class="row cart-item">
                                 <div class="col-3">
                                     <div class="cart-item-img">
-                                        @if (isset($cart_product['image']))
+                                        @if ($cart_product['image'])
                                             @php
                                                 $images = explode(',', $cart_product['image']);
                                                 $cart_product['image'] = $images[0];
@@ -22640,7 +22649,7 @@
                                                     alt="{{ $cart_product['name'] }}">
                                             @endif
                                         @else
-                                            <img src="https://dummyimage.com/80x80/e5e8ec/e5e8ec&text={{ $cart_product['name'] }}"
+                                            <img src="{{ url('images/product/small/nullImage.jpg') }}"
                                                 alt="{{ $cart_product['name'] }}">
                                         @endif
                                     </div>
@@ -22746,11 +22755,10 @@
                                 </div>
                             @endif
 
-                           
+
                             <label for="payhere" class="button sm style3 pay-button cash">
-                                <input type="radio" id="payhere" name="payment_mode"
-                                    value="payhere" required>
-                                    Online Payment
+                                <input type="radio" id="payhere" name="payment_mode" value="payhere" required>
+                                Online Payment
                             </label>
 
                             <label for="Cash" class="button sm style3 pay-button cash">
@@ -22888,8 +22896,9 @@
             {{ $ecommerce_setting->custom_js }}
         </script>
     @endif
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
+        
         "use strict";
 
         function generateHash(orderId, amount, currency, merchantSecret, merchantId) {
@@ -22907,9 +22916,50 @@
         }
 
         $('.place-order').on('click', function() {
+
+            // Validate required fields
+            let name = $("#name").val().trim();
+            let phone = $("#phone").val().trim();
+            let email = $("#email").val().trim();
+            let address = $("#address").val().trim();
+            let city = $("#city").val().trim();
+
+            if (!name || !phone || !email || !address || !city) {
+                Swal.fire({
+                    title: 'Missing Information',
+                    text: 'Please fill all required fields before placing the order.',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
+                });
+                return;
+            }
+
+            // Optional: validate email format
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                Swal.fire({
+                    title: 'Invalid Email',
+                    text: 'Please enter a valid email address.',
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                });
+                return;
+            }
+
+            // Optional: validate phone number length (Sri Lanka 10 digits)
+            if (phone.length != 10 ) {
+                Swal.fire({
+                    title: 'Invalid Phone Number',
+                    text: 'Phone number must be 10 digits.(0711234568)',
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                });
+                return;
+            }
+
             var payment_mode = $('input[name="payment_mode"]:checked').val(); // Get selected radio button value
 
-            if(payment_mode == 'payhere'){
+            if (payment_mode == 'payhere') {
                 const merchantId = "1221455";
                 const orderId = "ORDER_" + new Date().getTime();
                 const amount = parseFloat($('#input_total').val());
@@ -22967,13 +23017,13 @@
                         confirmButtonText: 'ok'
                     });
                 };
-                console.log("Sss",payment);
+                console.log("Sss", payment);
 
                 payhere.startPayment(payment);
-            }else{
+            } else {
                 $('#payment-form').submit()
             }
-        }); 
+        });
 
         $('select').selectpicker();
 
@@ -23035,7 +23085,7 @@
 
         $('#address_list').on('change', function() {
             var def_address = $('input[name="default_address"]').val();
-           
+
             if ((def_address.length > 0) && ($(this).val() == def_address)) {
                 $('.default_address').removeClass('d-none');
 
@@ -23066,10 +23116,11 @@
 
             } else if ($(this).val() == 0) {
                 console.log("@11111")
-                $('.shipping_details input,.shipping_details select,.billing_details input,.billing_details select').val('');
+                $('.shipping_details input,.shipping_details select,.billing_details input,.billing_details select')
+                    .val('');
                 $('.shipping_details').removeClass('d-none');
                 $('.default_address').addClass('d-none');
-            }else if ($(this).val() > 0) {
+            } else if ($(this).val() > 0) {
                 $('.shipping_details').removeClass('d-none');
                 $('.default_address').addClass('d-none');
                 let selectedOption = $(this).find(':selected'); // Correct way to get selected option
@@ -23086,10 +23137,10 @@
                 $('#phone').val(phone);
                 $('#email').val(email);
                 $('#address').val(address);
-                $('#city').val(city).change(); 
+                $('#city').val(city).change();
 
-                console.log("DDD",address,city ,selectedOption )
-                
+                console.log("DDD", address, city, selectedOption)
+
 
             }
         })

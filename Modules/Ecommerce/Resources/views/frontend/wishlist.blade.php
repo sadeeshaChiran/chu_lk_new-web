@@ -68,7 +68,7 @@
                                                         </a>
                                                         @else
                                                         <a href="{{url('product')}}/{{$product->slug}}/{{$product->id}}" class="view-details ml-2 mr-2">
-                                                            <img loading="lazy" src="https://dummyimage.com/50x50/e5e8ec/e5e8ec&text={{ $product->name }}" alt="{{ $product->name }}">
+                                                            <img loading="lazy" src="{{ url('images/product/small/nullImage.jpg') }}" alt="{{ $product->name }}">
                                                         </a>
                                                         @endif
                                                         <div>

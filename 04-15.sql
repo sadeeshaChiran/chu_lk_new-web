@@ -46,3 +46,8 @@ SET role_id = CASE
     ELSE role_id
 END
 WHERE role_id IN (4, 5, 6, 7, 8);
+
+
+
+04/27
+ALTER TABLE `sales` ADD `shipping_phone_2` VARCHAR(255) NULL AFTER `shipping_phone`;

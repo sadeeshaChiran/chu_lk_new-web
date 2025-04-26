@@ -44,7 +44,7 @@ class OrdersController extends Controller
     public function create(Request $request)
     {
 
-        if (auth()->user() && auth()->user()->role_id != 5) {
+        if (auth()->user() && auth()->user()->role_id != 10) {
             auth()->logout();
         }
         $post_data = array();
@@ -58,6 +58,8 @@ class OrdersController extends Controller
         $post_data['shipping_name'] = trim(htmlspecialchars($request->input('shipping_name')));
         $post_data['shipping_email'] = trim(htmlspecialchars($request->input('shipping_email')));
         $post_data['shipping_phone'] = trim(htmlspecialchars($request->input('shipping_phone')));
+        $post_data['shipping_phone_2'] = trim(htmlspecialchars($request->input('shipping_phone_2')));
+
         $post_data['shipping_address'] = trim(htmlspecialchars($request->input('shipping_address')));
         $post_data['shipping_city'] = trim(htmlspecialchars($request->input('shipping_city')));
         $post_data['shipping_state'] = trim(htmlspecialchars($request->input('shipping_state')));
@@ -79,11 +81,13 @@ class OrdersController extends Controller
             $post_data['user_id'] = auth()->user()->id;
             $customer = Customer::select('id')->where('user_id', $post_data['user_id'])->first();
 
-            $customer->email = $post_data['shipping_email'];
-            $customer->name = $post_data['shipping_name'];
-            $customer->phone_number = $post_data['shipping_phone'];
-            $customer->address = $post_data['shipping_address'];
-            $customer->city = $post_data['shipping_city'];
+            // $customer->email = $post_data['shipping_email'];
+            // $customer->name = $post_data['shipping_name'];
+            // $customer->phone_number = $post_data['shipping_phone'];
+            // $customer->phone_number_2 = $post_data['shipping_phone_2'];
+
+            // $customer->address = $post_data['shipping_address'];
+            // $customer->city = $post_data['shipping_city'];
             $customer->is_active = 1;
 
             $customer->save();
@@ -142,6 +146,7 @@ class OrdersController extends Controller
                 'shipping_name'        => $post_data['shipping_name'],
                 'shipping_email'       => $post_data['shipping_email'],
                 'shipping_phone'       => $post_data['shipping_phone'],
+                'shipping_phone_2'     => $post_data['shipping_phone_2'],
                 'shipping_address'     => $post_data['shipping_address'],
                 'shipping_city'        => $post_data['shipping_city'],
                 'shipping_state'       => $post_data['shipping_state'],
@@ -163,6 +168,7 @@ class OrdersController extends Controller
                 'sale_note'            => $post_data['sale_note'],
                 'sale_type'            => 'website',
                 'payment_mode'         => $post_data['payment_mode'],
+                'is_exchange'          => 0,
                 'created_at'           => date('Y-m-d H:i:s')
             ]);
 

@@ -527,7 +527,7 @@
             </ul>
             </li>
             @endif
-            @if(\Auth::user()->role_id != 5)
+            @if(\Auth::user()->role_id != 10)
                 {{-- @if(!config('database.connections.saleprosaas_landlord'))
                     <li><a href="{{url('addon-list')}}" id="addon-list"> <i class="dripicons-flag"></i><span>{{trans('file.Addons')}}</span></a></li>
                 @endif

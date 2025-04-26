@@ -11,7 +11,7 @@
 @section('content')
 
     <!-- Bootstrap Modal -->
-    <div class="modal fade show" id="homeModal" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade show" id="homeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content ">
                 <div class="modal-body">
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
     @if (isset($sliders))
@@ -132,12 +132,13 @@
 @endsection
 
 @section('script')
-    <script>
+{{-- home model --}}
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             var myModal = new bootstrap.Modal(document.getElementById('homeModal'));
             myModal.show();
         });
-    </script>
+    </script> --}}
 
     <script>
         {!! file_get_contents(Module::find('Ecommerce')->getPath() . '/assets/js/swiper.min.js') !!}

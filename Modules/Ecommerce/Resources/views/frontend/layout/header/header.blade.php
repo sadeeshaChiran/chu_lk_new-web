@@ -43,7 +43,7 @@
                             <a href="{{ url('customer/login') }}">Login</a>
                         </li>
                     @endguest
-                    @if (auth()->user() && auth()->user()->role_id == 5)
+                    @if (auth()->user() && auth()->user()->role_id == 10)
                         <li class="user-menu">
                             <i class="material-symbols-outlined">person_add</i>
                             <ul class="user-dropdown-menu">

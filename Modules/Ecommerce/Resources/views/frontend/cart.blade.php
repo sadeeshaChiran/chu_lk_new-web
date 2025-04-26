@@ -56,11 +56,15 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                @if($cart_product['image']!==null)
+                                                @if($cart_product['image'])
                                                     @php
                                                         $images = explode(',', $cart_product['image']);
                                                         $cart_product['image'] = $images[0];
                                                     @endphp
+                                                    @else
+                                                        @php
+                                                            $cart_product['image'] = 'nullImage.jpg';
+                                                        @endphp
                                                 @endif
                                                 <img src="{{ url('images/product/small') }}/{{ $cart_product['image'] }}" alt="{{ $cart_product['name'] }}"> 
                                             </div>

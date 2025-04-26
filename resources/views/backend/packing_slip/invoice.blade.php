@@ -104,9 +104,13 @@
     <div class="line"></div>
     <span style="font-size: 12px">
         <strong>To:</strong><br>
-        @if ($sale->is_online)
+        @if ($sale->sale_type == 'website')
             {{ $sale->shipping_name }}<br>
-            {{ $sale->shipping_phone }}<br>
+            {{ $sale->shipping_phone }}
+            @if($sale->shipping_phone_2)
+                / {{$sale->shipping_phone_2}}
+            @endif
+            <br>
             {{ $sale->shipping_address }}, {{ $sale->shipping_city }}
         @else
             {{ $sale->customer->name }}<br>

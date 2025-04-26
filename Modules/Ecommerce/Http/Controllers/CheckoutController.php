@@ -53,7 +53,7 @@ class CheckoutController extends Controller
 
 			$gateways = DB::table('external_services')->where('type', 'payment')->where('active', 1)->get();
 
-			if (auth()->user() && auth()->user()->role_id == 5) {
+			if (auth()->user() && auth()->user()->role_id == 10) {
 				$customer = DB::table('customers')->where('user_id', auth()->user()->id)->first();
 				$addresses = DB::table('customer_addresses')->where('customer_id', $customer->id)->get();
 				$def_address = $addresses->where('default', 1)->first();

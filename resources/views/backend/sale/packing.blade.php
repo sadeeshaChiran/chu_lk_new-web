@@ -70,14 +70,14 @@
                                         <input type="hidden" value="{{ $data['sale_id'] }}" name="sale_id">
                                         <input type="hidden" value="{{ $data['amount'] }}" name="amount">
                                         <input type="hidden" value="{{ $packing_weight }}" name="weight">
-                                        <input type="hidden" value="{{ $customer_data->name }}" name="recipient_name">
-                                        <input type="hidden" value="{{ $customer_data->phone_number }}"
+                                        <input type="hidden" value="{{ $sale->shipping_name ? $sale->shipping_name : $customer_data->name }}" name="recipient_name">
+                                        <input type="hidden" value="{{ $sale->shipping_phone ? $sale->shipping_phone : $customer_data->phone_number }}"
                                             name="recipient_contact_1">
-                                        <input type="hidden" value="{{ $customer_data->phone_number_2 }}"
+                                        <input type="hidden" value="{{ $sale->shipping_phone_2 ? $sale->shipping_phone_2 : $customer_data->phone_number_2 }}"
                                             name="recipient_contact_2">
-                                        <input type="hidden" value="{{ $customer_data->address }}"
+                                        <input type="hidden" value="{{ $sale->shipping_address ? $sale->shipping_address : $customer_data->address }}"
                                             name="recipient_address">
-                                        <input type="hidden" value="{{ $customer_data->city }}" name="recipient_city">
+                                        <input type="hidden" value="{{ $sale->shipping_city ? $sale->shipping_city : $customer_data->city }}" name="recipient_city">
 
                                         <div class="col-md-12 form-group">
                                             <h5>Product List</h5>

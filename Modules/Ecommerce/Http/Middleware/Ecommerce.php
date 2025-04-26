@@ -26,7 +26,7 @@ class Ecommerce
         }
 
         if(in_array('ecommerce',explode(',',$general_setting->modules))) {
-            if(auth()->user() && auth()->user()->role_id == 5){
+            if(auth()->user() && auth()->user()->role_id == 10){
                 $customer = DB::table('customers')->select('id','user_id','wishlist')->where('user_id', Auth::id())->first();
                 if(isset($customer->wishlist)){
                     $wishlist = $customer->wishlist;
