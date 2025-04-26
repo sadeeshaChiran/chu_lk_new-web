@@ -1,6 +1,6 @@
 @extends('ecommerce::frontend.layout.main')
 
-@if($product->image!==null)
+@if($product->image)
 @php
 $images = explode(',', $product->image);
 $product->image = $images[0];
@@ -65,7 +65,7 @@ $product->image = $images[0];
                     </div>
                 </div>
                 @else
-                <img src="https://placehold.co/550x550" alt="{{ $product->name }}"/>
+                <img src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $product->name }}"/>
                 @endif
             </div>
             <div class="col-md-6 offset-md-1 mt-5">

@@ -37,10 +37,10 @@
                 @foreach($cats as $cat)
                 <div class="col-sm-2 text-center mt-3">
                     <a href="{{ url('/shop') }}/{{$cat->slug}}">
-                        @if($cat->icon!==null)
+                        @if($cat->icon)
                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $cat->icon }}" alt="{{ $cat->name }}">
                         @else
-                            <img loading="lazy" src="https://dummyimage.com/100x100/e5e8ec/e5e8ec&text={{ $cat->name }}" alt="{{ $cat->name }}">
+                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}">
                         @endif
                         <h3 class="product-name mr-3 ml-3 mt-3 mb-3">
                             {{ $cat->name }}
@@ -51,10 +51,10 @@
                 @if(count($cats) < 1)
                 <div class="col-sm-2 text-center mt-3">
                     <a href="{{ url('/shop') }}/{{$category->slug}}">
-                        @if($category->icon!==null)
+                        @if($category->icon)
                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $category->icon }}" alt="{{ $category->name }}">
                         @else
-                            <img loading="lazy" src="https://dummyimage.com/100x100/e5e8ec/e5e8ec&text={{ $category->name }}" alt="{{ $category->name }}">
+                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $category->name }}">
                         @endif
                         <h3 class="product-name mr-3 ml-3 mt-3 mb-3">
                             {{ $category->name }}

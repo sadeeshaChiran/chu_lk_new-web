@@ -122,7 +122,7 @@
                                     @foreach($product_sales as $product)
                                     <tr class="sale-{{$sale->id}}">
                                         <td class="d-flex" style="text-align: left;">
-                                            @if($product->image!==null)
+                                            @if($product->image)
                                             @php
                                                 $images = explode(',', $product->image);
                                                 $product->image = $images[0];

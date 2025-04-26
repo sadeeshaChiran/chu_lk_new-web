@@ -26,16 +26,16 @@
                             <a href="{{url('shop')}}/{{$category->slug}}">
                                 <div class="category-container">
                                     @if(isset($ecommerce_setting->theme) && $ecommerce_setting->theme == 'fashion')
-                                        @if($category->image!==null)
+                                        @if($category->image)
                                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/large') }}/{{ $category->image }}" alt="{{ $category->name }}">
                                         @else
-                                            <img loading="lazy" src="https://dummyimage.com/100x100/e5e8ec/e5e8ec&text={{ $category->name }}" alt="{{ $category->name }}">
+                                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $category->name }}">
                                         @endif
                                     @else
-                                        @if($category->icon!==null)
+                                        @if($category->icon)
                                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $category->icon }}" alt="{{ $category->name }}">
                                         @else
-                                            <img loading="lazy" src="https://dummyimage.com/100x100/e5e8ec/e5e8ec&text={{ $category->name }}" alt="{{ $category->name }}">
+                                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $category->name }}">
                                         @endif
                                     @endif
 

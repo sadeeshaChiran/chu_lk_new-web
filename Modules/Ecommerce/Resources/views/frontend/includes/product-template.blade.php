@@ -7,7 +7,7 @@
                 </div>
             @endif
             <a href="{{ url('product') }}/{{ $product->slug }}/{{ $product->id }}" class="view-details">
-                @if ($product->image !== null)
+                @if ($product->image)
                     @php
                         $images = explode(',', $product->image);
                         $product->image = $images[0];
@@ -15,7 +15,7 @@
                     <img loading="lazy" class="product-img"
                         data-src="{{ url('images/product/large/') }}/{{ $product->image }}" alt="{{ $product->name }}">
                 @else
-                    <img loading="lazy" src="https://dummyimage.com/300x300/e5e8ec/e5e8ec&text={{ $product->name }}"
+                    <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}"
                         alt="{{ $product->name }}">
                 @endif
             </a>

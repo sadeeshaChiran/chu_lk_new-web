@@ -20,10 +20,10 @@
                             <a href="{{url('brand')}}/{{$brand->slug}}">
                                 <div class="brand-container">
                                     <div class="brand-img">
-                                    @if($brand->image!==null)
+                                    @if($brand->image)
                                         <img loading="lazy" class="category-img" data-src="{{ url('images/brand/') }}/{{ $brand->image }}" alt="{{ $brand->title }}">
                                     @else
-                                        <img loading="lazy" src="https://dummyimage.com/100x100/e5e8ec/e5e8ec&text={{ $brand->title }}" alt="{{ $brand->title }}">
+                                        <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $brand->title }}">
                                     @endif
                                     </div>
                                 </div>

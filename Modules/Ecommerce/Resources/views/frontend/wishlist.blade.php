@@ -58,7 +58,7 @@
                                                         <a class="remove-from-wishlist" data-id="{{$product->id}}" style="font-size:16px;opacity:0.5">
                                                             <span class="material-symbols-outlined">delete</span>
                                                         </a>
-                                                        @if($product->image!==null)
+                                                        @if($product->image)
                                                         @php
                                                             $images = explode(',', $product->image);
                                                             $product->image = $images[0];

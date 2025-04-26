@@ -829,7 +829,7 @@ $subTotal = session()->has('subTotal') ? session()->get('subTotal') : 0;
                          
                             
                         } else {
-                            $('#detailsModal .modal-image').html('<img src="https://placehold.co/550x550" alt="'+response.name+'"/>');
+                            $('#detailsModal .modal-image').html('<img src="src="{{ url('images/product/large/nullImage.jpg') }}" alt="'+response.name+'"/>');
                         }
 
                         if(response.in_stock == 1) {
