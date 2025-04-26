@@ -22957,6 +22957,17 @@
                 return;
             }
 
+            if (!$('#tnc').is(':checked')) {
+                Swal.fire({
+                    title: 'Terms & Conditions',
+                    text: 'You must agree to the Terms and Conditions before placing the order.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return; // Stop further code execution
+            }
+
+
             var payment_mode = $('input[name="payment_mode"]:checked').val(); // Get selected radio button value
 
             if (payment_mode == 'payhere') {
