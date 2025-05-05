@@ -15,7 +15,7 @@
                     <img loading="lazy" class="product-img"
                         data-src="{{ url('images/product/large/') }}/{{ $product->image }}" alt="{{ $product->name }}">
                 @else
-                    <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}"
+                    <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}"
                         alt="{{ $product->name }}">
                 @endif
             </a>

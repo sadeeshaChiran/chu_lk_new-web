@@ -72,9 +72,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>{{ trans('file.Biller') }} *</label>
-                                                    <select required id="biller_id" name="biller_id"
+                                                    <select required id="biller_id" name="biller_id" id="biller_id"
                                                         class="selectpicker form-control" data-live-search="true"
-                                                        data-live-search-style="begins" title="Select Biller...">
+                                                        title="Select Biller...">
                                                         @foreach ($lims_biller_list as $biller)
                                                             <option value="{{ $biller->id }}">
                                                                 {{ $biller->name . ' (' . $biller->company_name . ')' }}
@@ -755,13 +755,38 @@
 
 
                         <div class="form-group">
-                            <label>{{ trans('file.Address') }}</label>
+                            <label>{{ trans('file.Address') }} *</label>
                             <input type="text" name="address" class="form-control">
                         </div>
+
+                        {{-- <div class="form-group">
+                            <label>District *</label>
+                            <select required name="district" id="district" class="selectpicker form-control"
+                                data-live-search="true" title="Select District...">
+                                @foreach ($districts as $district)
+                                    <option value="{{ $district->id }}">
+                                        {{ $district->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div> --}}
                         <div class="form-group">
+                            <label>City *</label>
+                            <select required name="city" id="city" class="selectpicker form-control"
+                                data-live-search="true" title="Select City...">
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->name_en }}">
+                                        {{ $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
+                        {{-- <div class="form-group">
                             <label>{{ trans('file.City') }}</label>
                             <input type="text" name="city" class="form-control">
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <input type="hidden" name="pos" value="1">
                             <button type="button"
@@ -831,10 +856,22 @@
                             <input type="text" name="address" class="form-control"
                                 value="{{ $customer->address }}">
                         </div>
+
                         <div class="form-group">
                             <label>{{ trans('file.City') }}</label>
-                            <input type="text" name="city" class="form-control" value="{{ $customer->city }}">
+                            <select required name="city" id="city" class="selectpicker form-control"
+                                data-live-search="true" title="Select City...">
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->name_en }}"  @if ($city->name_en == $customer->city) selected @endif>
+                                        {{ $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                        {{-- <div class="form-group">
+                            <label>{{ trans('file.City') }}</label>
+                            <input type="text" name="city" class="form-control" value="{{ $customer->city }}">
+                        </div> --}}
                         <div class="form-group">
                             <input type="hidden" name="pos" value="1">
                             <button type="button"
@@ -896,6 +933,34 @@
     <script type="text/javascript">
         // $(document).on("change", "#customer_id", function() {
         //     localStorage.setItem("sale_customer_id", $(this).val());
+        // });
+
+
+        // const allCities = @json($cities);
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const districtSelect = document.getElementById('district');
+        //     const citySelect = document.getElementById('city');
+
+        //     districtSelect.addEventListener('change', function() {
+        //         const selectedDistrictId = this.value;
+
+        //         // Clear existing city options
+        //         citySelect.innerHTML = '';
+
+        //         // Filter cities by selected district ID
+        //         const filteredCities = allCities.filter(city => city.district_id == selectedDistrictId);
+
+        //         // Add new options
+        //         filteredCities.forEach(city => {
+        //             const option = document.createElement('option');
+        //             option.value = city.name_en;
+        //             option.text = city.name_en;
+        //             citySelect.appendChild(option);
+        //         });
+
+        //         // Refresh Bootstrap Select
+        //         $('.selectpicker').selectpicker('refresh');
+        //     });
         // });
 
         $(document).on("change", "#warehouse_id", function() {

@@ -21,6 +21,7 @@ use Spatie\Permission\Models\Permission;
 use App\Mail\CustomerCreate;
 use App\Mail\SupplierCreate;
 use App\Mail\CustomerDeposit;
+use App\Models\Cities;
 use Mail;
 use App\Models\CustomField;
 
@@ -251,7 +252,8 @@ class CustomerController extends Controller
         if ($role->hasPermissionTo('customers-add')) {
             $lims_customer_group_all = CustomerGroup::where('is_active', true)->get();
             $custom_fields = CustomField::where('belongs_to', 'customer')->get();
-            return view('backend.customer.create', compact('lims_customer_group_all', 'custom_fields'));
+            $cities = Cities::all();
+            return view('backend.customer.create', compact('lims_customer_group_all', 'custom_fields', 'cities'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }
@@ -376,8 +378,9 @@ class CustomerController extends Controller
             $lims_customer_data = Customer::find($id);
             $lims_customer_group_all = CustomerGroup::where('is_active', true)->get();
             $custom_fields = CustomField::where('belongs_to', 'customer')->get();
+            $cities = Cities::all();
 
-            return view('backend.customer.edit', compact('lims_customer_data', 'lims_customer_group_all', 'custom_fields'));
+            return view('backend.customer.edit', compact('lims_customer_data', 'lims_customer_group_all', 'custom_fields', 'cities'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }

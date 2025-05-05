@@ -65,7 +65,7 @@ $product->image = $images[0];
                     </div>
                 </div>
                 @else
-                <img src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $product->name }}"/>
+                <img src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $product->name }}"/>
                 @endif
             </div>
             <div class="col-md-6 offset-md-1 mt-5">

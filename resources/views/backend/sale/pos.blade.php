@@ -1578,8 +1578,20 @@
                                     </div>
                                     <div class="form-group">
                                         <label>{{ trans('file.City') }}</label>
-                                        <input type="text" name="city" required class="form-control">
+                                        <select required name="city" id="city" class="selectpicker form-control"
+                                            data-live-search="true" title="Select City...">
+                                            @foreach ($cities as $city)
+                                                <option value="{{ $city->name_en }}">
+                                                    {{ $city->name_en }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
+
+                                    {{-- <div class="form-group">
+                                        <label>{{ trans('file.City') }}</label>
+                                        <input type="text" name="city" required class="form-control">
+                                    </div> --}}
                                     <div class="form-group">
                                         <input type="hidden" name="pos" value="1">
                                         <button type="button"

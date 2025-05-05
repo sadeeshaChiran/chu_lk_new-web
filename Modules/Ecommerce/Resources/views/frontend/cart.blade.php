@@ -63,7 +63,7 @@
                                                     @endphp
                                                     @else
                                                         @php
-                                                            $cart_product['image'] = 'nullImage.jpg';
+                                                            $cart_product['image'] = 'nullImage1.jpg';
                                                         @endphp
                                                 @endif
                                                 <img src="{{ url('images/product/small') }}/{{ $cart_product['image'] }}" alt="{{ $cart_product['name'] }}"> 

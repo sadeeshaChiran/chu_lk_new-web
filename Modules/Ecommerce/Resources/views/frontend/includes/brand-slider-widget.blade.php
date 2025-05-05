@@ -23,7 +23,7 @@
                                     @if($brand->image)
                                         <img loading="lazy" class="category-img" data-src="{{ url('images/brand/') }}/{{ $brand->image }}" alt="{{ $brand->title }}">
                                     @else
-                                        <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $brand->title }}">
+                                        <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $brand->title }}">
                                     @endif
                                     </div>
                                 </div>

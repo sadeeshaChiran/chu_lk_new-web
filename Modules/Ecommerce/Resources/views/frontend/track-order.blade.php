@@ -129,7 +129,7 @@
                                             @endphp
                                             <img loading="lazy" class="product-img" data-src="{{ url('images/product/small/') }}/{{ $product->image }}" alt="{{ $product->name }}">
                                             @else
-                                            <img loading="lazy" class="product-img" src="{{ url('images/product/small/nullImage.jpg') }}" alt="{{ $product->name }}">
+                                            <img loading="lazy" class="product-img" src="{{ url('images/product/small/nullImage1.jpg') }}" alt="{{ $product->name }}">
                                             @endif
                                             {!! $product->name !!}
                                             @if($product->is_variant == 1)

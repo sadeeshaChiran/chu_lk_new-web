@@ -22649,7 +22649,7 @@
                                                     alt="{{ $cart_product['name'] }}">
                                             @endif
                                         @else
-                                            <img src="{{ url('images/product/small/nullImage.jpg') }}"
+                                            <img src="{{ url('images/product/small/nullImage1.jpg') }}"
                                                 alt="{{ $cart_product['name'] }}">
                                         @endif
                                     </div>

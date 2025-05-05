@@ -40,7 +40,7 @@
                         @if($cat->icon)
                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $cat->icon }}" alt="{{ $cat->name }}">
                         @else
-                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}">
+                            <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}">
                         @endif
                         <h3 class="product-name mr-3 ml-3 mt-3 mb-3">
                             {{ $cat->name }}
@@ -54,7 +54,7 @@
                         @if($category->icon)
                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $category->icon }}" alt="{{ $category->name }}">
                         @else
-                            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $category->name }}">
+                            <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $category->name }}">
                         @endif
                         <h3 class="product-name mr-3 ml-3 mt-3 mb-3">
                             {{ $category->name }}

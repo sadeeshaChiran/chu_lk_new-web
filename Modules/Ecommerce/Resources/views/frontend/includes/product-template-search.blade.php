@@ -8,7 +8,7 @@
             @endphp
             <img loading="lazy" class="product-img" data-src="{{ url('images/product/medium/') }}/{{ $product->image }}" alt="{{ $product->name }}">
             @else
-            <img loading="lazy" src="{{ url('images/product/large/nullImage.jpg') }}" alt="{{ $product->name }}">
+            <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $product->name }}">
             @endif
         </a>
     </div>

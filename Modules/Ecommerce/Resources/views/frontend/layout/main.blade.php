@@ -26107,7 +26107,7 @@
                                 variant = '(<span>' + value.variant.join(' | ') + '</span>)';
                                 id = value.id + '-' + value.variant.join('-')
                             }
-                            var imageSrc = image[0] ? '{{ url("/images/product/medium") }}/' + image[0] : '{{ url("images/product/large/nullImage.jpg") }}';
+                            var imageSrc = image[0] ? '{{ url("/images/product/medium") }}/' + image[0] : '{{ url("images/product/large/nullImage1.jpg") }}';
 
 var item = '<div class="shp__single__product" id="cart-item-' + id +
     '"><div class="shp__pro__thumb"><a href="{{ url('/product') }}/' +
@@ -26234,7 +26234,7 @@ $('.shp__cart__wrap').append(item);
 
                         } else {
                             $('#detailsModal .modal-image').html(
-                                '<img src="src="{{ url('images/product/large/nullImage.jpg') }}" alt="' +
+                                '<img src="src="{{ url('images/product/large/nullImage1.jpg') }}" alt="' +
                                 response.name + '"/>');
                         }
 
