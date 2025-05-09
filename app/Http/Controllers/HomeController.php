@@ -79,7 +79,7 @@ class HomeController extends Controller
         //making strict mode false for this query
         config()->set('database.connections.mysql.strict', false);
         DB::reconnect();
-        if(Auth::user()->role_id == 5) {
+        if(Auth::user()->role_id == 10) {
             $customer = Customer::select('id', 'points')->where('user_id', Auth::id())->first();
             $lims_sale_data = Sale::with('warehouse')->where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
             $lims_payment_data = DB::table('payments')
