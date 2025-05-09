@@ -23,6 +23,7 @@
                     <th>{{trans('file.Type')}}</th>
                     <th class="not-exported">{{trans('file.Initial File')}}</th>
                     <th class="not-exported">{{trans('file.Final File')}}</th>
+                    <th class="not-exported">Adjusted</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -85,6 +86,12 @@
                         <a download href="{{'stock_count/'.$stock_count->final_file}}" title="{{trans('file.Download')}}"><i class="dripicons-copy"></i></a>
                         @endif
                     </td>
+                    <td>
+                        @if($stock_count->is_adjusted)
+                            <div class="badge badge-success">Yes</div>
+                        @else
+                            <div class="badge badge-danger">No</div>
+                        @endif
                     <td>
                         @if($stock_count->final_file)
                             <div style="cursor: pointer;" class="badge badge-success final-report" data-stock_count='["{{date($general_setting->date_format, strtotime($stock_count->created_at->toDateString()))}}", "{{$stock_count->reference_no}}", "{{$warehouse->name}}", "{{$type}}", "{{implode(", ", $category_name)}}", "{{implode(", ", $brand_name)}}", "{{$initial_file}}", "{{$final_file}}", "{{$stock_count->id}}"]'>{{trans('file.Final Report')}}
@@ -339,7 +346,7 @@
         'columnDefs': [
             {
                 "orderable": false,
-                'targets': [0, 7, 8, 9]
+                'targets': [0, 7, 8]
             },
             {
                 'render': function(data, type, row, meta){

@@ -482,11 +482,12 @@ class CustomerController extends Controller
             //validate
             foreach ($header as $key => $value) {
                 $lheader = strtolower($value);
-                $escapedItem = preg_replace('/[^a-z]/', '', $lheader);
+                $escapedItem = preg_replace('/[^a-z0-9]/', '', $lheader);
                 array_push($escapedHeader, $escapedItem);
             }
 
             $mail_setting = MailSetting::latest()->first();
+
 
             //looping through othe columns
             while ($columns = fgetcsv($file)) {
@@ -495,14 +496,16 @@ class CustomerController extends Controller
                 foreach ($columns as $key => $value) {
                     $value = preg_replace('/\D/', '', $value);
                 }
+
                 $data = array_combine($escapedHeader, $columns);
                 $lims_customer_group_data = CustomerGroup::where('name', $data['customergroup'])->first();
                 $customer = Customer::firstOrNew(['name' => $data['name']]);
-                $customer->customer_group_id = $lims_customer_group_data->id;
+                $customer->customer_group_id = $lims_customer_group_data->id ?? 1;
                 $customer->name = $data['name'];
                 $customer->company_name = $data['companyname'];
                 $customer->email = $data['email'];
                 $customer->phone_number = $data['phonenumber'];
+                $customer->phone_number_2 = $data['phonenumber2'];
                 $customer->address = $data['address'];
                 $customer->city = $data['city'];
                 $customer->state = $data['state'];

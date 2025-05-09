@@ -196,6 +196,9 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::post('products/purchase-history-data', 'purchaseHistoryData');
         Route::post('products/sale-return-history-data', 'saleReturnHistoryData');
         Route::post('products/purchase-return-history-data', 'purchaseReturnHistoryData');
+        Route::post('products/adjustment-history-data', 'adjustmentHistoryData');
+        Route::post('products/transfer-history-data', 'transferHistoryData');
+
 
         Route::post('importproduct', 'importProduct')->name('product.import');
         Route::post('exportproduct', 'exportProduct')->name('product.export');
@@ -345,7 +348,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::get('sales/{id}/create', 'createSale')->name('sale.draft');
         Route::post('sales/deletebyselection', 'deleteBySelection');
         Route::get('sales/print-last-reciept', 'printLastReciept')->name('sales.printLastReciept');
-        Route::get('sales/today-sale', 'todaySale');
+        Route::get('sales/today-sale/', 'todaySale');
         Route::get('sales/today-profit/{warehouse_id}', 'todayProfit');
         Route::get('sales/check-discount', 'checkDiscount');
         Route::get('sales/get-sold-items/{id}', 'getSoldItem');
@@ -506,7 +509,9 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
             Route::post('sale_report_data', 'saleReportData');
             Route::get('challan-report', 'challanReport')->name('report.challan');
             Route::post('sale-report-chart', 'saleReportChart')->name('report.saleChart');
-            Route::post('payment_report_by_date', 'paymentReportByDate')->name('report.paymentByDate');
+            Route::post('sale_payment_report_by_date', 'salePaymentReportByDate')->name('report.salePaymentByDate');
+            Route::post('purchase_payment_report_by_date', 'purchasePaymentReportByDate')->name('report.purchasePaymentByDate');
+
             Route::post('warehouse_report', 'warehouseReport')->name('report.warehouse');
             Route::post('warehouse-sale-data', 'warehouseSaleData');
             Route::post('warehouse-purchase-data', 'warehousePurchaseData');
@@ -556,6 +561,9 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::post('user/deletebyselection', 'deleteBySelection');
         Route::get('user/notification', 'notificationUsers')->name('user.notification');
         Route::get('user/all', 'allUsers')->name('user.all');
+        Route::get('user/customer', 'customerUser')->name('user.customer');
+        Route::get('user/staff', 'staffUser')->name('user.staff');
+
     });
     Route::resource('user', UserController::class);
 

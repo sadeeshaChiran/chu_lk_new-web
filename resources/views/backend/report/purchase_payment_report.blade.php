@@ -5,7 +5,7 @@
             <div class="card-header mt-2">
                 <h3 class="text-center">{{trans('file.Payment Report')}}</h3>
             </div>
-            {!! Form::open(['route' => 'report.paymentByDate', 'method' => 'post']) !!}
+            {!! Form::open(['route' => 'report.purchasePaymentByDate', 'method' => 'post']) !!}
             <div class="col-md-6 offset-md-3 mt-3 mb-3">
                 <div class="form-group row">
                     <label class="d-tc mt-2"><strong>{{trans('file.Choose Your Date')}}</strong> &nbsp;</label>
@@ -31,7 +31,6 @@
                     <th class="not-exported"></th>
                     <th>{{trans('file.Date')}}</th>
                     <th>{{trans('file.Payment Reference')}} </th>
-                    <th>{{trans('file.Sale Reference')}}</th>
                     <th>{{trans('file.Purchase Reference')}}</th>
                     <th>{{trans('file.Paid By')}}</th>
                     <th>{{trans('file.Amount')}}</th>
@@ -49,7 +48,6 @@
                     <td></td>
                     <td>{{date($general_setting->date_format, strtotime($payment->created_at->toDateString())) . ' '. $payment->created_at->toTimeString()}}</td>
                     <td>{{$payment->payment_reference}}</td>
-                    <td>@if($sale){{$sale->reference_no}}@endif</td>
                     <td>@if($purchase){{$purchase->reference_no}}@endif</td>
                     <td>{{$payment->paying_method}}</td>
                     <td>{{$payment->amount}}</td>
@@ -77,7 +75,7 @@
 <script type="text/javascript">
     $("ul#report").siblings('a').attr('aria-expanded','true');
     $("ul#report").addClass("show");
-    $("ul#report li#payment-report-menu").addClass("active");
+    $("ul#report li#purchase-payment-report-menu").addClass("active");
 
     $('#report-table').DataTable( {
         "order": [],

@@ -118,12 +118,15 @@
                     <th  style="min-width: 300px;">{{ trans('file.product_list')}}</th>
                     <th>{{trans('file.Biller')}}</th>
                     <th>{{trans('file.customer')}}</th>
+                    <th>Courier Type</th>
+                    <th>Sale Type </th>
                     <th>{{trans('file.Sale Status')}}</th>
                     <th>{{trans('file.Payment Status')}}</th>
                     <th>{{trans('file.Payment Method')}}</th>
                     <th>{{trans('file.Delivery Status')}}</th>
                     <th>{{trans('Total Amount')}}</th>
                     <th>{{trans('Delivery Amount')}}</th>
+                    <th>{{trans('file.Discount')}}</th>
                     <th>{{trans('file.grand total')}}</th>
                     <th>{{trans('file.Returned Amount')}}</th>
                     <th>{{trans('file.Paid')}}</th>
@@ -152,7 +155,9 @@
                 <th></th>
                 <th></th>
                 <th></th>
-
+                <th></th>
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
                 @foreach($custom_fields as $fieldName)
@@ -612,7 +617,7 @@
     @endif
 
 
-    var columns = [{"data": "key"}, {"data": "action"},{"data": "date"}, {"data": "reference_no"},{"data": "waybill_id"},{"data": "product_list"}, {"data": "biller"}, {"data": "customer"}, {"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"},{"data": "total_amount"},{"data": "delivery_amount"},{"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
+    var columns = [{"data": "key"}, {"data": "action"},{"data": "date"}, {"data": "reference_no"},{"data": "waybill_id"},{"data": "product_list"}, {"data": "biller"}, {"data": "customer"}, {"data": "courier_name"},{"data": "sale_type"},{"data": "sale_status"}, {"data": "payment_status"},{"data": "payment_method"},{"data": "delivery_status"},{"data": "total_amount"},{"data": "delivery_amount"},{"data": "discount"}, {"data": "grand_total"}, {"data": "returned_amount"}, {"data": "paid_amount"}, {"data": "due"}];
     var field_name = <?php echo json_encode($field_name) ?>;
     for(i = 0; i < field_name.length; i++) {
         columns.push({"data": field_name[i]});
@@ -1242,20 +1247,25 @@
         if (dt_selector.rows( '.selected' ).any() && is_calling_first) {
             var rows = dt_selector.rows( '.selected' ).indexes();
 
-            $( dt_selector.column( 12 ).footer() ).html(dt_selector.cells( rows, 12, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
-            $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 14 ).footer() ).html(dt_selector.cells( rows, 14, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 15 ).footer() ).html(dt_selector.cells( rows, 15, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 16 ).footer() ).html(dt_selector.cells( rows, 16, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 17 ).footer() ).html(dt_selector.cells( rows, 17, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 18 ).footer() ).html(dt_selector.cells( rows, 18, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 19 ).footer() ).html(dt_selector.cells( rows, 19, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 20 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+
         }
         else {
-            $( dt_selector.column( 12 ).footer() ).html(dt_selector.cells( rows, 12, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 14 ).footer() ).html(dt_selector.cells( rows, 14, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 15 ).footer() ).html(dt_selector.cells( rows, 15, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 16 ).footer() ).html(dt_selector.cells( rows, 16, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 17 ).footer() ).html(dt_selector.cells( rows, 17, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 18 ).footer() ).html(dt_selector.cells( rows, 18, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 19 ).footer() ).html(dt_selector.cells( rows, 19, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 20 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            
         }
     }
 

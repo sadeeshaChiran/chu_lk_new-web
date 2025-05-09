@@ -20,6 +20,7 @@
                     <th>{{trans('file.Image')}}</th>
                     <th>{{trans('file.Supplier Details')}}</th>
                     <th>{{trans('file.Total Due')}}</th>
+                    <th>Over Due Amount</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -36,6 +37,14 @@
                     $purchaseData = App\Models\Purchase::where([
                                     ['supplier_id', $supplier->id],
                                     ['payment_status', 1]
+                                ])
+                                ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
+                                ->first();
+
+                    $purchaseDataBeforeDue = App\Models\Purchase::where([
+                                    ['supplier_id', $supplier->id],
+                                    ['payment_status', 1],
+                                    ['due_at', '<=', date('Y-m-d')]
                                 ])
                                 ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
                                 ->first();
@@ -62,6 +71,7 @@
                             @if($supplier->country){{','.$supplier->country}}@endif
                     </td>
                     <td>{{number_format($purchaseData->grand_total - $returned_amount - $purchaseData->paid_amount, 2)}}</td>
+                    <td>{{number_format((($purchaseData->grand_total - $returned_amount - $purchaseData->paid_amount) - $purchaseDataBeforeDue->grand_total), 2)}}</td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trans('file.action')}}
@@ -115,16 +125,56 @@
         </div>
         <div class="modal-body">
           <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
+          <div class="row">  
             <div class="form-group">
                 <input type="hidden" name="supplier_id">
+               
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Payment {{trans('file.Date')}}</label>
+                    <input type="text" name="created_at" class="form-control date" placeholder="Choose date"/>
+                </div>
+            </div>
+            <div class="col-md-6 mt-1">
                 <label>{{trans('file.Amount')}} *</label>
                 <input type="number" name="amount" step="any" class="form-control" required>
             </div>
-            <div class="form-group">
+            <div class="col-md-12 mt-1">
+                <label>{{trans('file.Paid By')}}</label>
+                <select name="paid_by_id" class="form-control" required>
+                    <option value="1">Cash</option>
+                    <option value="3">Credit Card</option>
+                    <option value="4">Cheque</option>
+                    <option value="5">Bank Transfer</option>
+                </select>
+            </div>
+           
+                <div id="cheque" class="col-md-12 mt-1" style="display: none;">
+                    <label>{{trans('file.Cheque Number')}} *</label>
+                    <input type="text" name="cheque_no" class="form-control">
+                </div>
+
+                <div class="col-md-12 mt-1">
+                    <label> {{trans('file.Account')}}</label>
+                    <select class="form-control selectpicker" name="account_id">
+                    @foreach($lims_account_list as $account)
+                        @if($account->is_default)
+                        <option selected value="{{$account->id}}">{{$account->name}} [{{$account->account_no}}]</option>
+                        @else
+                        <option value="{{$account->id}}">{{$account->name}} [{{$account->account_no}}]</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+            
+            <div class="col-md-12 mt-1">
                 <label>{{trans('file.Note')}}</label>
                 <textarea name="note" rows="4" class="form-control"></textarea>
             </div>
-            <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+        </div>
+            <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-3 col-md-12" id="submit-button">
+          
         </div>
         {!! Form::close() !!}
       </div>
@@ -194,6 +244,24 @@
 	    }
 	    return false;
 	}
+
+    $('select[name="paid_by_id"]').on("change", function() {
+        var id = $('select[name="paid_by_id"]').val();
+        $('input[name="cheque_no"]').attr('required', false);
+        $(".payment-form").off("submit");
+        if (id == 3) {
+            $.getScript( "vendor/stripe/checkout.js" );
+            $(".card-element").show();
+            $("#cheque").hide();
+        } else if (id == 4) {
+            $("#cheque").show();
+            $(".card-element").hide();
+            $('input[name="cheque_no"]').attr('required', true);
+        } else {
+            $(".card-element").hide();
+            $("#cheque").hide();
+        }
+    });
 
     $('#supplier-table').DataTable( {
         "order": [],

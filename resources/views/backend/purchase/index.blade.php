@@ -52,6 +52,7 @@
                             <option value="0">{{trans('file.All')}}</option>
                             <option value="1">{{trans('file.Due')}}</option>
                             <option value="2">{{trans('file.Paid')}}</option>
+                            {{-- <option value="3">{{trans('file.Pending')}}</option> --}}
                         </select>
                     </div>
                 </div>
@@ -74,6 +75,7 @@
                 <tr>
                     <th class="not-exported"></th>
                     <th>{{trans('file.Date')}}</th>
+                    <th>Due {{trans('file.Date')}}</th>
                     <th>{{trans('file.reference')}}</th>
                     <th>{{trans('file.Supplier')}}</th>
                     <th>{{trans('file.Purchase Status')}}</th>
@@ -81,6 +83,7 @@
                     <th>{{trans('file.Returned Amount')}}</th>
                     <th>{{trans('file.Paid')}}</th>
                     <th>{{trans('file.Due')}}</th>
+                    <th>Over Due Amount</th>
                     <th>{{trans('file.Payment Status')}}</th>
                     @foreach($custom_fields as $fieldName)
                     <th>{{$fieldName}}</th>
@@ -92,6 +95,8 @@
             <tfoot class="tfoot active">
                 <th></th>
                 <th>{{trans('file.Total')}}</th>
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -188,24 +193,31 @@
                 {!! Form::open(['route' => 'purchase.add-payment', 'method' => 'post', 'class' => 'payment-form' ]) !!}
                     <div class="row">
                         <input type="hidden" name="balance">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Payment {{trans('file.Date')}}</label>
+                                <input type="text" name="created_at" class="form-control date" placeholder="Choose date"/>
+                            </div>
+                        </div>
+                        {{-- <div class="col-md-6">
                             <label>{{trans('file.Recieved Amount')}} *</label>
                             <input type="text" name="paying_amount" class="form-control numkey"  step="any" required>
-                        </div>
+                        </div> --}}
                         <div class="col-md-6">
                             <label>{{trans('file.Paying Amount')}} *</label>
                             <input type="text" id="amount" name="amount" class="form-control"  step="any" required>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        {{-- <div class="col-md-6 mt-1">
                             <label>{{trans('file.Change')}} : </label>
                             <p class="change ml-2">{{number_format(0, $general_setting->decimal, '.', '')}}</p>
-                        </div>
+                        </div> --}}
                         <div class="col-md-6 mt-1">
                             <label>{{trans('file.Paid By')}}</label>
                             <select name="paid_by_id" class="form-control">
                                 <option value="1">Cash</option>
                                 <option value="3">Credit Card</option>
                                 <option value="4">Cheque</option>
+                                <option value="5">Bank Transfer</option>
                             </select>
                         </div>
                     </div>
@@ -256,24 +268,31 @@
             <div class="modal-body">
                 {!! Form::open(['route' => 'purchase.update-payment', 'method' => 'post', 'class' => 'payment-form' ]) !!}
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Payment {{trans('file.Date')}}</label>
+                                <input type="text" name="edit_created_at" class="form-control date" placeholder="Choose date"/>
+                            </div>
+                        </div>
+                        {{-- <div class="col-md-6">
                             <label>{{trans('file.Recieved Amount')}} *</label>
                             <input type="text" name="edit_paying_amount" class="form-control numkey"  step="any" required>
-                        </div>
+                        </div> --}}
                         <div class="col-md-6">
                             <label>{{trans('file.Paying Amount')}} *</label>
                             <input type="text" name="edit_amount" class="form-control"  step="any" required>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        {{-- <div class="col-md-6 mt-1">
                             <label>{{trans('file.Change')}} : </label>
                             <p class="change ml-2">{{number_format(0, $general_setting->decimal, '.', '')}}</p>
-                        </div>
+                        </div> --}}
                         <div class="col-md-6 mt-1">
                             <label>{{trans('file.Paid By')}}</label>
                             <select name="edit_paid_by_id" class="form-control selectpicker">
                                 <option value="1">Cash</option>
                                 <option value="3">Credit Card</option>
                                 <option value="4">Cheque</option>
+                                <option value="5">Bank Transfer</option>
                             </select>
                         </div>
                     </div>
@@ -346,6 +365,7 @@
     var columns = [
         {"data": "key"},
         {"data": "date"},
+        {"data": "due_date"},
         {"data": "reference_no"},
         {"data": "supplier"},
         {"data": "purchase_status"},
@@ -353,6 +373,7 @@
         {"data": "returned_amount"},
         {"data": "paid_amount"},
         {"data": "due"},
+        {"data": "is_over_due_amount"},
         {"data": "payment_status"}
     ];
 
@@ -410,17 +431,21 @@
         a.print();
     });
 
+    // $(document).on("input", "input[name='amount']", function(){
+    //     $('input[name="paying_amount"]').val($('input[name="amount"]').val());
+    // });
+
     $(document).on("click", "table.purchase-list tbody .add-payment", function(event) {
         $("#cheque").hide();
         $(".card-element").hide();
         $('select[name="paid_by_id"]').val(1);
         rowindex = $(this).closest('tr').index();
         var purchase_id = $(this).data('id').toString();
-        var balance = $('table.purchase-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(9)').text();
+        var balance = $('table.purchase-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(10)').text();
         balance = parseFloat(balance.replace(/,/g, ''));
         $('input[name="amount"]').val(balance);
-        $('input[name="balance"]').val(balance);
-        $('input[name="paying_amount"]').val(balance);
+        // $('input[name="balance"]').val(balance);
+        // $('input[name="paying_amount"]').val(balance);
         $('input[name="purchase_id"]').val(purchase_id);
     });
 
@@ -444,6 +469,8 @@
             $.each(payment_date, function(index){
                 var newRow = $("<tr>");
                 var cols = '';
+
+                console.log(payment_date[index]);
 
                 cols += '<td>' + payment_date[index] + '</td>';
                 cols += '<td>' + payment_reference[index] + '</td>';
@@ -491,10 +518,10 @@
                     $('input[name="edit_cheque_no"]').val(cheque_no[index]);
                     $('input[name="edit_cheque_no"]').attr('required', true);
                 }
+                $('input[name="edit_created_at"]').val(payment_date[index].split(' ')[0]);
                 $('input[name="edit_date"]').val(payment_date[index]);
                 $("#payment_reference").html(payment_reference[index]);
                 $('input[name="edit_amount"]').val(paid_amount[index]);
-                $('input[name="edit_paying_amount"]').val(paying_amount[index]);
                 $('.change').text(change[index]);
                 $('textarea[name="edit_payment_note"]').val(payment_note[index]);
                 return false;
@@ -522,20 +549,22 @@
         }
     });
 
-    $('input[name="paying_amount"]').on("input", function() {
-        $(".change").text(parseFloat( $(this).val() - $('input[name="amount"]').val() ).toFixed({{$general_setting->decimal}}));
-    });
+    // $('input[name="paying_amount"]').on("input", function() {
+    //     $(".change").text(parseFloat( $(this).val() - $('input[name="amount"]').val() ).toFixed({{$general_setting->decimal}}));
+    // });
 
     $('input[name="amount"]').on("input", function() {
-        if( $(this).val() > parseFloat($('input[name="paying_amount"]').val()) ) {
-            alert('Paying amount cannot be bigger than recieved amount');
-            $(this).val('');
-        }
-        else if( $(this).val() > parseFloat($('input[name="balance"]').val()) ) {
+
+        // if( $(this).val() > parseFloat($('input[name="paying_amount"]').val()) ) {
+        //     alert('Paying amount cannot be bigger than recieved amount');
+        //     $(this).val('');
+        // } else 
+        
+        if( $(this).val() > parseFloat($('input[name="balance"]').val()) ) {
             alert('Paying amount cannot be bigger than due amount');
             $(this).val('');
         }
-        $(".change").text(parseFloat($('input[name="paying_amount"]').val() - $(this).val()).toFixed({{$general_setting->decimal}}));
+        // $(".change").text(parseFloat($('input[name="paying_amount"]').val() - $(this).val()).toFixed({{$general_setting->decimal}}));
     });
 
     $('select[name="edit_paid_by_id"]').on("change", function() {
@@ -557,17 +586,19 @@
         }
     });
 
-    $('input[name="edit_amount"]').on("input", function() {
-        if( $(this).val() > parseFloat($('input[name="edit_paying_amount"]').val()) ) {
-            alert('Paying amount cannot be bigger than recieved amount');
-            $(this).val('');
-        }
-        $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(this).val()).toFixed({{$general_setting->decimal}}));
-    });
+    // $('input[name="edit_amount"]').on("input", function() {
+    //     if( $(this).val() > parseFloat($('input[name="edit_paying_amount"]').val()) ) {
+    //         alert('Paying amount cannot be bigger than recieved amount');
+    //         $(this).val('');
+    //     }
+        
+    //     $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(this).val()).toFixed({{$general_setting->decimal}}));
+    // });
 
-    $('input[name="edit_paying_amount"]').on("input", function() {
-        $(".change").text(parseFloat( $(this).val() - $('input[name="edit_amount"]').val() ).toFixed({{$general_setting->decimal}}));
-    });
+    // $('input[name="edit_paying_amount"]').on("input", function() {
+    //     $(".change").text(parseFloat( $(this).val() - $('input[name="edit_amount"]').val() ).toFixed({{$general_setting->decimal}}));
+    // });
+
 
     $('#purchase-table').DataTable( {
         "processing": true,
@@ -607,7 +638,7 @@
         'columnDefs': [
             {
                 "orderable": false,
-                'targets': [0, 3, 4, 7, 8, 9, 10]
+                'targets': [0, 3, 4, 7, 8, 9, 10, 11]
             },
             {
                 'render': function(data, type, row, meta){
@@ -734,16 +765,18 @@
         if (dt_selector.rows( '.selected' ).any() && is_calling_first) {
             var rows = dt_selector.rows( '.selected' ).indexes();
 
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+
         }
         else {
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 8 ).footer() ).html(dt_selector.column( 8, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+
         }
     }
 
@@ -856,18 +889,19 @@
     }
 
     $(document).on('submit', '.payment-form', function(e) {
-        if( $('input[name="paying_amount"]').val() < parseFloat($('#amount').val()) ) {
-            alert('Paying amount cannot be bigger than recieved amount');
-            $('input[name="amount"]').val('');
-            $(".change").text(parseFloat( $('input[name="paying_amount"]').val() - $('#amount').val() ).toFixed({{$general_setting->decimal}}));
-            e.preventDefault();
-        }
-        else if( $('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]').val()) ) {
-            alert('Paying amount cannot be bigger than recieved amount');
-            $('input[name="edit_amount"]').val('');
-            $(".change").text(parseFloat( $('input[name="edit_paying_amount"]').val() - $('input[name="edit_amount"]').val() ).toFixed({{$general_setting->decimal}}));
-            e.preventDefault();
-        }
+
+        // if( $('input[name="paying_amount"]').val() < parseFloat($('#amount').val()) ) {
+        //     alert('Paying amount cannot be bigger than recieved amount');
+        //     $('input[name="amount"]').val('');
+        //     $(".change").text(parseFloat( $('input[name="paying_amount"]').val() - $('#amount').val() ).toFixed({{$general_setting->decimal}}));
+        //     e.preventDefault();
+        // }
+        // else if( $('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]').val()) ) {
+        //     alert('Paying amount cannot be bigger than recieved amount');
+        //     $('input[name="edit_amount"]').val('');
+        //     $(".change").text(parseFloat( $('input[name="edit_paying_amount"]').val() - $('input[name="edit_amount"]').val() ).toFixed({{$general_setting->decimal}}));
+        //     e.preventDefault();
+        // }
 
         $('#edit-payment select[name="edit_paid_by_id"]').prop('disabled', false);
     });

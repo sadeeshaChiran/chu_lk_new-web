@@ -131,7 +131,7 @@ class ReturnController extends Controller
                 ->orderBy($order,$dir);
             if(Auth::user()->role_id > 2 && config('staff_access') == 'own') {
                 $returnss =  $q->select('returns.*')
-                            ->with('biller', 'customer', 'warehouse', 'user')
+                            ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip.user')
                             ->where('returns.user_id', Auth::id())
                             ->orwhere([
                                 ['returns.reference_no', 'LIKE', "%{$search}%"],
@@ -171,7 +171,7 @@ class ReturnController extends Controller
             }
             elseif(Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
                 $returnss =  $q->select('returns.*')
-                            ->with('biller', 'customer', 'warehouse', 'user')
+                            ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip.user')
                             ->where('returns.user_id', Auth::id())
                             ->orwhere([
                                 ['returns.reference_no', 'LIKE', "%{$search}%"],
@@ -211,7 +211,7 @@ class ReturnController extends Controller
             }
             else {
                 $returnss =  $q->select('returns.*')
-                            ->with('biller', 'customer', 'warehouse', 'user')
+                            ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip.user')
                             ->orwhere('returns.reference_no', 'LIKE', "%{$search}%")
                             ->orwhere('customers.name', 'LIKE', "%{$search}%")
                             ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
@@ -246,6 +246,8 @@ class ReturnController extends Controller
                 $nestedData['warehouse'] = $returns->warehouse->name;
                 $nestedData['biller'] = $returns->biller->name;
                 $nestedData['customer'] = $returns->customer->name;
+                $nestedData['return_user'] = $returns->user->name;
+                $nestedData['packing_slip_user'] = $returns->packingSlip->user->name ?? 'N/A';
                 $nestedData['grand_total'] = number_format($returns->grand_total, config('decimal'));
                 $nestedData['options'] = '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.trans("file.action").'

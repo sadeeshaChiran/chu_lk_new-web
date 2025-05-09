@@ -13,3 +13,7 @@ ALTER TABLE `customers` ADD `phone_number_2` VARCHAR(191) NULL DEFAULT NULL AFTE
 -- 2025/02/06
 ALTER TABLE `customer_addresses` CHANGE `country` `country` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
 ALTER TABLE `payment_with_credit_card` CHANGE `charge_id` `charge_id` VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+
+--2025/02/07
+ALTER TABLE `purchases` ADD `due_at` TIMESTAMP NULL AFTER `note`;

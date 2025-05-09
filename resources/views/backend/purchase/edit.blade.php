@@ -24,6 +24,12 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
+                                            <label>Due {{trans('file.Date')}}</label>
+                                            <input type="text" name="due_at" class="form-control date" value="{{date($general_setting->date_format, strtotime($lims_purchase_data->due_at))}}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
                                             <label>{{trans('file.Reference No')}}</label>
                                             <p><strong>{{ $lims_purchase_data->reference_no }}</strong> </p>
                                         </div>

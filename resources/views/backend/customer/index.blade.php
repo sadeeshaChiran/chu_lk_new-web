@@ -50,7 +50,7 @@
         </div>
         <div class="modal-body">
           <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
-           <p>{{trans('file.The correct column order is')}} (customer_group*, name*, company_name, email, phone_number*, address*, city*, state, postal_code, country) {{trans('file.and you must follow this')}}.</p>
+           <p>{{trans('file.The correct column order is')}} (customer_group*, name*, company_name, email, phone_number*,phone_number_2, address*, city*, state, postal_code, country) {{trans('file.and you must follow this')}}.</p>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">

@@ -156,7 +156,7 @@ class PackingSlipController extends Controller
             'client_id' => '2993',
             'order_id' => $sale_id,
             'parcel_weight' => (float) $weight,
-            'parcel_description' => 'api sample',
+            'parcel_description' => $data['description'],
             'recipient_name' => $recipient_name,
             'recipient_contact_1' => $recipient_contact_1,
             'recipient_contact_2' => $recipient_contact_2,
@@ -196,7 +196,10 @@ class PackingSlipController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['is_exchange'] = Sale::where('id', $data['sale_id'])->first()->is_exchange;
+        $sale = Sale::where('id', $data['sale_id'])->first();
+
+        $data['is_exchange'] = $sale->is_exchange;
+        $data['description'] = $sale->sale_note;
         $waybill_id = null;
         $courier_id = $data['courier_id'];
         $user_id = \Auth::id();

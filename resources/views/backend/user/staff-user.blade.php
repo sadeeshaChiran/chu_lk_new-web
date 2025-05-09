@@ -85,7 +85,7 @@
 
     $("ul#people").siblings('a').attr('aria-expanded','true');
     $("ul#people").addClass("show");
-    $("ul#people #user-list-menu").addClass("active");
+    $("ul#people #staff-user-list-menu").addClass("active");
 
     @if(config('database.connections.saleprosaas_landlord'))
         if(localStorage.getItem("message")) {

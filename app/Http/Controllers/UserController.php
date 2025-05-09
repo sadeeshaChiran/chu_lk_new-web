@@ -24,20 +24,36 @@ class UserController extends Controller
 {
     use \App\Traits\MailInfo;
 
-    public function index()
+    public function customerUser()
     {
         $role = Role::find(Auth::user()->role_id);
         if($role->hasPermissionTo('users-index')){
             $permissions = Role::findByName($role->name)->permissions;
             foreach ($permissions as $permission)
                 $all_permission[] = $permission->name;
-            $lims_user_list = User::where('is_deleted', false)->get();
+            $lims_user_list = User::where('is_deleted', false)->where('role_id', 10)->get();
             $numberOfUserAccount = User::where('is_active', true)->count();
-            return view('backend.user.index', compact('lims_user_list', 'all_permission', 'numberOfUserAccount'));
+            return view('backend.user.customer-user', compact('lims_user_list', 'all_permission', 'numberOfUserAccount'));
         }
         else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }
+
+    public function staffUser()
+    {
+        $role = Role::find(Auth::user()->role_id);
+        if($role->hasPermissionTo('users-index')){
+            $permissions = Role::findByName($role->name)->permissions;
+            foreach ($permissions as $permission)
+                $all_permission[] = $permission->name;
+            $lims_user_list = User::where('is_deleted', false)->whereNot('role_id', 10)->get();
+            $numberOfUserAccount = User::where('is_active', true)->count();
+            return view('backend.user.staff-user', compact('lims_user_list', 'all_permission', 'numberOfUserAccount'));
+        }
+        else
+            return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
+    }
+
 
     public function create()
     {

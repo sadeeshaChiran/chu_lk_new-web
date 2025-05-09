@@ -165,7 +165,12 @@ class TransferController extends Controller
                 $nestedData['total_cost'] = number_format($transfer->total_cost, config('decimal'));
                 $nestedData['total_tax'] = number_format($transfer->total_tax, config('decimal'));
                 $nestedData['grand_total'] = number_format($transfer->grand_total, config('decimal'));
-
+                $nestedData['product_list'] = '<ul class="list-disc  pl-1 m-0">';
+                $product_Sale = ProductTransfer::with('product')->where('transfer_id', $transfer->id)->get();
+                foreach ($product_Sale as $index => $product) {
+                    $nestedData['product_list'] .= '<li class="ml-0">' . $product->product->name . ' x ' . $product->qty . '' . '</li>';
+                }
+                $nestedData['product_list'] .= '</ul>';
                 if($transfer->is_sent == 1) {
                     $nestedData['is_sent'] = '<div class="badge badge-success">'.trans('file.Yes').'</div>';
                     $status = trans('file.Yes');

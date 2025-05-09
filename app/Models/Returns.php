@@ -30,4 +30,15 @@ class Returns extends Model
     {
     	return $this->belongsTo('App\Models\User');
     }
+
+    public function packingSlip()
+    {
+    	return $this->belongsTo('App\Models\PackingSlip', 'sale_id', 'sale_id');
+    }
+
+    public function sale()
+{
+    return $this->belongsTo(Sale::class);
+}
+
 }

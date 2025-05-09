@@ -16,50 +16,66 @@ class CashRegisterController extends Controller
 	{
 		if (Auth::user()->role_id <= 2) {
 			$lims_cash_register_all = CashRegister::with('user', 'warehouse')->get();
-	
+
 			foreach ($lims_cash_register_all as $register) {
-				$total_sale_amount = Sale::where([
-					['cash_register_id', $register->id],
-					['sale_status', 1]
-				])->sum('grand_total');
-	
+
+				$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
+					->whereIn('sale_status', [1, 4])
+					->sum('grand_total');
+
 				$total_payment = Payment::where('cash_register_id', $register->id)->sum('amount');
-	
+
 				$cash_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Cash']
 				])->sum('amount');
-	
+
 				$credit_card_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Credit Card']
 				])->sum('amount');
-	
+
 				$gift_card_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Gift Card']
 				])->sum('amount');
-	
+
 				$deposit_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Deposit']
 				])->sum('amount');
-	
+
 				$cheque_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Cheque']
 				])->sum('amount');
-	
+
 				$paypal_payment = Payment::where([
 					['cash_register_id', $register->id],
 					['paying_method', 'Paypal']
 				])->sum('amount');
-	
+
 				$total_sale_return = Returns::where('cash_register_id', $register->id)->sum('grand_total');
 				$total_expense = Expense::where('cash_register_id', $register->id)->sum('amount');
-	
-				$total_cash = $register->cash_in_hand + $cash_payment - ($total_sale_return + $total_expense);
-	
+
+				
+				$cash_payment_received = Payment::where('cash_register_id', $register->id)
+					->whereNotNull('sale_id')
+					->where('paying_method', 'Cash')
+					->sum('amount');
+					$cash_payment_paid = Payment::where('cash_register_id', $register->id)
+					->whereNotNull('purchase_id')
+					->where('paying_method', 'Cash')
+					->sum('amount');
+
+				$cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
+				->whereHas('sale', function ($query) {
+					$query->where('payment_status', 4);
+				})
+				->sum('grand_total');
+				$total_cash = $register->cash_in_hand + ($cash_payment_received - $cash_payment_paid) - ($cash_total_sale_return + $total_expense);
+
+
 				// Inject custom attributes into the model
 				$register->total_sale_amount = $total_sale_amount;
 				$register->total_payment = $total_payment;
@@ -73,14 +89,14 @@ class CashRegisterController extends Controller
 				$register->total_expense = $total_expense;
 				$register->total_cash = $total_cash;
 			}
-	
+
 			return view('backend.cash_register.index', compact('lims_cash_register_all'));
 		} else {
 			return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
 		}
 	}
-	
-	
+
+
 	public function store(Request $request)
 	{
 		$data = $request->all();
@@ -98,38 +114,74 @@ class CashRegisterController extends Controller
 		$data['closing_balance'] = $cash_register_data->closing_balance;
 		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
 
-		$data['total_sale_amount'] = Sale::where([
-										['cash_register_id', $cash_register_data->id],
-										['sale_status', 1]
-									])->sum('grand_total');
-		$data['total_payment'] = Payment::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['cash_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Cash']
-								])->sum('amount');
-		$data['credit_card_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Credit Card']
-								])->sum('amount');
+		$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
+			->whereIn('sale_status', [1, 4])
+			->sum('grand_total');
+		// INCOME SIDE (Received)
+		$data['total_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->sum('amount');
+
+		$data['cash_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Cash')
+			->sum('amount');
+
+		$data['credit_card_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Credit Card')
+			->sum('amount');
+
+		$data['bank_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Bank Transfer')
+			->sum('amount');
+
+		// EXPENSE SIDE (Paid)
+		$data['total_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->sum('amount');
+
+		$data['cash_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Cash')
+			->sum('amount');
+
+		$data['credit_card_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Credit Card')
+			->sum('amount');
+
+		$data['bank_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Bank Transfer')
+			->sum('amount');
+
+
 		$data['gift_card_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Gift Card']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Gift Card']
+		])->sum('amount');
 		$data['deposit_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Deposit']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Deposit']
+		])->sum('amount');
 		$data['cheque_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Cheque']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Cheque']
+		])->sum('amount');
 		$data['paypal_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Paypal']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Paypal']
+		])->sum('amount');
 		$data['total_sale_return'] = Returns::where('cash_register_id', $cash_register_data->id)->sum('grand_total');
+		$cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
+			->whereHas('sale', function ($query) {
+				$query->where('payment_status', 4);
+			})
+			->sum('grand_total');
 		$data['total_expense'] = Expense::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['total_cash'] = $data['cash_in_hand'] + $data['cash_payment'] - ($data['total_sale_return'] + $data['total_expense']);
+		$data['total_cash'] = $data['cash_in_hand'] + ($data['cash_payment_received'] - $data['cash_payment_paid']) - ($cash_total_sale_return + $data['total_expense']);
 		$data['status'] = $cash_register_data->status;
 		return $data;
 	}
@@ -137,47 +189,105 @@ class CashRegisterController extends Controller
 	public function showDetails($warehouse_id)
 	{
 		$cash_register_data = CashRegister::where([
-					    		['user_id', Auth::id()],
-					    		['warehouse_id', $warehouse_id],
-					    		['status', true]
-					    	])->first();
+			['user_id', Auth::id()],
+			['warehouse_id', $warehouse_id],
+			['status', true]
+		])->first();
+		
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
 		$data['closing_balance'] = $cash_register_data->closing_balance;
 		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
 
-		$data['total_sale_amount'] = Sale::where([
-										['cash_register_id', $cash_register_data->id],
-										['sale_status', 1]
-									])->sum('grand_total');
-		$data['total_payment'] = Payment::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['cash_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Cash']
-								])->sum('amount');
-		$data['credit_card_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Credit Card']
-								])->sum('amount');
+		$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
+    ->whereIn('sale_status', [1, 4])
+    ->sum('grand_total');
+
+		// $sales = Sale::where('cash_register_id', $cash_register_data->id)->get();
+	
+		// $total_sale_amount = 0;
+		
+		// foreach ($sales as $sale) {
+		// 	$totalQty = $sale->total_qty;
+		
+		// 	$returned = Returns::where('sale_id', $sale->id)->first();
+		
+		// 	if ($returned) {
+		// 		if ($returned->total_qty < $totalQty) {
+		// 			$total_sale_amount = $sale->grand_total - $returned->grand_total;
+		// 		}
+		// 	}else {
+		// 		$total_sale_amount += $sale->grand_total;
+		// 	}
+
+		// }
+
+
+		// INCOME SIDE (Received)
+		$data['total_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->sum('amount');
+
+		$data['cash_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Cash')
+			->sum('amount');
+
+		$data['credit_card_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Credit Card')
+			->sum('amount');
+
+		$data['bank_payment_received'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('sale_id')
+			->where('paying_method', 'Bank Transfer')
+			->sum('amount');
+
+		// EXPENSE SIDE (Paid)
+		$data['total_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->sum('amount');
+
+		$data['cash_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Cash')
+			->sum('amount');
+
+		$data['credit_card_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Credit Card')
+			->sum('amount');
+
+		$data['bank_payment_paid'] = Payment::where('cash_register_id', $cash_register_data->id)
+			->whereNotNull('purchase_id')
+			->where('paying_method', 'Bank Transfer')
+			->sum('amount');
+
 		$data['gift_card_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Gift Card']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Gift Card']
+		])->sum('amount');
 		$data['deposit_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Deposit']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Deposit']
+		])->sum('amount');
 		$data['cheque_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Cheque']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Cheque']
+		])->sum('amount');
 		$data['paypal_payment'] = Payment::where([
-									['cash_register_id', $cash_register_data->id],
-									['paying_method', 'Paypal']
-								])->sum('amount');
+			['cash_register_id', $cash_register_data->id],
+			['paying_method', 'Paypal']
+		])->sum('amount');
+
 		$data['total_sale_return'] = Returns::where('cash_register_id', $cash_register_data->id)->sum('grand_total');
+		$cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
+			->whereHas('sale', function ($query) {
+				$query->where('payment_status', 4);
+			})
+			->sum('grand_total');
 		$data['total_expense'] = Expense::where('cash_register_id', $cash_register_data->id)->sum('amount');
-		$data['total_cash'] = $data['cash_in_hand'] + $data['cash_payment'] - ($data['total_sale_return'] + $data['total_expense']);
+		$data['total_cash'] = $data['cash_in_hand'] + ($data['cash_payment_received'] - $data['cash_payment_paid']) - ($cash_total_sale_return + $data['total_expense']);
 		$data['id'] = $cash_register_data->id;
 		return $data;
 	}
@@ -193,16 +303,16 @@ class CashRegisterController extends Controller
 		return redirect()->back()->with('message', 'Cash register closed successfully');
 	}
 
-    public function checkAvailability($warehouse_id)
-    {
-    	$open_register_number = CashRegister::where([
-						    		['user_id', Auth::id()],
-						    		['warehouse_id', $warehouse_id],
-						    		['status', true]
-						    	])->count();
-    	if($open_register_number)
-    		return 'true';
-    	else
-    		return 'false';
-    }
+	public function checkAvailability($warehouse_id)
+	{
+		$open_register_number = CashRegister::where([
+			['user_id', Auth::id()],
+			['warehouse_id', $warehouse_id],
+			['status', true]
+		])->count();
+		if ($open_register_number)
+			return 'true';
+		else
+			return 'false';
+	}
 }

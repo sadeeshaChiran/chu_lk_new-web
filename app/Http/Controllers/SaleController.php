@@ -793,6 +793,7 @@ class SaleController extends Controller
         if (!empty($sales)) {
             foreach ($sales as $key => $sale) {
 
+
                 $nestedData['id'] = $sale->id;
                 $nestedData['key'] = $key;
                 $nestedData['date'] = date(config('date_format') . ' h:i:s', strtotime($sale->created_at));
@@ -842,6 +843,14 @@ class SaleController extends Controller
                     $sale_status = trans('file.Processing');
                 }
 
+                if ($sale->sale_type == 'online')
+                    $nestedData['sale_type'] = '<div class="badge badge-primary">' . trans('file.Online') . '</div>';
+                else if ($sale->sale_type == 'website')
+                    $nestedData['sale_type'] = '<div class="badge badge-success">' . trans('file.Website') . '</div>';
+                else if ($sale->sale_type == 'wholesale')
+                    $nestedData['sale_type'] = '<div class="badge badge-secondary ">' . trans('Wholesale') . '</div>';
+
+
                 if ($sale->payment_status == 1)
                     $nestedData['payment_status'] = '<div class="badge badge-danger">' . trans('file.Pending') . '</div>';
                 elseif ($sale->payment_status == 2)
@@ -861,11 +870,13 @@ class SaleController extends Controller
                 } else
                     $nestedData['delivery_status'] = 'N/A';
 
+                $nestedData['courier_name'] = $sale->delivery_type;
 
                 $nestedData['total_amount'] = number_format($sale->total_price, config('decimal'));
                 $nestedData['delivery_amount'] = number_format($sale->shipping_cost, config('decimal'));
                 $nestedData['grand_total'] = number_format($sale->grand_total, config('decimal'));
                 //$nestedData['grand_total'] = \Illuminate\Support\Number::format($sale->grand_total, locale: 'id');
+                $nestedData['discount'] = number_format($sale->total_discount, config('decimal'));
                 $returned_amount = DB::table('returns')->where('sale_id', $sale->id)->sum('grand_total');
                 $nestedData['returned_amount'] = number_format($returned_amount, config('decimal'));
                 $nestedData['paid_amount'] = number_format($sale->paid_amount, config('decimal'));
@@ -3638,14 +3649,58 @@ class SaleController extends Controller
 
     public function todaySale()
     {
-        $data['total_sale_amount'] = Sale::whereDate('created_at', date("Y-m-d"))->sum('grand_total');
-        $data['total_payment'] = Payment::whereDate('created_at', date("Y-m-d"))->sum('amount');
-        $data['cash_payment'] = Payment::where([
-            ['paying_method', 'Cash']
-        ])->whereDate('created_at', date("Y-m-d"))->sum('amount');
-        $data['credit_card_payment'] = Payment::where([
-            ['paying_method', 'Credit Card']
-        ])->whereDate('created_at', date("Y-m-d"))->sum('amount');
+
+        $cash_register_data = CashRegister::where([
+			['status', true]
+		])->first();
+		
+
+		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
+
+        $data['total_sale_amount'] = Sale::whereDate('created_at', date("Y-m-d"))->whereIn('sale_status', [1, 4])->sum('grand_total');
+
+
+        // INCOME SIDE (Received)
+        $data['total_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('sale_id')
+        ->sum('amount');
+
+        $data['cash_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('sale_id')
+        ->where('paying_method', 'Cash')
+        ->sum('amount');
+
+        $data['credit_card_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('sale_id')
+        ->where('paying_method', 'Credit Card')
+        ->sum('amount');
+
+        $data['bank_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('sale_id')
+        ->where('paying_method', 'Bank Transfer')
+        ->sum('amount');
+
+        // EXPENSE SIDE (Paid)
+        $data['total_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('purchase_id')
+        ->sum('amount');
+
+        $data['cash_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('purchase_id')
+        ->where('paying_method', 'Cash')
+        ->sum('amount');
+
+        $data['credit_card_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('purchase_id')
+        ->where('paying_method', 'Credit Card')
+        ->sum('amount');
+
+        $data['bank_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
+        ->whereNotNull('purchase_id')
+        ->where('paying_method', 'Bank Transfer')
+        ->sum('amount');
+
+
         $data['gift_card_payment'] = Payment::where([
             ['paying_method', 'Gift Card']
         ])->whereDate('created_at', date("Y-m-d"))->sum('amount');
@@ -3659,10 +3714,17 @@ class SaleController extends Controller
             ['paying_method', 'Paypal']
         ])->whereDate('created_at', date("Y-m-d"))->sum('amount');
         $data['total_sale_return'] = Returns::whereDate('created_at', date("Y-m-d"))->sum('grand_total');
+        $cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
+			->whereHas('sale', function ($query) {
+				$query->where('payment_status', 4);
+			})
+			->sum('grand_total');
         $data['total_expense'] = Expense::whereDate('created_at', date("Y-m-d"))->sum('amount');
-        $data['total_cash'] = $data['total_payment'] - ($data['total_sale_return'] + $data['total_expense']);
+		$data['total_cash'] = $data['cash_in_hand'] + ($data['cash_payment_received'] - $data['cash_payment_paid']) - ($cash_total_sale_return + $data['total_expense']);
         return $data;
     }
+
+
 
     public function todayProfit($warehouse_id)
     {

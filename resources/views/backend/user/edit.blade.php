@@ -109,8 +109,11 @@
 <script type="text/javascript">
     $("ul#people").siblings('a').attr('aria-expanded','true');
     $("ul#people").addClass("show");
-    $('#biller-id').hide();
-    $('#warehouseId').hide();
+
+    $(document).ready(function() {
+        $('#warehouseId').hide();
+        $('#biller-id').hide();
+    });
 
 
 

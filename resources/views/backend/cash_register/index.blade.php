@@ -61,7 +61,8 @@
                             <td>{{ $cash_register->total_cash }}</td>
                             <td>{{ $cash_register->next_day_opening_balance }}</td>
                             <td>{{ $cash_register->closing_balance }}</td>
-                            <td>{{  ($cash_register->closing_balance + $cash_register->next_day_opening_balance) - $cash_register->total_cash}}</td>
+                            <td>{{ $cash_register->closing_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}
+                            </td>
 
                             @if ($cash_register->note)
                                 <td>{{ $cash_register->note }}</td>
@@ -113,24 +114,60 @@
                                     <tbody>
                                         <tr>
                                             <td>{{ trans('file.Cash in Hand') }}:</td>
-                                            <td id="cash_in_hand" class="text-right">100</td>
+                                            <td id="cash_in_hand" class="text-right">0</td>
                                         </tr>
                                         <tr>
                                             <td>{{ trans('file.Total Sale Amount') }}:</td>
                                             <td id="total_sale_amount" class="text-right"></td>
                                         </tr>
                                         <tr>
-                                            <td>{{ trans('file.Total Payment') }}:</td>
-                                            <td id="total_payment" class="text-right"></td>
+                                            <td> + {{ trans('file.Total Payment') }} Received:</td>
+                                            <td id="total_payment_received" class="text-right"></td>
                                         </tr>
+                                        <tr class="bg-light">
+                                            <td> - {{ trans('file.Total Payment') }} Paid:</td>
+                                            <td id="total_payment_paid" class="text-right"></td>
+                                        </tr>
+
+
                                         <tr>
-                                            <td>{{ trans('file.Cash Payment') }}:</td>
-                                            <td id="cash_payment" class="text-right"></td>
+                                            <td> + {{ trans('file.Cash Payment') }} Received:</td>
+                                            <td id="cash_payment_received" class="text-right"></td>
                                         </tr>
+
+
+                                        <tr class="bg-light">
+                                            <td> - {{ trans('file.Cash Payment') }} Paid:</td>
+                                            <td id="cash_payment_paid" class="text-right"></td>
+                                        </tr>
+
+
+
                                         <tr>
-                                            <td>{{ trans('file.Credit Card Payment') }}:</td>
-                                            <td id="credit_card_payment" class="text-right"></td>
+                                            <td> + {{ trans('file.Credit Card Payment') }} Received:</td>
+                                            <td id="credit_card_payment_received" class="text-right"></td>
                                         </tr>
+
+
+
+                                        <tr class="bg-light">
+                                            <td> - {{ trans('file.Credit Card Payment') }} Paid:</td>
+                                            <td id="credit_card_payment_paid" class="text-right"></td>
+                                        </tr>
+
+
+
+                                        <tr>
+                                            <td> + {{ trans('Bank Payment') }} Received:</td>
+                                            <td id="bank_payment_received" class="text-right"></td>
+                                        </tr>
+
+
+                                        <tr class="bg-light">
+                                            <td> - {{ trans('Bank Payment') }} Paid:</td>
+                                            <td id="bank_payment_paid" class="text-right"></td>
+                                        </tr>
+
                                         <tr>
                                             <td>{{ trans('file.Cheque Payment') }}:</td>
                                             <td id="cheque_payment" class="text-right"></td>
@@ -159,7 +196,8 @@
                                 </table>
                             </div>
                             <div class="col-md-12" id="closing-section">
-                                <form action="{{ route('cashRegister.close') }}" method="POST">
+                                
+                                <form action="{{ route('cashRegister.close') }}" class="col-md-12" method="POST">
                                     @csrf
                                     <input type="hidden" name="cash_register_id">
                                     <div class="row">
@@ -170,10 +208,10 @@
                                         <input type="number" step="any" name="closing_balance"
                                             class="form-control col-md-12 p-2 mt-2" step="any"
                                             placeholder="Closing Balance" required>
-                                        
-                                  
-                                                <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
-                                          
+
+
+                                        <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
+
                                         <button type="submit"
                                             class="btn btn-primary  col-md-12 p-2">{{ trans('file.Close Register') }}</button>
                                     </div>
@@ -209,9 +247,17 @@
 
                     $('#register-details-modal #cash_in_hand').text(data['cash_in_hand']);
                     $('#register-details-modal #total_sale_amount').text(data['total_sale_amount']);
-                    $('#register-details-modal #total_payment').text(data['total_payment']);
-                    $('#register-details-modal #cash_payment').text(data['cash_payment']);
-                    $('#register-details-modal #credit_card_payment').text(data['credit_card_payment']);
+                    $('#register-details-modal #total_payment_received').text(data['total_payment_received']);
+                    $('#register-details-modal #cash_payment_received').text(data['cash_payment_received']);
+                    $('#register-details-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
+                    $('#register-details-modal #bank_payment_received').text(data['bank_payment_received']);
+
+                    
+                    $('#register-details-modal #total_payment_paid').text(data['total_payment_paid']);
+                    $('#register-details-modal #cash_payment_paid').text(data['cash_payment_paid']);
+                    $('#register-details-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#register-details-modal #bank_payment_paid').text(data['bank_payment_paid']);
+
                     $('#register-details-modal #cheque_payment').text(data['cheque_payment']);
                     $('#register-details-modal #gift_card_payment').text(data['gift_card_payment']);
                     $('#register-details-modal #paypal_payment').text(data['paypal_payment']);

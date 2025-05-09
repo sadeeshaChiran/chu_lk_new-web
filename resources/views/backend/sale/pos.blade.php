@@ -1559,7 +1559,7 @@
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} *</label>
                                         <input type="text" name="phone_number" required class="form-control"
-                                            pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10"
+                                              minlength="10"
                                             maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     </div>
@@ -1567,7 +1567,7 @@
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} - 2</label>
                                         <input type="text" name="phone_number_2" class="form-control"
-                                            pattern="^(070|071|072|074|075|076|077|078|079)\d{7}$" minlength="10"
+                                              minlength="10"
                                             maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     </div>
@@ -1737,21 +1737,54 @@
                                                         <td id="total_sale_amount" class="text-right"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>{{ trans('file.Total Payment') }}:</td>
-                                                        <td id="total_payment" class="text-right"></td>
+                                                        <td> + {{ trans('file.Total Payment') }} Received:</td>
+                                                        <td id="total_payment_received" class="text-right"></td>
                                                     </tr>
+                                                    <tr class="bg-light">
+                                                        <td> - {{ trans('file.Total Payment') }} Paid:</td>
+                                                        <td id="total_payment_paid" class="text-right"></td>
+                                                    </tr>
+
                                                     @if (in_array('cash', $options))
                                                         <tr>
-                                                            <td>{{ trans('file.Cash Payment') }}:</td>
-                                                            <td id="cash_payment" class="text-right"></td>
+                                                            <td> + {{ trans('file.Cash Payment') }} Received:</td>
+                                                            <td id="cash_payment_received" class="text-right"></td>
                                                         </tr>
                                                     @endif
+                                                    @if (in_array('cash',  $options))
+                                                        <tr class="bg-light">
+                                                            <td> - {{ trans('file.Cash Payment') }} Paid:</td>
+                                                            <td id="cash_payment_paid" class="text-right"></td>
+                                                        </tr>
+                                                    @endif
+
                                                     @if (in_array('card', $options))
                                                         <tr>
-                                                            <td>{{ trans('file.Credit Card Payment') }}:</td>
-                                                            <td id="credit_card_payment" class="text-right"></td>
+                                                            <td> + {{ trans('file.Credit Card Payment') }} Received:</td>
+                                                            <td id="credit_card_payment_received" class="text-right"></td>
                                                         </tr>
                                                     @endif
+                                                    
+                                                    @if (in_array('card', $options))
+                                                        <tr class="bg-light">
+                                                            <td> - {{ trans('file.Credit Card Payment') }} Paid:</td>
+                                                            <td id="credit_card_payment_paid" class="text-right"></td>
+                                                        </tr>
+                                                    @endif
+
+                                                    @if (in_array('bank', $options))
+                                                        <tr>
+                                                            <td> + {{ trans('Bank Payment') }} Received:</td>
+                                                            <td id="bank_payment_received" class="text-right"></td>
+                                                        </tr>
+                                                    @endif
+                                    
+                                                    <tr class="bg-light"> 
+                                                        <td> - {{ trans('Bank Payment') }} Paid:</td>
+                                                        <td id="bank_payment_paid" class="text-right"></td>
+                                                     </tr>
+                                                   
+
                                                     @if (in_array('cheque', $options))
                                                         <tr>
                                                             <td>{{ trans('file.Cheque Payment') }}:</td>
@@ -1847,16 +1880,47 @@
                                             <table class="table table-hover">
                                                 <tbody>
                                                     <tr>
+                                                        <td>{{ trans('file.Cash in Hand') }}:</td>
+                                                        <td id="cash_in_hand" class="text-right">0</td>
+                                                    </tr>
+
+                                                    <tr>
                                                         <td>{{ trans('file.Total Sale Amount') }}:</td>
                                                         <td class="total_sale_amount text-right"></td>
                                                     </tr>
+
                                                     <tr>
-                                                        <td>{{ trans('file.Cash Payment') }}:</td>
-                                                        <td class="cash_payment text-right"></td>
+                                                        <td> + {{ trans('file.Total Payment') }} Received:</td>
+                                                        <td id="total_payment_received" class="text-right"></td>
+                                                    </tr>
+                                                    <tr class="bg-light">
+                                                        <td> + {{ trans('file.Total Payment') }} Paid:</td>
+                                                        <td id="total_payment_paid" class="text-right"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td> + {{ trans('file.Cash Payment') }} Received:</td>
+                                                        <td id="cash_payment_received" class="text-right"></td>
+                                                    </tr>
+                                                    <tr class="bg-light"> 
+                                                        <td> - {{ trans('file.Cash Payment') }} Paid:</td>
+                                                        <td id="cash_payment_paid" class="text-right"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>{{ trans('file.Credit Card Payment') }}:</td>
-                                                        <td class="credit_card_payment text-right"></td>
+                                                        <td> + {{ trans('file.Credit Card Payment') }} Received:</td>
+                                                        <td id="credit_card_payment_received" class="text-right"></td>
+                                                    </tr>
+                                                    <tr class="bg-light"> 
+                                                        <td> - {{ trans('file.Credit Card Payment') }} Paid:</td>
+                                                        <td id="credit_card_payment_paid" class="text-right"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td> + {{ trans('Bank Payment') }} Received:</td>
+                                                        <td id="bank_payment_received" class="text-right"></td>
+                                                    </tr>
+                                                    <tr class="bg-light">
+                                                        <td> - {{ trans('Bank Payment') }} Paid:</td>
+                                                        <td id="bank_payment_paid" class="text-right"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>{{ trans('file.Cheque Payment') }}:</td>
@@ -1879,14 +1943,7 @@
                                                             <td class="paypal_payment text-right"></td>
                                                         </tr>
                                                     @endif
-                                                    <tr>
-                                                        <td>{{ trans('file.Total Payment') }}:</td>
-                                                        <td class="total_payment text-right"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>{{ trans('file.Total Sale Return') }}:</td>
-                                                        <td class="total_sale_return text-right"></td>
-                                                    </tr>
+                                                    
                                                     <tr>
                                                         <td>{{ trans('file.Total Expense') }}:</td>
                                                         <td class="total_expense text-right"></td>
@@ -2169,11 +2226,9 @@
             function calculateShortage() {
                 
                 let totalCash = parseFloat($('#register-details-modal #total_cash').text()) || 0;
-                console.log('ssss',totalCash)
                 const closing = parseFloat($('#closing_balance').val()) || 0;
                 const opening = parseFloat($('#next_day_opening_balance').val()) || 0;
-                const shortage = (closing + opening) - totalCash;
-                console.log('Total Cash:', totalCash);
+                const shortage =  (totalCash) - (closing + opening) ;
                 $('#shortage_balance').text(shortage.toFixed(2));
             }
             // $('select[name="customer_id"]').on('change', function() {
@@ -2489,9 +2544,17 @@
                 success: function(data) {
                     $('#register-details-modal #cash_in_hand').text(data['cash_in_hand']);
                     $('#register-details-modal #total_sale_amount').text(data['total_sale_amount']);
-                    $('#register-details-modal #total_payment').text(data['total_payment']);
-                    $('#register-details-modal #cash_payment').text(data['cash_payment']);
-                    $('#register-details-modal #credit_card_payment').text(data['credit_card_payment']);
+                    $('#register-details-modal #total_payment_received').text(data['total_payment_received']);
+                    $('#register-details-modal #cash_payment_received').text(data['cash_payment_received']);
+                    $('#register-details-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
+                    $('#register-details-modal #bank_payment_received').text(data['bank_payment_received']);
+
+                    
+                    $('#register-details-modal #total_payment_paid').text(data['total_payment_paid']);
+                    $('#register-details-modal #cash_payment_paid').text(data['cash_payment_paid']);
+                    $('#register-details-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#register-details-modal #bank_payment_paid').text(data['bank_payment_paid']);
+
                     $('#register-details-modal #cheque_payment').text(data['cheque_payment']);
                     $('#register-details-modal #gift_card_payment').text(data['gift_card_payment']);
                     $('#register-details-modal #deposit_payment').text(data['deposit_payment']);
@@ -2511,10 +2574,21 @@
                 url: 'sales/today-sale/',
                 type: "GET",
                 success: function(data) {
+                    $('#register-details-modal #cash_in_hand').text(data['cash_in_hand']);
+
                     $('#today-sale-modal .total_sale_amount').text(data['total_sale_amount']);
-                    $('#today-sale-modal .total_payment').text(data['total_payment']);
-                    $('#today-sale-modal .cash_payment').text(data['cash_payment']);
-                    $('#today-sale-modal .credit_card_payment').text(data['credit_card_payment']);
+
+                    $('#today-sale-modal #total_payment_received').text(data['total_payment_received']);
+                    $('#today-sale-modal #cash_payment_received').text(data['cash_payment_received']);
+                    $('#today-sale-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
+                    $('#today-sale-modal #bank_payment_received').text(data['bank_payment_received']);
+
+                    
+                    $('#today-sale-modal #total_payment_paid').text(data['total_payment_paid']);
+                    $('#today-sale-modal #cash_payment_paid').text(data['cash_payment_paid']);
+                    $('#today-sale-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#today-sale-modal #bank_payment_paid').text(data['bank_payment_paid']);
+
                     $('#today-sale-modal .cheque_payment').text(data['cheque_payment']);
                     $('#today-sale-modal .gift_card_payment').text(data['gift_card_payment']);
                     $('#today-sale-modal .deposit_payment').text(data['deposit_payment']);

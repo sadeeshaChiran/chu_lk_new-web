@@ -22,6 +22,14 @@
                                             <input type="text" name="created_at" class="form-control date" placeholder="Choose date"/>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Due {{trans('file.Date')}}</label>
+                                            <input type="text" name="due_at" class="form-control date" placeholder="Choose date"/>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>
@@ -47,8 +55,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>{{trans('file.Supplier')}}</label>
-                                            <select name="supplier_id" class="selectpicker form-control" data-live-search="true" title="Select supplier...">
+                                            <label>{{trans('file.Supplier')}} *</label>
+                                            <select required name="supplier_id" class="selectpicker form-control" data-live-search="true" title="Select supplier..." >
                                                 @foreach($lims_supplier_list as $supplier)
                                                 <option value="{{$supplier->id}}">{{$supplier->name .' ('. $supplier->company_name .')'}}</option>
                                                 @endforeach

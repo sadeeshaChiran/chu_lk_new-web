@@ -211,6 +211,7 @@ class ReturnPurchaseController extends Controller
                     $supplier = new Supplier;
                     $nestedData['supplier'] = 'N/A';
                 }
+                $nestedData['return_user'] = $returns->user->name;
                 $nestedData['grand_total'] = number_format($returns->grand_total, config('decimal'));
                 $nestedData['options'] = '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.trans("file.action").'

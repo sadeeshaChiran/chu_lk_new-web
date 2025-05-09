@@ -58,6 +58,13 @@
         <li class="nav-item">
             <a class="nav-link" href="#product-purchase-return" role="tab" data-toggle="tab">{{trans('file.Purchase Return')}}</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#product-adjustment" role="tab" data-toggle="tab">{{trans('file.Adjustment')}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#product-transfer" role="tab" data-toggle="tab">{{trans('file.Transfer')}}</a>
+        </li>
+
     </ul>
     <div class="tab-content">
         <!-- sale table -->
@@ -142,6 +149,41 @@
                             <th>{{trans('file.qty')}}</th>
                             <th>{{trans('file.Unit Price')}}</th>
                             <th>{{trans('file.Subtotal')}}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- adjustment table -->
+        <div role="tabpanel" class="tab-pane fade" id="product-adjustment">
+            <div class="table-responsive mb-4">
+                <table id="adjustments-table" class="table table-hover" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th class="not-exported-sale"></th>
+                            <th>{{trans('file.Date')}}</th>
+                            <th>{{trans('file.reference')}}</th>
+                            <th>{{trans('file.Warehouse')}}</th>
+                            <th>{{trans('file.Action')}}</th>                           
+                            <th>{{trans('file.qty')}}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- transfer table -->
+        <div role="tabpanel" class="tab-pane fade" id="product-transfer">
+            <div class="table-responsive mb-4">
+                <table id="product-transfer-table" class="table table-hover" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th class="not-exported-purchase-return"></th>
+                            <th>{{trans('file.Date')}}</th>
+                            <th>{{trans('file.reference')}}</th>
+                            <th>{{trans('file.Warehouse')}}</th>
+                    
+                            <th>{{trans('file.qty')}}</th>
+
                         </tr>
                     </thead>
                 </table>
@@ -273,6 +315,7 @@
             },
         ]
     });
+    
     //retreiving purchase table data
     $('#purchase-table').DataTable({
         "processing": true,
@@ -583,6 +626,189 @@
             },
         ]
     });
+
+    // retreiving adjustment table data
+    $('#adjustments-table').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax":{
+            url:"adjustment-history-data",
+            data:{
+                product_id: product_id,
+                starting_date: starting_date,
+                ending_date: ending_date,
+                warehouse_id: warehouse_id
+            },
+            dataType: "json",
+            type:"post"
+        },
+        "columns": [
+            {"data": "key"},
+            {"data": "date"},
+            {"data": "reference_no"},
+            {"data": "warehouse"},
+            {"data": "action"},
+            {"data": "qty"},
+        ],
+        'language': {
+
+            'lengthMenu': '_MENU_ {{trans("file.records per page")}}',
+             "info":      '<small>{{trans("file.Showing")}} _START_ - _END_ (_TOTAL_)</small>',
+            "search":  '{{trans("file.Search")}}',
+            'paginate': {
+                    'previous': '<i class="dripicons-chevron-left"></i>',
+                    'next': '<i class="dripicons-chevron-right"></i>'
+            }
+        },
+        order:[['1', 'desc']],
+        'columnDefs': [
+            {
+                "orderable": false,
+                'targets': [0, 3, 4]
+            },
+            {
+                'render': function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                    }
+
+                   return data;
+                },
+                'checkboxes': {
+                   'selectRow': true,
+                   'selectAllRender': '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'
+                },
+                'targets': [0]
+            }
+        ],
+        'select': { style: 'multi',  selector: 'td:first-child'},
+        'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        dom: '<"row"lfB>rtip',
+        rowId: 'ObjectID',
+        buttons: [
+            {
+                extend: 'pdf',
+                text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: '<i title="print" class="fa fa-print"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'colvis',
+                text: '<i title="column visibility" class="fa fa-eye"></i>',
+                columns: ':gt(0)'
+            },
+        ]
+    });
+    
+    //retreiving transfer table data
+    $('#product-transfer-table').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax":{
+            url:"transfer-history-data",
+            data:{
+                product_id: product_id,
+                starting_date: starting_date,
+                ending_date: ending_date,
+                warehouse_id: warehouse_id
+            },
+            dataType: "json",
+            type:"post"
+        },
+        "columns": [
+            {"data": "key"},
+            {"data": "date"},
+            {"data": "reference_no"},
+            {"data": "warehouse"},
+            {"data": "qty"},
+        ],
+        'language': {
+
+            'lengthMenu': '_MENU_ {{trans("file.records per page")}}',
+             "info":      '<small>{{trans("file.Showing")}} _START_ - _END_ (_TOTAL_)</small>',
+            "search":  '{{trans("file.Search")}}',
+            'paginate': {
+                    'previous': '<i class="dripicons-chevron-left"></i>',
+                    'next': '<i class="dripicons-chevron-right"></i>'
+            }
+        },
+        order:[['1', 'desc']],
+        'columnDefs': [
+            {
+                "orderable": false,
+                'targets': [0, 3, 4]
+            },
+            {
+                'render': function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                    }
+
+                   return data;
+                },
+                'checkboxes': {
+                   'selectRow': true,
+                   'selectAllRender': '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'
+                },
+                'targets': [0]
+            }
+        ],
+        'select': { style: 'multi',  selector: 'td:first-child'},
+        'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        dom: '<"row"lfB>rtip',
+        rowId: 'ObjectID',
+        buttons: [
+            {
+                extend: 'pdf',
+                text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale-return)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale-return)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: '<i title="print" class="fa fa-print"></i>',
+                exportOptions: {
+                    columns: ':visible:Not(.not-exported-sale-return)',
+                    rows: ':visible'
+                }
+            },
+            {
+                extend: 'colvis',
+                text: '<i title="column visibility" class="fa fa-eye"></i>',
+                columns: ':gt(0)'
+            },
+        ]
+    });
+
+
 </script>
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 @endpush

@@ -111,13 +111,13 @@ class StockCountController extends Controller
                 $code[] = $current_line[1];
                
 
-                if($current_line[4] != ''){
-                    $temp_qty = $current_line[4] - $current_line[3];
-                    $product_count = Product_Warehouse::where('product_id', $product_data->id)->where('warehouse_id', $lims_stock_count_data->warehouse_id)->first();
-                    $product_count->qty = intval($current_line[4]);
-                    $product_count->save();
-                }else
-                    $temp_qty = $current_line[3] * (-1);
+                // if($current_line[4] != ''){
+                //     $temp_qty = $current_line[4] - $current_line[3];
+                //     $product_count = Product_Warehouse::where('product_id', $product_data->id)->where('warehouse_id', $lims_stock_count_data->warehouse_id)->first();
+                //     $product_count->qty = intval($current_line[4]);
+                //     $product_count->save();
+                // }else
+                //     $temp_qty = $current_line[3] * (-1);
                    
             }
             $i++;
@@ -186,6 +186,8 @@ class StockCountController extends Controller
                 $product_id[] = $product_data->id;
                 $names[] = $current_line[0];
                 $code[] = $current_line[1];
+                $unit_cost[] = $product_data->cost;
+
 
                 if($current_line[4])
                     $temp_qty = $current_line[4] - $current_line[3];
@@ -203,7 +205,7 @@ class StockCountController extends Controller
             }
             $i++;
         }
-        return view('backend.stock_count.qty_adjustment', compact('lims_warehouse_list', 'warehouse_id', 'id', 'product_id', 'names', 'code', 'qty', 'action'));
+        return view('backend.stock_count.qty_adjustment', compact('lims_warehouse_list', 'warehouse_id', 'id', 'product_id', 'names', 'code', 'qty', 'unit_cost', 'action'));
     }
     public function destroy($id)
     {
