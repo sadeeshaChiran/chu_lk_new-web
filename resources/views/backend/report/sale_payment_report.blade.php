@@ -61,7 +61,6 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
                 <th>{{number_format(0, $general_setting->decimal, '.', '')}}<</th>
                 <th></th>
             </tfoot>
@@ -75,7 +74,7 @@
 <script type="text/javascript">
     $("ul#report").siblings('a').attr('aria-expanded','true');
     $("ul#report").addClass("show");
-    $("ul#report li#sale-payment-report-menu").addClass("active");
+    $("ul#report #sale-payment-report-menu").addClass("active");
 
     $('#report-table').DataTable( {
         "order": [],
@@ -201,6 +200,7 @@ $(".daterangepicker-field").daterangepicker({
     $('input[name="end_date"]').val(end_date);
   }
 });
+
 
 </script>
 @endpush

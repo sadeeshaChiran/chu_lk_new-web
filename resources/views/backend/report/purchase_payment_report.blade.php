@@ -61,7 +61,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
+              
                 <th>{{number_format(0, $general_setting->decimal, '.', '')}}<</th>
                 <th></th>
             </tfoot>
@@ -75,7 +75,7 @@
 <script type="text/javascript">
     $("ul#report").siblings('a').attr('aria-expanded','true');
     $("ul#report").addClass("show");
-    $("ul#report li#purchase-payment-report-menu").addClass("active");
+    $("ul#report #purchase-payment-report-menu").addClass("active");
 
     $('#report-table').DataTable( {
         "order": [],

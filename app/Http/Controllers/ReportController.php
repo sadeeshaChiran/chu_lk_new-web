@@ -2194,9 +2194,13 @@ class ReportController extends Controller
     {
         $data = $request->all();
         $start_date = $data['start_date'];
-        $end_date = $data['end_date'];
+        $end_date = $data['end_date'] ;
 
-        $lims_payment_data = Payment::with('sale', 'user')->whereNotNull('sale_id')->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+        $lims_payment_data = Payment::with('sale', 'user')
+        ->whereNotNull('sale_id')
+        ->where('created_at', '>=', $start_date)
+        ->where('created_at', '<=', $end_date)
+        ->get();        
         return view('backend.report.sale_payment_report',compact('lims_payment_data', 'start_date', 'end_date'));
     }
 
@@ -2206,7 +2210,11 @@ class ReportController extends Controller
         $start_date = $data['start_date'];
         $end_date = $data['end_date'];
 
-        $lims_payment_data = Payment::with('purchase', 'user')->whereNotNull('purchase_id')->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+        $lims_payment_data = Payment::with('purchase', 'user')
+        ->whereNotNull('purchase_id')
+        ->where('created_at', '>=', $start_date)
+        ->where('created_at', '<=', $end_date)
+        ->get();
         return view('backend.report.purchase_payment_report',compact('lims_payment_data', 'start_date', 'end_date'));
     }
     

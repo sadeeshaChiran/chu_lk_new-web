@@ -417,10 +417,19 @@
         $("#sale-report-form").submit();
       });
 
-      $("a#payment-report-link").click(function(e){
+
+
+      $("a#sale-payment-report-link").click(function(e) {
         e.preventDefault();
-        $("#payment-report-form").submit();
+        $("#sale-payment-report-form").submit();
       });
+
+      $("a#purchase-payment-report-link").click(function(e) {
+        e.preventDefault();
+        $("#purchase-payment-report-form").submit();
+      });
+
+
 
       $("a#warehouse-report-link").click(function(e){
         e.preventDefault();

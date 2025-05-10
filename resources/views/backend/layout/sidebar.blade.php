@@ -579,7 +579,7 @@
 
                         @if ($payment_report_active)
                             <li id="purchase-payment-report-menu">
-                                {!! Form::open(['route' => 'report.purchasePaymentByDate', 'method' => 'post', 'id' => 'payment-report-form']) !!}
+                                {!! Form::open(['route' => 'report.purchasePaymentByDate', 'method' => 'post', 'id' => 'purchase-payment-report-form']) !!}
                                 <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
                                 <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
                                 <a id="purchase-payment-report-link" href="">Purchase
