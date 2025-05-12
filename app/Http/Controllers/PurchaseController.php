@@ -250,17 +250,14 @@ class PurchaseController extends Controller
                 else
                     $nestedData['payment_status'] = '<div class="badge badge-success">' . trans('file.Paid') . '</div>';
 
+                
+                $nestedData['created_by'] = $purchase->user_id ? User::find($purchase->user_id)->name : 'N/A';
+
                 $nestedData['grand_total'] = number_format($purchase->grand_total, config('decimal'));
                 $returned_amount = DB::table('return_purchases')->where('purchase_id', $purchase->id)->sum('grand_total');
                 $nestedData['returned_amount'] = number_format($returned_amount, config('decimal'));
                 $nestedData['paid_amount'] = number_format($purchase->paid_amount, config('decimal'));
-                $purchaseDataBeforeDue = Purchase::where([
-                    ['supplier_id', $supplier->id],
-                    ['payment_status', 1],
-                    ['due_at', '<=', date('Y-m-d')]
-                ])
-                    ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
-                    ->first();
+
 
                 $nestedData['due'] = number_format($purchase->grand_total - $returned_amount  - $purchase->paid_amount, config('decimal'));
                 if ($purchase->payment_status == 1) {
@@ -850,16 +847,16 @@ class PurchaseController extends Controller
             else
                 $product_purchase->recieved = 0;
             $product_purchase->purchase_unit_id = $unit[$key]['id'];
-            $product_purchase->net_unit_cost = number_format((float)$net_unit_cost, config('decimal'), '.', '');
+            $product_purchase->net_unit_cost = number_format((float)$net_unit_cost, config('decimal') );
             $product_purchase->discount = $discount[$key] * $qty[$key];
             $product_purchase->tax_rate = $tax[$key]['rate'];
-            $product_purchase->tax = number_format((float)$product_tax, config('decimal'), '.', '');
-            $product_purchase->total = number_format((float)$total, config('decimal'), '.', '');
+            $product_purchase->tax = number_format((float)$product_tax, config('decimal') );
+            $product_purchase->total = number_format((float)$total, config('decimal') );
             $product_purchase->save();
             $lims_purchase_data->total_qty += $qty[$key];
             $lims_purchase_data->total_discount += $discount[$key] * $qty[$key];
-            $lims_purchase_data->total_tax += number_format((float)$product_tax, config('decimal'), '.', '');
-            $lims_purchase_data->total_cost += number_format((float)$total, config('decimal'), '.', '');
+            $lims_purchase_data->total_tax += number_format((float)$product_tax, config('decimal') );
+            $lims_purchase_data->total_cost += number_format((float)$total, config('decimal') );
         }
         $lims_purchase_data->item = $key + 1;
         $lims_purchase_data->order_tax = ($lims_purchase_data->total_cost - $lims_purchase_data->order_discount) * ($data['order_tax_rate'] / 100);

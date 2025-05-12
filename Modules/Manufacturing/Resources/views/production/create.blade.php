@@ -86,8 +86,8 @@
                                                     <th id="total-qty">0</th>
                                                     <th class="recieved-product-qty"></th>
                                                     <th></th>
-                                                    <th id="total-tax">{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                                                    <th id="total">{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                                                    <th id="total-tax">{{number_format(0, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{number_format(0, $general_setting->decimal )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -118,7 +118,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="hidden" name="grand_total" />
-                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal, '.', '')}}" />
+                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal )}}" />
                                             <input type="hidden" name="payment_status" value="1" />
                                         </div>
                                     </div>
@@ -155,16 +155,16 @@
     <div class="container-fluid">
         <table class="table table-bordered table-condensed totals">
             <td><strong>{{trans('file.Items')}}</strong>
-                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Total')}}</strong>
-                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Shipping Cost')}}</strong>
-                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.grand total')}}</strong>
-                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
         </table>
     </div>
@@ -507,7 +507,7 @@
 
                     rowindex = newRow.index();
                     product_cost.splice(rowindex,0, parseFloat(data[2]));
-                    product_discount.splice(rowindex,0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+                    product_discount.splice(rowindex,0, '{{number_format(0, $general_setting->decimal )}}');
                     tax_rate.splice(rowindex,0, parseFloat(data[3]));
                     tax_name.splice(rowindex,0, data[4]);
                     tax_method.splice(rowindex,0, data[5]);
@@ -632,7 +632,7 @@
             var shipping_cost = parseFloat($('input[name="shipping_cost"]').val());
         }
         else
-            var shipping_cost = {{number_format(0, $general_setting->decimal, '.', '')}};
+            var shipping_cost = {{number_format(0, $general_setting->decimal )}};
 
         item = ++item + '(' + total_qty + ')';
         var grand_total = (subtotal + shipping_cost);

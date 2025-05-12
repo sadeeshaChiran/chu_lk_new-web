@@ -128,9 +128,9 @@
                           <th></th>
                           <th></th>
                           <th></th>
-                          <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                          <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                          <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                          <th>{{number_format(0, $general_setting->decimal )}}</th>
+                          <th>{{number_format(0, $general_setting->decimal )}}</th>
+                          <th>{{number_format(0, $general_setting->decimal )}}</th>
                           <th></th>
                       </tr>
                     </tfoot>
@@ -169,7 +169,7 @@
                                 <th>Total:</th>
                                 <th></th>
                                 <th></th>
-                                <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                                <th>{{number_format(0, $general_setting->decimal )}}</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -761,7 +761,7 @@
             $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
         }
         else {
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( rows, 7, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 8 ).footer() ).html(dt_selector.column( 8, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 9 ).footer() ).html(dt_selector.column( 9, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
         }

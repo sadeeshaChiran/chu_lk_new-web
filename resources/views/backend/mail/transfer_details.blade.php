@@ -81,7 +81,7 @@
 													<td style="border: 1px solid #000; padding: 5px">{{ ++$i }}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$product}}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$mailData['qty'][$key].' '.$mailData['unit'][$key]}}</td>
-													<td style="border: 1px solid #000; padding: 5px">{{number_format((float)($mailData['total'][$key] / $mailData['qty'][$key]), $general_setting->decimal, '.', '')}}</td>
+													<td style="border: 1px solid #000; padding: 5px">{{number_format((float)($mailData['total'][$key] / $mailData['qty'][$key]), $general_setting->decimal )}}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$mailData['tax'][$key]}} ({{ $mailData['tax_rate'][$key]}} %)</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$mailData['total'][$key]}}</td>
 												</tr>

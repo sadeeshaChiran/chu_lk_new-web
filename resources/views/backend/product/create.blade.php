@@ -184,7 +184,7 @@
                                         <span class="validation-msg"></span>
                                     </div>
                                     <div class="form-group">
-                                        <input type="hidden" name="qty" value="{{number_format(0, $general_setting->decimal, '.', '')}}">
+                                        <input type="hidden" name="qty" value="{{number_format(0, $general_setting->decimal )}}">
                                     </div>
                                 </div>
                                 <div class="col-md-4">

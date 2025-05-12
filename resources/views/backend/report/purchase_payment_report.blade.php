@@ -32,26 +32,39 @@
                     <th>{{trans('file.Date')}}</th>
                     <th>{{trans('file.Payment Reference')}} </th>
                     <th>{{trans('file.Purchase Reference')}}</th>
+                    <th>{{trans('file.Supplier')}}</th>
                     <th>{{trans('file.Paid By')}}</th>
                     <th>{{trans('file.Amount')}}</th>
+                    <th>{{trans('file.Account')}}</th>
+                    <th>{{trans('file.Payment Note')}}</th>
                     <th>{{trans('file.Created By')}}</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($lims_payment_data as $payment)
-                <?php
-                    $sale = DB::table('sales')->find($payment->sale_id);
-                    $purchase = DB::table('purchases')->find($payment->purchase_id);
-                    $user = DB::table('users')->find($payment->user_id);
-                ?>
                 <tr>
+
                     <td></td>
                     <td>{{date($general_setting->date_format, strtotime($payment->created_at->toDateString())) . ' '. $payment->created_at->toTimeString()}}</td>
                     <td>{{$payment->payment_reference}}</td>
-                    <td>@if($purchase){{$purchase->reference_no}}@endif</td>
+                    <td>{{$payment->purchase->reference_no}}</td>
+                    <td>{{ $payment->purchase?->supplier?->name ?? 'N/A' }}</td>
                     <td>{{$payment->paying_method}}</td>
                     <td>{{$payment->amount}}</td>
-                    <td>{{$user->name}}<br>{{$user->email}}</td>
+                    <td>
+                        @if($payment->account)
+                        {{$payment->account->name}}
+                        @else
+                        -
+                        @endif
+                    </td>
+                    <td>
+                        @if($payment->note)
+                        {{$payment->note}}
+                        @else
+                        -
+                        @endif
+                    <td>{{$payment->user->name}}<br>{{$payment->user->email}}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -62,7 +75,7 @@
                 <th></th>
                 <th></th>
               
-                <th>{{number_format(0, $general_setting->decimal, '.', '')}}<</th>
+                <th>{{number_format(0, $general_setting->decimal )}}<</th>
                 <th></th>
             </tfoot>
         </table>

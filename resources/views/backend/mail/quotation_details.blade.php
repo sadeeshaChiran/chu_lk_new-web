@@ -65,7 +65,7 @@
 													<td style="border: 1px solid #000; padding: 5px">{{$key+1}}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$product}}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$quotation_data['qty'][$key].' '.$quotation_data['unit'][$key]}}</td>
-													<td style="border: 1px solid #000; padding: 5px">{{number_format((float)($quotation_data['total'][$key] / $quotation_data['qty'][$key]), $general_setting->decimal, '.', '')}}</td>
+													<td style="border: 1px solid #000; padding: 5px">{{number_format((float)($quotation_data['total'][$key] / $quotation_data['qty'][$key]), $general_setting->decimal )}}</td>
 													<td style="border: 1px solid #000; padding: 5px">{{$quotation_data['total'][$key]}}</td>
 												</tr>
 												@endforeach

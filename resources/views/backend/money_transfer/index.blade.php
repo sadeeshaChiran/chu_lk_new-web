@@ -31,7 +31,7 @@
                     <td>{{ $money_transfer->reference_no }}</td>
                     <td>{{ $money_transfer->fromAccount->name }}</td>
                     <td>{{ $money_transfer->toAccount->name }}</td>
-                    <td>{{ number_format((float)$money_transfer->amount, $general_setting->decimal, '.', '')}}</td>
+                    <td>{{ number_format((float)$money_transfer->amount, $general_setting->decimal )}}</td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trans('file.action')}}

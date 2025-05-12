@@ -34,9 +34,9 @@
                     <td>{{ $account->account_no }}</td>
                     <td>{{ $account->name }}</td>
                     @if($account->initial_balance)
-                        <td>{{ number_format((float)$account->initial_balance, $general_setting->decimal, '.', '')}}</td>
+                        <td>{{ number_format((float)$account->initial_balance, $general_setting->decimal )}}</td>
                     @else
-                        <td>{{number_format(0, $general_setting->decimal, '.', '')}}</td>
+                        <td>{{number_format(0, $general_setting->decimal )}}</td>
                     @endif
                     <td>
                         @if($account->is_default)

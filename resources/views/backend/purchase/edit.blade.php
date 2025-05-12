@@ -239,10 +239,10 @@
                                                             <input type="text" class="form-control expired-date" name="expired_date[]" disabled />
                                                         </td>
                                                         @endif
-                                                        <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, $general_setting->decimal, '.', '')}} </td>
-                                                        <td class="discount">{{ number_format((float)$product_purchase->discount, $general_setting->decimal, '.', '')}}</td>
-                                                        <td class="tax">{{ number_format((float)$product_purchase->tax, $general_setting->decimal, '.', '')}}</td>
-                                                        <td class="sub-total">{{ number_format((float)$product_purchase->total, $general_setting->decimal, '.', '')}}</td>
+                                                        <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, $general_setting->decimal )}} </td>
+                                                        <td class="discount">{{ number_format((float)$product_purchase->discount, $general_setting->decimal )}}</td>
+                                                        <td class="tax">{{ number_format((float)$product_purchase->tax, $general_setting->decimal )}}</td>
+                                                        <td class="sub-total">{{ number_format((float)$product_purchase->total, $general_setting->decimal )}}</td>
                                                         <td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>
                                                         <input type="hidden" class="product-id" name="product_id[]" value="{{$product_data->id}}"/>
                                                         <input type="hidden" class="product-code" name="product_code[]" value="{{$product_data->code}}"/>
@@ -274,9 +274,9 @@
                                                     <th></th>
                                                     <th></th>
                                                     <th class="recieved-product-qty d-none"></th>
-                                                    <th id="total-discount">{{ number_format((float)$lims_purchase_data->total_discount, $general_setting->decimal, '.', '')}}</th>
-                                                    <th id="total-tax">{{ number_format((float)$lims_purchase_data->total_tax, $general_setting->decimal, '.', '')}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_purchase_data->total_cost, $general_setting->decimal, '.', '')}}</th>
+                                                    <th id="total-discount">{{ number_format((float)$lims_purchase_data->total_discount, $general_setting->decimal )}}</th>
+                                                    <th id="total-tax">{{ number_format((float)$lims_purchase_data->total_tax, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{ number_format((float)$lims_purchase_data->total_cost, $general_setting->decimal )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -369,22 +369,22 @@
     <div class="container-fluid">
         <table class="table table-bordered table-condensed totals">
             <td><strong>{{trans('file.Items')}}</strong>
-                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Total')}}</strong>
-                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Order Tax')}}</strong>
-                <span class="pull-right" id="order_tax">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="order_tax">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Order Discount')}}</strong>
-                <span class="pull-right" id="order_discount">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="order_discount">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Shipping Cost')}}</strong>
-                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.grand total')}}</strong>
-                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
         </table>
     </div>
@@ -513,10 +513,10 @@ if($('select[name="status"]').val() == 2){
 
 }
 if(!$('input[name="order_discount"]').val())
-    $('input[name="order_discount"]').val('{{number_format(0, $general_setting->decimal, '.', '')}}');
+    $('input[name="order_discount"]').val('{{number_format(0, $general_setting->decimal )}}');
 $('#order_discount').text(parseFloat($('input[name="order_discount"]').val()).toFixed({{$general_setting->decimal}}));
 if(!$('input[name="shipping_cost"]').val())
-    $('input[name="shipping_cost"]').val('{{number_format(0, $general_setting->decimal, '.', '')}}');
+    $('input[name="shipping_cost"]').val('{{number_format(0, $general_setting->decimal )}}');
 $('#shipping_cost').text(parseFloat($('input[name="shipping_cost"]').val()).toFixed({{$general_setting->decimal}}));
 $('#grand_total').text(parseFloat($('input[name="grand_total"]').val()).toFixed({{$general_setting->decimal}}));
 
@@ -595,10 +595,10 @@ $('body').on('focus',".expired-date", function() {
 //Change quantity
 $("#myTable").on('input', '.qty', function() {
     rowindex = $(this).closest('tr').index();
-    if($(this).val() < 1 && $(this).val() != '') {
-      $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(1);
-      alert("Quantity can't be less than 1");
-    }
+    // if($(this).val() < 1 && $(this).val() != '') {
+    //   $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(1);
+    //   alert("Quantity can't be less than 1");
+    // }
     checkQuantity($(this).val(), true);
 });
 
@@ -743,11 +743,11 @@ $('button[name="update_btn"]').on("click", function() {
         return;
     }
 
-    if(edit_qty < 1) {
-        $('input[name="edit_qty"]').val(1);
-        edit_qty = 1;
-        alert("Quantity can't be less than 1");
-    }
+    // if(edit_qty < 1) {
+    //     $('input[name="edit_qty"]').val(1);
+    //     edit_qty = 1;
+    //     alert("Quantity can't be less than 1");
+    // }
 
     var row_unit_operator = unit_operator[rowindex].slice(0, unit_operator[rowindex].indexOf(","));
     var row_unit_operation_value = unit_operation_value[rowindex].slice(0, unit_operation_value[rowindex].indexOf(","));
@@ -828,7 +828,7 @@ function productSearch(data) {
                     cols += '<td><input type="text" class="form-control expired-date" name="expired_date[]" disabled/></td>';
                 }
                 cols += '<td class="net_unit_cost"></td>';
-                cols += '<td class="discount">{{number_format(0, $general_setting->decimal, '.', '')}}</td>';
+                cols += '<td class="discount">{{number_format(0, $general_setting->decimal )}}</td>';
                 cols += '<td class="tax"></td>';
                 cols += '<td class="sub-total"></td>';
                 cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
@@ -848,7 +848,7 @@ function productSearch(data) {
 
                 rowindex = newRow.index();
                 product_cost.splice(rowindex, 0, parseFloat(data[2]));
-                product_discount.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+                product_discount.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
                 tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                 tax_name.splice(rowindex, 0, data[4]);
                 tax_method.splice(rowindex, 0, data[5]);
@@ -983,9 +983,9 @@ function calculateGrandTotal() {
     var shipping_cost = parseFloat($('input[name="shipping_cost"]').val());
 
     if (!order_discount)
-        order_discount = {{number_format(0, $general_setting->decimal, '.', '')}};
+        order_discount = {{number_format(0, $general_setting->decimal )}};
     if (!shipping_cost)
-        shipping_cost = {{number_format(0, $general_setting->decimal, '.', '')}};
+        shipping_cost = {{number_format(0, $general_setting->decimal )}};
 
     item = ++item + '(' + total_qty + ')';
     order_tax = (subtotal - order_discount) * (order_tax / 100);

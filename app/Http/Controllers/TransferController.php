@@ -1055,14 +1055,14 @@ class TransferController extends Controller
             $product_transfer->product_id = $product['id'];
             $product_transfer->qty = $qty[$key];
             $product_transfer->purchase_unit_id = $unit[$key]['id'];
-            $product_transfer->net_unit_cost = number_format((float)$net_unit_cost, config('decimal'), '.', '');
+            $product_transfer->net_unit_cost = number_format((float)$net_unit_cost, config('decimal') );
             $product_transfer->tax_rate = $tax[$key]['rate'];
-            $product_transfer->tax = number_format((float)$product_tax, config('decimal'), '.', '');
-            $product_transfer->total = number_format((float)$total, config('decimal'), '.', '');
+            $product_transfer->tax = number_format((float)$product_tax, config('decimal') );
+            $product_transfer->total = number_format((float)$total, config('decimal') );
             $product_transfer->save();
             $lims_transfer_data->total_qty += $qty[$key];
-            $lims_transfer_data->total_tax += number_format((float)$product_tax, config('decimal'), '.', '');
-            $lims_transfer_data->total_cost += number_format((float)$total, config('decimal'), '.', '');
+            $lims_transfer_data->total_tax += number_format((float)$product_tax, config('decimal') );
+            $lims_transfer_data->total_cost += number_format((float)$total, config('decimal') );
         }
         $lims_transfer_data->item = $key + 1;
         $lims_transfer_data->grand_total = $lims_transfer_data->total_cost + $lims_transfer_data->shipping_cost;

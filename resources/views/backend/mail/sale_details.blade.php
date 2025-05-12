@@ -76,7 +76,7 @@
                                         <td style="border: 1px solid #ccc; padding: 5px">N/A</td>
                                     @endif
                                     <td style="border: 1px solid #ccc; padding: 5px">{{$sale_data['qty'][$key].' '.$sale_data['unit'][$key]}}</td>
-                                    <td style="border: 1px solid #ccc; padding: 5px">{{number_format((float)($sale_data['total'][$key] / $sale_data['qty'][$key]), $general_setting->decimal, '.', '')}}</td>
+                                    <td style="border: 1px solid #ccc; padding: 5px">{{number_format((float)($sale_data['total'][$key] / $sale_data['qty'][$key]), $general_setting->decimal )}}</td>
                                     <td style="border: 1px solid #ccc; padding: 5px">{{$sale_data['total'][$key]}}</td>
                                 </tr>
                                 @endforeach
@@ -117,7 +117,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="5" style="border: 1px solid #ccc; padding: 5px"><strong>Due</strong></td>
-                                    <td style="border: 1px solid #ccc; padding: 5px">{{number_format((float)($sale_data['grand_total'] - $sale_data['paid_amount']), $general_setting->decimal, '.', '')}}</td>
+                                    <td style="border: 1px solid #ccc; padding: 5px">{{number_format((float)($sale_data['grand_total'] - $sale_data['paid_amount']), $general_setting->decimal )}}</td>
                                 </tr>
                             </tbody>
                         </table>

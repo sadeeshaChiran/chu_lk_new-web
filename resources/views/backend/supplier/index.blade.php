@@ -48,6 +48,29 @@
                                 ])
                                 ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
                                 ->first();
+
+                    $purchaseDataBefore_returned_amount = DB::table('purchases')
+                        ->join('return_purchases', 'purchases.id', '=', 'return_purchases.purchase_id')
+                        ->where([
+                            ['purchases.supplier_id', $supplier->id],
+                            ['purchases.payment_status', 1],
+                            ['purchases.due_at', '<=', date('Y-m-d')]
+                        ])
+                        ->sum('return_purchases.grand_total');
+
+                    $grandTotalBeforeDue = $purchaseDataBeforeDue->grand_total ?? 0;
+                    $paidAmountBeforeDue = $purchaseDataBeforeDue->paid_amount ?? 0;
+                    
+
+                    if($grandTotalBeforeDue == 0){
+                        $purchaseDataBeforeDueAmount = 0;
+                    }else{
+                        $purchaseDataBeforeDueAmount = ($grandTotalBeforeDue - $paidAmountBeforeDue - $purchaseDataBefore_returned_amount);
+                    }
+
+                    $currentDue = $purchaseData->grand_total - $returned_amount - $purchaseData->paid_amount;
+
+
                 ?>
                 <tr data-id="{{$supplier->id}}">
                     <td>{{$key}}</td>
@@ -70,8 +93,10 @@
                             @if($supplier->postal_code){{','.$supplier->postal_code}}@endif
                             @if($supplier->country){{','.$supplier->country}}@endif
                     </td>
-                    <td>{{number_format($purchaseData->grand_total - $returned_amount - $purchaseData->paid_amount, 2)}}</td>
-                    <td>{{number_format((($purchaseData->grand_total - $returned_amount - $purchaseData->paid_amount) - $purchaseDataBeforeDue->grand_total), 2)}}</td>
+                    <td>{{ number_format((float)$currentDue, $general_setting->decimal, '.', '')}}</td>
+                    <td>{{ number_format((float)$purchaseDataBeforeDueAmount, $general_setting->decimal, '.', '')}}</td>
+            
+
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trans('file.action')}}

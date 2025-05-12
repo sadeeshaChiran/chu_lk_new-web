@@ -95,7 +95,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="hidden" name="grand_total" value="0" />
-                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal, '.', '')}}" />
+                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal )}}" />
                                             <input type="hidden" name="payment_status" value="2" />
                                         </div>
                                     </div>

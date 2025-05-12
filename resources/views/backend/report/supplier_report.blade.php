@@ -69,6 +69,8 @@
                             <th>{{trans('file.grand total')}}</th>
                             <th>{{trans('file.Paid')}}</th>
                             <th>{{trans('file.Balance')}}</th>
+                            <th>Over Due Date </th>
+                            <th>{{trans('file.Payment Status')}}</th>
                             <th>{{trans('file.Status')}}</th>
                         </tr>
                     </thead>
@@ -76,6 +78,8 @@
                         <tr>
                             <th></th>
                             <th>{{trans('file.Total')}}</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -100,12 +104,16 @@
                             <th>{{trans('file.Purchase Reference')}}</th>
                             <th>{{trans('file.Amount')}}</th>
                             <th>{{trans('file.Paid Method')}}</th>
+                            <th>{{trans('file.Account')}}</th>
+                            <th>{{trans('file.Payment Note')}}</th>
                         </tr>
                     </thead>
                     <tfoot class="tfoot active">
                         <tr>
                             <th></th>
                             <th>{{trans('file.Total')}}</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -137,7 +145,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                            <th>{{number_format(0, $general_setting->decimal )}}</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -168,7 +176,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                            <th>{{number_format(0, $general_setting->decimal )}}</th>
                             <th></th>
                         </tr>
                     </tfoot>
@@ -223,6 +231,8 @@
             {"data": "grand_total"},
             {"data": "paid"},
             {"data": "balance"},
+            {"data": "is_over_due_amount"},
+            {"data": "payment_status"},
             {"data": "status"}
         ],
         'language': {
@@ -349,7 +359,9 @@
             {"data": "reference_no"},
             {"data": "purchase_reference"},
             {"data": "amount"},
-            {"data": "paying_method"}
+            {"data": "paying_method"},
+            {"data": "account"},
+            {"data": "note"}
         ],
         'language': {
 
@@ -711,3 +723,5 @@ $(".daterangepicker-field").daterangepicker({
 
 </script>
 @endpush
+
+

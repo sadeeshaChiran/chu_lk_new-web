@@ -557,24 +557,24 @@ class ProductController extends Controller
         if ($product_data->tax_id) {
             $tax_data = DB::table('taxes')->select('rate')->find($product_data->tax_id);
             if ($product_data->tax_method == 1) {
-                $net_unit_cost = number_format($product_data->cost, 2, '.', '');
-                $tax = number_format($product_data->cost * $stock * ($tax_data->rate / 100), 2, '.', '');
-                $cost = number_format(($product_data->cost * $stock) + $tax, 2, '.', '');
+                $net_unit_cost = number_format($product_data->cost, 2 );
+                $tax = number_format($product_data->cost * $stock * ($tax_data->rate / 100), 2 );
+                $cost = number_format(($product_data->cost * $stock) + $tax, 2 );
             } else {
-                $net_unit_cost = number_format((100 / (100 + $tax_data->rate)) * $product_data->cost, 2, '.', '');
-                $tax = number_format(($product_data->cost - $net_unit_cost) * $stock, 2, '.', '');
-                $cost = number_format($product_data->cost * $stock, 2, '.', '');
+                $net_unit_cost = number_format((100 / (100 + $tax_data->rate)) * $product_data->cost, 2 );
+                $tax = number_format(($product_data->cost - $net_unit_cost) * $stock, 2 );
+                $cost = number_format($product_data->cost * $stock, 2 );
             }
             $tax_rate = $tax_data->rate;
             $data['total_tax'] = $tax;
             $data['total_cost'] = $cost;
         } else {
             $data['total_tax'] = 0.00;
-            $data['total_cost'] = number_format($product_data->cost * $stock, 2, '.', '');
-            $net_unit_cost = number_format($product_data->cost, 2, '.', '');
+            $data['total_cost'] = number_format($product_data->cost * $stock, 2 );
+            $net_unit_cost = number_format($product_data->cost, 2 );
             $tax_rate = 0.00;
             $tax = 0.00;
-            $cost = number_format($product_data->cost * $stock, 2, '.', '');
+            $cost = number_format($product_data->cost * $stock, 2 );
         }
 
         $product_warehouse_data = Product_Warehouse::select('id', 'qty')

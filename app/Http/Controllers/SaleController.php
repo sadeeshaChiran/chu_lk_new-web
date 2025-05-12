@@ -2614,16 +2614,16 @@ class SaleController extends Controller
             $product_sale->product_id = $product['id'];
             $product_sale->qty = $mail_data['qty'][$key] = $qty[$key];
             $product_sale->sale_unit_id = $sale_unit_id;
-            $product_sale->net_unit_price = number_format((float)$net_unit_price, config('decimal'), '.', '');
+            $product_sale->net_unit_price = number_format((float)$net_unit_price, config('decimal') );
             $product_sale->discount = $discount[$key] * $qty[$key];
             $product_sale->tax_rate = $tax[$key]['rate'];
-            $product_sale->tax = number_format((float)$product_tax, config('decimal'), '.', '');
-            $product_sale->total = $mail_data['total'][$key] = number_format((float)$total, config('decimal'), '.', '');
+            $product_sale->tax = number_format((float)$product_tax, config('decimal') );
+            $product_sale->total = $mail_data['total'][$key] = number_format((float)$total, config('decimal') );
             $product_sale->save();
             $lims_sale_data->total_qty += $qty[$key];
             $lims_sale_data->total_discount += $discount[$key] * $qty[$key];
-            $lims_sale_data->total_tax += number_format((float)$product_tax, config('decimal'), '.', '');
-            $lims_sale_data->total_price += number_format((float)$total, config('decimal'), '.', '');
+            $lims_sale_data->total_tax += number_format((float)$product_tax, config('decimal') );
+            $lims_sale_data->total_price += number_format((float)$total, config('decimal') );
         }
         $lims_sale_data->item = $key + 1;
         $lims_sale_data->order_tax = ($lims_sale_data->total_price - $lims_sale_data->order_discount) * ($data['order_tax_rate'] / 100);
@@ -3128,8 +3128,8 @@ class SaleController extends Controller
                 new Seller(config('company_name')), // seller name
                 new TaxNumber(config('vat_registration_number')), // seller tax number
                 new InvoiceDate($lims_sale_data->created_at->toDateString() . "T" . $lims_sale_data->created_at->toTimeString()), // invoice date as Zulu ISO8601 @see https://en.wikipedia.org/wiki/ISO_8601
-                new InvoiceTotalAmount(number_format((float)$lims_sale_data->grand_total, 4, '.', '')), // invoice total amount
-                new InvoiceTaxAmount(number_format((float)($lims_sale_data->total_tax + $lims_sale_data->order_tax), 4, '.', '')) // invoice tax amount
+                new InvoiceTotalAmount(number_format((float)$lims_sale_data->grand_total, 4 )), // invoice total amount
+                new InvoiceTaxAmount(number_format((float)($lims_sale_data->total_tax + $lims_sale_data->order_tax), 4 )) // invoice tax amount
                 // TODO :: Support others tags
             ])->toBase64();
         } else {

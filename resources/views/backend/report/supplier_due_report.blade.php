@@ -37,6 +37,7 @@
                     <th>{{trans('file.Returned Amount')}}</th>
                     <th>{{trans('file.Paid')}}</th>
                     <th>{{trans('file.Due')}}</th>
+                    <th>Over Due</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,20 +46,53 @@
                     <?php
                         $supplier = DB::table('suppliers')->find($purchase_data->supplier_id);
                         $returned_amount = DB::table('return_purchases')->where('purchase_id', $purchase_data->id)->sum('grand_total');
+                        $purchaseDataBeforeDue = App\Models\Purchase::where([
+                                    ['id', $purchase_data->id],
+                                    ['payment_status', 1],
+                                    ['due_at', '<=', date('Y-m-d')]
+                                ])
+                                ->selectRaw('SUM(grand_total) as grand_total,SUM(paid_amount) as paid_amount')
+                                ->first();
+                        $purchaseDataBefore_returned_amount = DB::table('purchases')
+                            ->join('return_purchases', 'purchases.id', '=', 'return_purchases.purchase_id')
+                            ->where([
+                                ['purchases.id', $purchase_data->id],
+                                ['purchases.payment_status', 1],
+                                ['purchases.due_at', '<=', date('Y-m-d')]
+                            ])
+                            ->sum('return_purchases.grand_total');
+
+                                $grandTotalBeforeDue = $purchaseDataBeforeDue->grand_total ?? 0;
+                                $paidAmountBeforeDue = $purchaseDataBeforeDue->paid_amount ?? 0;
+
+                                if($grandTotalBeforeDue == 0){
+                                    $purchaseDataBeforeDueAmount = 0;
+                                }else{
+                                    $purchaseDataBeforeDueAmount = ($grandTotalBeforeDue - $paidAmountBeforeDue - $purchaseDataBefore_returned_amount);
+                                }
+
+                                $currentDue = $purchase_data->grand_total - $returned_amount - $purchase_data->paid_amount;
+
+                                $diffFromPreviousDue = $currentDue - $purchaseDataBeforeDueAmount;
+
+                                
+                               
                     ?>
                     <tr>
                         <td>{{$key}}</td>
                         <td>{{date($general_setting->date_format, strtotime($purchase_data->created_at->toDateString())) . ' '. $purchase_data->created_at->toTimeString()}}</td>
                         <td>{{$purchase_data->reference_no}}</td>
                         <td>{{$supplier->name .' (' .$supplier->phone_number . ')'}}</td>
-                        <td>{{number_format((float)$purchase_data->grand_total, $general_setting->decimal, '.', '')}}</td>
-                        <td>{{number_format((float)$returned_amount, $general_setting->decimal, '.', '')}}</td>
+                        <td>{{number_format((float)$purchase_data->grand_total, $general_setting->decimal )}}</td>
+                        <td>{{number_format((float)$returned_amount, $general_setting->decimal )}}</td>
                         @if($purchase_data->paid_amount)
-                        <td>{{number_format((float)$purchase_data->paid_amount, $general_setting->decimal, '.', '')}}</td>
+                        <td>{{number_format((float)$purchase_data->paid_amount, $general_setting->decimal )}}</td>
                         @else
-                        <td>{{number_format(0, $general_setting->decimal, '.', '')}}</td>
+                        <td>{{number_format(0, $general_setting->decimal )}}</td>
                         @endif
-                        <td>{{number_format((float)($purchase_data->grand_total - $returned_amount - $purchase_data->paid_amount), $general_setting->decimal, '.', '')}}</td>
+                        <td>{{ number_format((float)$currentDue, $general_setting->decimal )}}</td>
+                        <td>{{ number_format((float)$purchaseDataBeforeDueAmount, $general_setting->decimal )}}</td>
+
                     </tr>
                     @endif
                 @endforeach
@@ -68,10 +102,12 @@
                 <th>{{trans('file.Total')}}:</th>
                 <th></th>
                 <th></th>
-                <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                <th>{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                <th>{{number_format(0, $general_setting->decimal )}}</th>
+                <th>{{number_format(0, $general_setting->decimal )}}</th>
+                <th>{{number_format(0, $general_setting->decimal )}}</th>
+                <th>{{number_format(0, $general_setting->decimal )}}</th>
+                <th>{{number_format(0, $general_setting->decimal )}}</th>
+
             </tfoot>
         </table>
     </div>
@@ -197,12 +233,16 @@
             $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
+
         }
         else {
             $( dt_selector.column( 4 ).footer() ).html(dt_selector.column( 4, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
+            $( dt_selector.column( 8 ).footer() ).html(dt_selector.column( 8, {page:'current'} ).data().sum().toFixed({{$general_setting->decimal}}));
+
         }
     }
 

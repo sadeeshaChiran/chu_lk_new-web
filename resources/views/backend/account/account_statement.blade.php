@@ -48,9 +48,9 @@
                     @else
                         <td></td>
                     @endif
-                    <td>{{number_format((float)$credit, $general_setting->decimal, '.', '')}}</td>
-                    <td>{{number_format((float)$debit, $general_setting->decimal, '.', '')}}</td>
-                    <td>{{number_format((float)$balance, $general_setting->decimal, '.', '')}}</td>
+                    <td>{{number_format((float)$credit, $general_setting->decimal )}}</td>
+                    <td>{{number_format((float)$debit, $general_setting->decimal )}}</td>
+                    <td>{{number_format((float)$balance, $general_setting->decimal )}}</td>
                 </tr>
                 @endforeach
             </tbody>

@@ -193,9 +193,9 @@
                                                     <th></th>
                                                     <th></th>
                                                     <th></th>
-                                                    <th id="total-discount">{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                                                    <th id="total-tax">{{number_format(0, $general_setting->decimal, '.', '')}}</th>
-                                                    <th id="total">{{number_format(0, $general_setting->decimal, '.', '')}}</th>
+                                                    <th id="total-discount">{{number_format(0, $general_setting->decimal )}}</th>
+                                                    <th id="total-tax">{{number_format(0, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{number_format(0, $general_setting->decimal )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -232,7 +232,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="hidden" name="grand_total" />
-                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal, '.', '')}}" />
+                                            <input type="hidden" name="paid_amount" value="{{number_format(0, $general_setting->decimal )}}" />
                                             <input type="hidden" name="payment_status" value="1" />
                                         </div>
                                     </div>
@@ -288,22 +288,22 @@
     <div class="container-fluid">
         <table class="table table-bordered table-condensed totals">
             <td><strong>{{trans('file.Items')}}</strong>
-                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="item">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Total')}}</strong>
-                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="subtotal">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Order Tax')}}</strong>
-                <span class="pull-right" id="order_tax">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="order_tax">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Order Discount')}}</strong>
-                <span class="pull-right" id="order_discount">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="order_discount">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.Shipping Cost')}}</strong>
-                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="shipping_cost">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
             <td><strong>{{trans('file.grand total')}}</strong>
-                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal, '.', '')}}</span>
+                <span class="pull-right" id="grand_total">{{number_format(0, $general_setting->decimal )}}</span>
             </td>
         </table>
     </div>
@@ -495,10 +495,10 @@
     $("#myTable").on('input', '.qty', function() {
         rowindex = $(this).closest('tr').index();
         console.log($(this).val());
-        if($(this).val() < 1 && $(this).val() != '') {
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(1);
-            alert("Quantity can't be less than 1");
-        }
+        // if($(this).val() < 1 && $(this).val() != '') {
+        //     $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ') .qty').val(1);
+        //     alert("Quantity can't be less than 1");
+        // }
         checkQuantity($(this).val(), true);
     });
 
@@ -644,11 +644,11 @@
             return;
         }
 
-        if(edit_qty < 1) {
-            $('input[name="edit_qty"]').val(1);
-            edit_qty = 1;
-            alert("Quantity can't be less than 1");
-        }
+        // if(edit_qty < 1) {
+        //     $('input[name="edit_qty"]').val(1);
+        //     edit_qty = 1;
+        //     alert("Quantity can't be less than 1");
+        // }
 
         var row_unit_operator = unit_operator[rowindex].slice(0, unit_operator[rowindex].indexOf(","));
         var row_unit_operation_value = unit_operation_value[rowindex].slice(0, unit_operation_value[rowindex].indexOf(","));
@@ -728,7 +728,7 @@
                     }
 
                     cols += '<td class="net_unit_cost"></td>';
-                    cols += '<td class="discount">{{number_format(0, $general_setting->decimal, '.', '')}}</td>';
+                    cols += '<td class="discount">{{number_format(0, $general_setting->decimal )}}</td>';
                     cols += '<td class="tax"></td>';
                     cols += '<td class="sub-total"></td>';
                     cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
@@ -748,7 +748,7 @@
 
                     rowindex = newRow.index();
                     product_cost.splice(rowindex,0, parseFloat(data[2]));
-                    product_discount.splice(rowindex,0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+                    product_discount.splice(rowindex,0, '{{number_format(0, $general_setting->decimal )}}');
                     tax_rate.splice(rowindex,0, parseFloat(data[3]));
                     tax_name.splice(rowindex,0, data[4]);
                     tax_method.splice(rowindex,0, data[5]);
@@ -877,7 +877,7 @@
                 var order_discount = parseFloat($('input[name="order_discount"]').val()) * exchangeRate;
         }
         else
-            var order_discount = {{number_format(0, $general_setting->decimal, '.', '')}};
+            var order_discount = {{number_format(0, $general_setting->decimal )}};
 
         if($('input[name="shipping_cost"]').val()) {
             if(!currencyChange)
@@ -886,7 +886,7 @@
                 var shipping_cost = parseFloat($('input[name="shipping_cost"]').val()) * exchangeRate;
         }
         else
-            var shipping_cost = {{number_format(0, $general_setting->decimal, '.', '')}};
+            var shipping_cost = {{number_format(0, $general_setting->decimal )}};
 
         item = ++item + '(' + total_qty + ')';
         order_tax = (subtotal - order_discount) * (order_tax / 100);

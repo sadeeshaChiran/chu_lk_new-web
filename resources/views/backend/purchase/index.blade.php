@@ -78,6 +78,7 @@
                     <th>Due {{trans('file.Date')}}</th>
                     <th>{{trans('file.reference')}}</th>
                     <th>{{trans('file.Supplier')}}</th>
+                    <th>{{trans('file.Created By')}}</th>
                     <th>{{trans('file.Purchase Status')}}</th>
                     <th>{{trans('file.grand total')}}</th>
                     <th>{{trans('file.Returned Amount')}}</th>
@@ -171,6 +172,8 @@
                             <th>{{trans('file.Account')}}</th>
                             <th>{{trans('file.Amount')}}</th>
                             <th>{{trans('file.Paid By')}}</th>
+                            <th>{{trans('file.Account')}}</th>
+                            <th>{{trans('file.Payment Note')}}</th>
                             <th>{{trans('file.action')}}</th>
                         </tr>
                     </thead>
@@ -209,7 +212,7 @@
                         </div>
                         {{-- <div class="col-md-6 mt-1">
                             <label>{{trans('file.Change')}} : </label>
-                            <p class="change ml-2">{{number_format(0, $general_setting->decimal, '.', '')}}</p>
+                            <p class="change ml-2">{{number_format(0, $general_setting->decimal )}}</p>
                         </div> --}}
                         <div class="col-md-6 mt-1">
                             <label>{{trans('file.Paid By')}}</label>
@@ -284,7 +287,7 @@
                         </div>
                         {{-- <div class="col-md-6 mt-1">
                             <label>{{trans('file.Change')}} : </label>
-                            <p class="change ml-2">{{number_format(0, $general_setting->decimal, '.', '')}}</p>
+                            <p class="change ml-2">{{number_format(0, $general_setting->decimal )}}</p>
                         </div> --}}
                         <div class="col-md-6 mt-1">
                             <label>{{trans('file.Paid By')}}</label>
@@ -368,6 +371,7 @@
         {"data": "due_date"},
         {"data": "reference_no"},
         {"data": "supplier"},
+        {"data": "created_by"},
         {"data": "purchase_status"},
         {"data": "grand_total"},
         {"data": "returned_amount"},
@@ -477,6 +481,8 @@
                 cols += '<td>' + account_name[index] + '</td>';
                 cols += '<td>' + paid_amount[index] + '</td>';
                 cols += '<td>' + paying_method[index] + '</td>';
+                cols += '<td>' + account_name[index] + '</td>';
+                cols += '<td>' + payment_note[index] + '</td>';
                 cols += '<td><div class="btn-group"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
                 if(all_permission.indexOf("purchase-payment-edit") != -1)
                     cols += '<li><button type="button" class="btn btn-link edit-btn" data-id="' + payment_id[index] +'" data-clicked=false data-toggle="modal" data-target="#edit-payment"><i class="dripicons-document-edit"></i> Edit</button></li><li class="divider"></li>';

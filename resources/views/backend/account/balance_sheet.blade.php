@@ -22,9 +22,9 @@
                     <td>{{$key}}</td>
                     <td>{{$account->name}}</td>
                     <td>{{$account->account_no}}</td>
-                    <td>{{number_format((float)$credit[$key], $general_setting->decimal, '.', '')}}</td>
-                    <td>{{number_format((float)($debit[$key] * -1), $general_setting->decimal, '.', '')}}</td>
-                    <td>{{number_format((float)($credit[$key] - $debit[$key]), $general_setting->decimal, '.', '')}}</td>
+                    <td>{{number_format((float)$credit[$key], $general_setting->decimal )}}</td>
+                    <td>{{number_format((float)($debit[$key] * -1), $general_setting->decimal )}}</td>
+                    <td>{{number_format((float)($credit[$key] - $debit[$key]), $general_setting->decimal )}}</td>
                 </tr>
                 @endforeach
             </tbody>

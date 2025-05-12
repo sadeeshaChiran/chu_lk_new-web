@@ -881,10 +881,10 @@
                                     customer_group_rate));
                             else
                                 wholesale_price.splice(rowindex, 0,
-                                    '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                                    '{{ number_format(0, $general_setting->decimal ) }}');
                             cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
                             product_discount.splice(rowindex, 0,
-                                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                                '{{ number_format(0, $general_setting->decimal ) }}');
                             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                             tax_name.splice(rowindex, 0, data[4]);
                             tax_method.splice(rowindex, 0, data[5]);
@@ -1255,7 +1255,7 @@
             var order_discount_type = $('select[name="order_discount_type"]').val();
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
             if (!order_discount_value)
-                order_discount_value = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                order_discount_value = {{ number_format(0, $general_setting->decimal ) }};
 
             if (order_discount_type == 'Flat') {
                 if (!currencyChange)
@@ -1266,7 +1266,7 @@
                 var order_discount = parseFloat(subtotal * (order_discount_value / 100));
 
             if (!shipping_cost)
-                shipping_cost = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                shipping_cost = {{ number_format(0, $general_setting->decimal ) }};
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);

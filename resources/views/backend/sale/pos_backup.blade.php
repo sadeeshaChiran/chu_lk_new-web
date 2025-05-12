@@ -572,7 +572,7 @@
                                         $product_batch_data = \App\Models\ProductBatch::select('batch_no', 'expired_date')->find($product_sale->product_batch_id);
                                     ?>
                                     <td class="col-sm-5 col-6 product-title">
-                                    <strong class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal">{{$product_data->name}} <i class="fa fa-edit"></i></strong><br><span>{{$product_data->code}}</span> | In Stock: <span class="in-stock">{{$product_data->in_stock}}</span> <strong class="product-price d-md-none">{{ number_format((float)($product_sale->total / $product_sale->qty), $general_setting->decimal, '.', '')}}</strong>
+                                    <strong class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal">{{$product_data->name}} <i class="fa fa-edit"></i></strong><br><span>{{$product_data->code}}</span> | In Stock: <span class="in-stock">{{$product_data->in_stock}}</span> <strong class="product-price d-md-none">{{ number_format((float)($product_sale->total / $product_sale->qty), $general_setting->decimal )}}</strong>
 
                                     @if($product_batch_data)
                                     <br><input style="font-size:13px;padding:3px 25px 3px 10px;height:30px !important" type="text" class="form-control batch-no" value="{{$product_batch_data->batch_no}}" required/> <input type="hidden" class="product-batch-id" name="product_batch_id[]" value="{{$product_sale->product_batch_id}}"/>
@@ -580,9 +580,9 @@
                                     <input type="text" class="form-control batch-no d-none" disabled/> <input type="hidden" class="product-batch-id" name="product_batch_id[]"/>
                                     @endif
                                     </td>
-                                    <td class="col-sm-2 product-price d-none d-md-block">{{ number_format((float)($product_sale->total / $product_sale->qty), $general_setting->decimal, '.', '')}}</td>
+                                    <td class="col-sm-2 product-price d-none d-md-block">{{ number_format((float)($product_sale->total / $product_sale->qty), $general_setting->decimal )}}</td>
                                     <td class="col-sm-3"><div class="input-group"><span class="input-group-btn"><button type="button" class="ibtnDel btn btn-danger btn-sm mr-3"><i class="dripicons-cross"></i></button><button type="button" class="btn btn-default minus"><span class="dripicons-minus"></span></button></span><input type="text" name="qty[]" class="form-control qty numkey input-number" value="{{$product_sale->qty}}" step="any" required><span class="input-group-btn"><button type="button" class="btn btn-default plus"><span class="dripicons-plus"></span></button></span></div></td>
-                                    <td class="col-sm-2 sub-total">{{ number_format((float)$product_sale->total, $general_setting->decimal, '.', '')}}</td>
+                                    <td class="col-sm-2 sub-total">{{ number_format((float)$product_sale->total, $general_setting->decimal )}}</td>
                                     <input type="hidden" class="product-code" name="product_code[]" value="{{$product_data->code}}"/>
                                     <input type="hidden" class="product-id" name="product_id[]" value="{{$product_data->id}}"/>
                                     <input type="hidden" class="product_price" name="product_price[]" value="{{$product_price}}"/>
@@ -616,28 +616,28 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <input type="hidden" name="total_discount" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_discount}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif" />
+                                <input type="hidden" name="total_discount" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_discount}} @else {{number_format(0, $general_setting->decimal )}} @endif" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <input type="hidden" name="total_tax" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_tax}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif" />
+                                <input type="hidden" name="total_tax" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_tax}} @else {{number_format(0, $general_setting->decimal )}} @endif" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <input type="hidden" name="total_price" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_discount}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif" />
+                                <input type="hidden" name="total_price" value="@if(isset($lims_sale_data)) {{$lims_sale_data->total_discount}} @else {{number_format(0, $general_setting->decimal )}} @endif" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <input type="hidden" name="item" value="{{$lims_sale_data->item ?? 0}}" />
-                                <input type="hidden" name="order_tax" value="@if(isset($lims_sale_data)) {{$lims_sale_data->order_tax}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif" />
+                                <input type="hidden" name="order_tax" value="@if(isset($lims_sale_data)) {{$lims_sale_data->order_tax}} @else {{number_format(0, $general_setting->decimal )}} @endif" />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <input type="hidden" name="grand_total" value="@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->grand_total, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif"/>
+                                <input type="hidden" name="grand_total" value="@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->grand_total, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif"/>
                                 <input type="hidden" name="used_points" />
                                 <input type="hidden" name="sale_status" value="1" />
                                 @if(isset($lims_sale_data) && $lims_sale_data->coupon_id)
@@ -662,25 +662,25 @@
                                 <strong class="totals-title">{{trans('file.Items')}}</strong><strong id="item">{{$lims_sale_data->item ?? 0}} ({{$lims_sale_data->total_qty ?? 0}})</strong>
                             </div>
                             <div class="col-sm-4 col-6">
-                                <strong class="totals-title">{{trans('file.Total')}}</strong><strong id="subtotal">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->total_price, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</strong>
+                                <strong class="totals-title">{{trans('file.Total')}}</strong><strong id="subtotal">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->total_price, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</strong>
                             </div>
                             <div class="col-sm-4 col-6">
-                                <strong class="totals-title">{{trans('file.Discount')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-discount-modal"> <i class="dripicons-document-edit"></i></button></strong><strong id="discount">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->order_discount, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</strong>
+                                <strong class="totals-title">{{trans('file.Discount')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-discount-modal"> <i class="dripicons-document-edit"></i></button></strong><strong id="discount">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->order_discount, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</strong>
                             </div>
                             <div class="col-sm-4 col-6">
-                                <strong class="totals-title">{{trans('file.Coupon')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#coupon-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="coupon-text">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->coupon_discount, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</strong>
+                                <strong class="totals-title">{{trans('file.Coupon')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#coupon-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="coupon-text">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->coupon_discount, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</strong>
                             </div>
                             <div class="col-sm-4 col-6">
-                                <strong class="totals-title">{{trans('file.Tax')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-tax"><i class="dripicons-document-edit"></i></button></strong><strong id="tax">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->order_tax, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</strong>
+                                <strong class="totals-title">{{trans('file.Tax')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#order-tax"><i class="dripicons-document-edit"></i></button></strong><strong id="tax">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->order_tax, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</strong>
                             </div>
                             <div class="col-sm-4 col-6">
-                                <strong class="totals-title">{{trans('file.Shipping')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#shipping-cost-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="shipping-cost">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->shipping_cost, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</strong>
+                                <strong class="totals-title">{{trans('file.Shipping')}} <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#shipping-cost-modal"><i class="dripicons-document-edit"></i></button></strong><strong id="shipping-cost">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->shipping_cost, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</strong>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="payment-amount d-none d-md-block">
-                    <h2>{{trans('file.grand total')}} <span id="grand-total">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->grand_total, $general_setting->decimal, '.', '')}} @else {{number_format(0, $general_setting->decimal, '.', '')}} @endif</span></h2>
+                    <h2>{{trans('file.grand total')}} <span id="grand-total">@if(isset($lims_sale_data)) {{number_format((float)$lims_sale_data->grand_total, $general_setting->decimal )}} @else {{number_format(0, $general_setting->decimal )}} @endif</span></h2>
                 </div>
                 <div class="payment-options">
                     <div class="column-5 more-payment-options">
@@ -759,7 +759,7 @@
                                             </div>
                                             <div class="col-md-3 mt-1">
                                                 <label>{{trans('file.Change')}} : </label>
-                                                <p id="change" class="ml-2">{{number_format(0, $general_setting->decimal, '.', '')}}</p>
+                                                <p id="change" class="ml-2">{{number_format(0, $general_setting->decimal )}}</p>
                                             </div>
                                             <div class="col-md-3 mt-1">
                                                 <input type="hidden" name="paid_by_id">
@@ -2862,9 +2862,9 @@ function confirmDelete() {
         if(data[16])
             wholesale_price.splice(rowindex, 0, parseFloat(data[16] * currency['exchange_rate']) + parseFloat(data[16] * currency['exchange_rate'] * customer_group_rate));
         else
-            wholesale_price.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+            wholesale_price.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
         cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
-        product_discount.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+        product_discount.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
         tax_rate.splice(rowindex, 0, parseFloat(data[3]));
         tax_name.splice(rowindex, 0, data[4]);
         tax_method.splice(rowindex, 0, data[5]);
@@ -2886,10 +2886,10 @@ function confirmDelete() {
         localStorageSaleUnitOperator.splice(rowindex, 0, data[7]);
         localStorageSaleUnitOperationValue.splice(rowindex, 0, data[8]);
         //put some dummy value
-        localStorageNetUnitPrice.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
-        localStorageTaxValue.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
-        localStorageSubTotalUnit.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
-        localStorageSubTotal.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal, '.', '')}}');
+        localStorageNetUnitPrice.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
+        localStorageTaxValue.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
+        localStorageSubTotalUnit.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
+        localStorageSubTotal.splice(rowindex, 0, '{{number_format(0, $general_setting->decimal )}}');
 
         localStorage.setItem("localStorageProductId", localStorageProductId);
         localStorage.setItem("localStorageSaleUnit", localStorageSaleUnit);
@@ -3234,7 +3234,7 @@ function confirmDelete() {
         var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
 
         if (!order_discount_value)
-            order_discount_value = {{number_format(0, $general_setting->decimal, '.', '')}};
+            order_discount_value = {{number_format(0, $general_setting->decimal )}};
 
         if(order_discount_type == 'Flat') {
             if(!currencyChange) {
@@ -3256,7 +3256,7 @@ function confirmDelete() {
         else
             var shipping_cost = parseFloat($('input[name="shipping_cost"]').val() * currency['exchange_rate']);
         if (!shipping_cost)
-            shipping_cost = {{number_format(0, $general_setting->decimal, '.', '')}};
+            shipping_cost = {{number_format(0, $general_setting->decimal )}};
 
         item = ++item + '(' + total_qty + ')';
         order_tax = (subtotal - order_discount) * (order_tax / 100);
@@ -3270,7 +3270,7 @@ function confirmDelete() {
         else
             var coupon_discount = parseFloat($('input[name="coupon_discount"]').val() * currency['exchange_rate']);
         if (!coupon_discount)
-            coupon_discount = {{number_format(0, $general_setting->decimal, '.', '')}};
+            coupon_discount = {{number_format(0, $general_setting->decimal )}};
         grand_total -= coupon_discount;
 
         $('#item').text(item);

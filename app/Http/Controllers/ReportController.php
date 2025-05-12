@@ -385,22 +385,22 @@ class ReportController extends Controller
                 $end_date = $year . '-'. date('m', $start).'-'.$number_of_day;
 
                 $temp_total_discount = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('total_discount');
-                $total_discount[] = number_format((float)$temp_total_discount, config('decimal'), '.', '');
+                $total_discount[] = number_format((float)$temp_total_discount, config('decimal') );
 
                 $temp_order_discount = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('order_discount');
-                $order_discount[] = number_format((float)$temp_order_discount, config('decimal'), '.', '');
+                $order_discount[] = number_format((float)$temp_order_discount, config('decimal') );
 
                 $temp_total_tax = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('total_tax');
-                $total_tax[] = number_format((float)$temp_total_tax, config('decimal'), '.', '');
+                $total_tax[] = number_format((float)$temp_total_tax, config('decimal') );
 
                 $temp_order_tax = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('order_tax');
-                $order_tax[] = number_format((float)$temp_order_tax, config('decimal'), '.', '');
+                $order_tax[] = number_format((float)$temp_order_tax, config('decimal') );
 
                 $temp_shipping_cost = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('shipping_cost');
-                $shipping_cost[] = number_format((float)$temp_shipping_cost, config('decimal'), '.', '');
+                $shipping_cost[] = number_format((float)$temp_shipping_cost, config('decimal') );
 
                 $temp_total = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('grand_total');
-                $total[] = number_format((float)$temp_total, config('decimal'), '.', '');
+                $total[] = number_format((float)$temp_total, config('decimal') );
                 $start = strtotime("+1 month", $start);
             }
             $lims_warehouse_list = Warehouse::where('is_active',true)->get();
@@ -426,22 +426,22 @@ class ReportController extends Controller
             $end_date = $year . '-'. date('m', $start).'-'.$number_of_day;
 
             $temp_total_discount = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('total_discount');
-            $total_discount[] = number_format((float)$temp_total_discount, config('decimal'), '.', '');
+            $total_discount[] = number_format((float)$temp_total_discount, config('decimal') );
 
             $temp_order_discount = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('order_discount');
-            $order_discount[] = number_format((float)$temp_order_discount, config('decimal'), '.', '');
+            $order_discount[] = number_format((float)$temp_order_discount, config('decimal') );
 
             $temp_total_tax = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('total_tax');
-            $total_tax[] = number_format((float)$temp_total_tax, config('decimal'), '.', '');
+            $total_tax[] = number_format((float)$temp_total_tax, config('decimal') );
 
             $temp_order_tax = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('order_tax');
-            $order_tax[] = number_format((float)$temp_order_tax, config('decimal'), '.', '');
+            $order_tax[] = number_format((float)$temp_order_tax, config('decimal') );
 
             $temp_shipping_cost = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('shipping_cost');
-            $shipping_cost[] = number_format((float)$temp_shipping_cost, config('decimal'), '.', '');
+            $shipping_cost[] = number_format((float)$temp_shipping_cost, config('decimal') );
 
             $temp_total = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('grand_total');
-            $total[] = number_format((float)$temp_total, config('decimal'), '.', '');
+            $total[] = number_format((float)$temp_total, config('decimal') );
             $start = strtotime("+1 month", $start);
         }
         $lims_warehouse_list = Warehouse::where('is_active',true)->get();
@@ -471,12 +471,12 @@ class ReportController extends Controller
                 );
                 $purchase_data = Purchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query1))->get();
 
-                $total_discount[] = number_format((float)$purchase_data[0]->total_discount, config('decimal'), '.', '');
-                $order_discount[] = number_format((float)$purchase_data[0]->order_discount, config('decimal'), '.', '');
-                $total_tax[] = number_format((float)$purchase_data[0]->total_tax, config('decimal'), '.', '');
-                $order_tax[] = number_format((float)$purchase_data[0]->order_tax, config('decimal'), '.', '');
-                $shipping_cost[] = number_format((float)$purchase_data[0]->shipping_cost, config('decimal'), '.', '');
-                $grand_total[] = number_format((float)$purchase_data[0]->grand_total, config('decimal'), '.', '');
+                $total_discount[] = number_format((float)$purchase_data[0]->total_discount, config('decimal') );
+                $order_discount[] = number_format((float)$purchase_data[0]->order_discount, config('decimal') );
+                $total_tax[] = number_format((float)$purchase_data[0]->total_tax, config('decimal') );
+                $order_tax[] = number_format((float)$purchase_data[0]->order_tax, config('decimal') );
+                $shipping_cost[] = number_format((float)$purchase_data[0]->shipping_cost, config('decimal') );
+                $grand_total[] = number_format((float)$purchase_data[0]->grand_total, config('decimal') );
                 $start = strtotime("+1 month", $start);
             }
             $lims_warehouse_list = Warehouse::where('is_active', true)->get();
@@ -511,12 +511,12 @@ class ReportController extends Controller
             );
             $purchase_data = Purchase::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query1))->get();
 
-            $total_discount[] = number_format((float)$purchase_data[0]->total_discount, config('decimal'), '.', '');
-            $order_discount[] = number_format((float)$purchase_data[0]->order_discount, config('decimal'), '.', '');
-            $total_tax[] = number_format((float)$purchase_data[0]->total_tax, config('decimal'), '.', '');
-            $order_tax[] = number_format((float)$purchase_data[0]->order_tax, config('decimal'), '.', '');
-            $shipping_cost[] = number_format((float)$purchase_data[0]->shipping_cost, config('decimal'), '.', '');
-            $grand_total[] = number_format((float)$purchase_data[0]->grand_total, config('decimal'), '.', '');
+            $total_discount[] = number_format((float)$purchase_data[0]->total_discount, config('decimal') );
+            $order_discount[] = number_format((float)$purchase_data[0]->order_discount, config('decimal') );
+            $total_tax[] = number_format((float)$purchase_data[0]->total_tax, config('decimal') );
+            $order_tax[] = number_format((float)$purchase_data[0]->order_tax, config('decimal') );
+            $shipping_cost[] = number_format((float)$purchase_data[0]->shipping_cost, config('decimal') );
+            $grand_total[] = number_format((float)$purchase_data[0]->grand_total, config('decimal') );
             $start = strtotime("+1 month", $start);
         }
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
@@ -1063,7 +1063,7 @@ class ReportController extends Controller
                         else
                             $nestedData['stock_worth'] = ($nestedData['in_stock'] * $product->price).' '.config('currency').' / '.($nestedData['in_stock'] * $product->cost).' '.config('currency');
 
-                        $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal'), '.', '');
+                        $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal') );
 
                         /*if($nestedData['purchased_qty'] > 0 || $nestedData['transfered_qty'] > 0 || $nestedData['sold_qty'] > 0 || $nestedData['returned_qty'] > 0 || $nestedData['purchase_returned_qty']) {*/
                             $data[] = $nestedData;
@@ -1179,7 +1179,7 @@ class ReportController extends Controller
                     else
                         $nestedData['stock_worth'] = ($nestedData['in_stock'] * $product->price).' '.config('currency').' / '.($nestedData['in_stock'] * $product->cost).' '.config('currency');
 
-                    $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal'), '.', '');
+                    $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal') );
                     /*if($nestedData['purchased_qty'] > 0 || $nestedData['transfered_qty'] > 0 || $nestedData['sold_qty'] > 0 || $nestedData['returned_qty'] > 0 || $nestedData['purchase_returned_qty']) {*/
                         $data[] = $nestedData;
                     //}
@@ -1375,7 +1375,7 @@ class ReportController extends Controller
                         else
                             $nestedData['stock_worth'] = ($nestedData['in_stock'] * $product->price).' '.config('currency').' / '.($nestedData['in_stock'] * $product->cost).' '.config('currency');
 
-                        $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal'), '.', '');
+                        $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal') );
 
                         $data[] = $nestedData;
                     }
@@ -1557,7 +1557,7 @@ class ReportController extends Controller
                     else
                         $nestedData['stock_worth'] = ($nestedData['in_stock'] * $product->price).' '.config('currency').' / '.($nestedData['in_stock'] * $product->cost).' '.config('currency');
 
-                    $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal'), '.', '');
+                    $nestedData['profit'] = number_format((float)$nestedData['profit'], config('decimal') );
 
                     $data[] = $nestedData;
                 }
@@ -2193,13 +2193,19 @@ class ReportController extends Controller
     public function salePaymentReportByDate(Request $request)
     {
         $data = $request->all();
-        $start_date = $data['start_date'];
-        $end_date = $data['end_date'] ;
+        if($data) {
+            $start_date = $data['start_date'];
+            $end_date = $data['end_date'] ;
+        }
+        else {
+            $start_date = date("Y-m-"."01");
+            $end_date = date("Y-m-d");
+        }
+        
 
         $lims_payment_data = Payment::with('sale', 'user')
         ->whereNotNull('sale_id')
-        ->where('created_at', '>=', $start_date)
-        ->where('created_at', '<=', $end_date)
+        ->whereBetween('created_at', [$start_date, $end_date])
         ->get();        
         return view('backend.report.sale_payment_report',compact('lims_payment_data', 'start_date', 'end_date'));
     }
@@ -2207,13 +2213,18 @@ class ReportController extends Controller
     public function purchasePaymentReportByDate(Request $request)
     {
         $data = $request->all();
-        $start_date = $data['start_date'];
-        $end_date = $data['end_date'];
+        if($data) {
+            $start_date = $data['start_date'];
+            $end_date = $data['end_date'] ;
+        }
+        else {
+            $start_date = date("Y-m-"."01");
+            $end_date = date("Y-m-d");
+        }
 
-        $lims_payment_data = Payment::with('purchase', 'user')
-        ->whereNotNull('purchase_id')
-        ->where('created_at', '>=', $start_date)
-        ->where('created_at', '<=', $end_date)
+        $lims_payment_data = Payment::with('purchase', 'user', 'purchase.supplier', 'account')
+        ->whereNotNull(columns: 'purchase_id')
+        ->whereBetween('created_at', [$start_date, $end_date])
         ->get();
         return view('backend.report.purchase_payment_report',compact('lims_payment_data', 'start_date', 'end_date'));
     }
@@ -4769,7 +4780,7 @@ class ReportController extends Controller
         $start = $request->input('start');
         $order = 'purchases.'.$columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
-        $q = $q->select('purchases.id', 'purchases.reference_no', 'purchases.grand_total', 'purchases.paid_amount', 'purchases.status', 'purchases.created_at', 'warehouses.name as warehouse_name')
+        $q = $q->select('purchases.id', 'purchases.reference_no', 'purchases.grand_total', 'purchases.paid_amount', 'purchases.status', 'purchases.created_at', 'purchases.payment_status', 'purchases.due_at', 'purchases.status', 'warehouses.name as warehouse_name')
             ->offset($start)
             ->limit($limit)
             ->orderBy($order, $dir);
@@ -4835,6 +4846,22 @@ class ReportController extends Controller
                 $nestedData['grand_total'] = number_format($purchase->grand_total, cache()->get('general_setting')->decimal);
                 $nestedData['paid'] = number_format($purchase->paid_amount, cache()->get('general_setting')->decimal);
                 $nestedData['balance'] = number_format($purchase->grand_total - $purchase->paid_amount, cache()->get('general_setting')->decimal);
+                if ($purchase->payment_status == 1) {
+                    if ($purchase->due_at <= date('Y-m-d')) {
+                        $nestedData['is_over_due_amount'] = '<div class="badge badge-danger">YES</div>';
+                    } else {
+                        $nestedData['is_over_due_amount'] = '<div class="badge badge-primary">NO</div>';
+                    }
+                } else {
+                    $nestedData['is_over_due_amount'] = '-';
+                }
+                if ($purchase->payment_status == 1)
+
+                    $nestedData['payment_status'] = '<div class="badge badge-danger">' . trans('file.Due') . '</div>';
+
+                else
+                    $nestedData['payment_status'] = '<div class="badge badge-success">' . trans('file.Paid') . '</div>';
+                
                 if($purchase->status == 1){
                     $nestedData['status'] = '<div class="badge badge-success">'.trans('file.Completed').'</div>';
                     $status = trans('file.Completed');
@@ -4931,6 +4958,8 @@ class ReportController extends Controller
                 $nestedData['purchase_reference'] = $payment->purchase_reference;
                 $nestedData['amount'] = number_format($payment->amount, cache()->get('general_setting')->decimal);
                 $nestedData['paying_method'] = $payment->paying_method;
+                $nestedData['account'] = $payment->account_id ? DB::table('accounts')->where('id', $payment->account_id)->value('name') : '';
+                $nestedData['note'] = $payment->payment_note ?? '-';
                 $data[] = $nestedData;
             }
         }

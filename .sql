@@ -17,3 +17,8 @@ ALTER TABLE `payment_with_credit_card` CHANGE `charge_id` `charge_id` VARCHAR(19
 
 --2025/02/07
 ALTER TABLE `purchases` ADD `due_at` TIMESTAMP NULL AFTER `note`;
+
+--2025/05/11
+UPDATE `purchases`
+SET due_at = CURDATE() - INTERVAL 1 DAY
+WHERE due_at IS NULL;

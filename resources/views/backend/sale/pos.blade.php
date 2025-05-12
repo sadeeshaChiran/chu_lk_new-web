@@ -966,7 +966,7 @@
                                                             class="fa fa-edit"></i></strong><br><span>{{ $product_data->code }}</span>
                                                     | In Stock: <span
                                                         class="in-stock">{{ $product_data->in_stock }}</span> <strong
-                                                        class="product-price d-md-none">{{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal, '.', '') }}</strong>
+                                                        class="product-price d-md-none">{{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal ) }}</strong>
 
                                                     @if ($product_batch_data)
                                                         <br><input
@@ -983,7 +983,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="col-sm-2 product-price d-none d-md-block">
-                                                    {{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal, '.', '') }}
+                                                    {{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal ) }}
                                                 </td>
                                                 <td class="col-sm-3">
                                                     <div class="input-group"><span class="input-group-btn"><button
@@ -1000,7 +1000,7 @@
                                                                     class="dripicons-plus"></span></button></span></div>
                                                 </td>
                                                 <td class="col-sm-2 sub-total">
-                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal, '.', '') }}
+                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal ) }}
                                                 </td>
                                                 <input type="hidden" class="product-code" name="product_code[]"
                                                     value="{{ $product_data->code }}" />
@@ -1052,32 +1052,32 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_discount"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal, '.', '') }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_tax"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_tax }} @else {{ number_format(0, $general_setting->decimal, '.', '') }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_tax }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_price"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal, '.', '') }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="item" value="{{ $lims_sale_data->item ?? 0 }}" />
                                     <input type="hidden" name="order_tax"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->order_tax }} @else {{ number_format(0, $general_setting->decimal, '.', '') }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->order_tax }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="grand_total"
-                                        value="@if (isset($lims_sale_data)) {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal, '.', '') }} @else {{ number_format(0, $general_setting->decimal, '.', '') }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal ) }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
                                     <input type="hidden" name="used_points" />
                                     <input type="hidden" name="sale_status" value="1" />
                                     @if (isset($lims_sale_data) && $lims_sale_data->coupon_id)
@@ -1110,9 +1110,9 @@
                                     <strong class="totals-title">{{ trans('file.Total') }}</strong><strong
                                         id="subtotal">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal, '.', '') }}
+                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal ) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                            {{ number_format(0, $general_setting->decimal ) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1123,9 +1123,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="discount">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->order_discount, $general_setting->decimal, '.', '') }}
+                                            {{ number_format((float) $lims_sale_data->order_discount, $general_setting->decimal ) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                            {{ number_format(0, $general_setting->decimal ) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1136,9 +1136,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="coupon-text">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->coupon_discount, $general_setting->decimal, '.', '') }}
+                                            {{ number_format((float) $lims_sale_data->coupon_discount, $general_setting->decimal ) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                            {{ number_format(0, $general_setting->decimal ) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1148,9 +1148,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="tax">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->order_tax, $general_setting->decimal, '.', '') }}
+                                            {{ number_format((float) $lims_sale_data->order_tax, $general_setting->decimal ) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                            {{ number_format(0, $general_setting->decimal ) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1161,9 +1161,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="shipping-cost">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->shipping_cost, $general_setting->decimal, '.', '') }}
+                                            {{ number_format((float) $lims_sale_data->shipping_cost, $general_setting->decimal ) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                            {{ number_format(0, $general_setting->decimal ) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1173,9 +1173,9 @@
                     <div class="payment-amount d-none d-md-block">
                         <h2>{{ trans('file.grand total') }} <span id="grand-total">
                                 @if (isset($lims_sale_data))
-                                    {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal, '.', '') }}
+                                    {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal ) }}
                                 @else
-                                    {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                    {{ number_format(0, $general_setting->decimal ) }}
                                 @endif
                             </span></h2>
                     </div>
@@ -3976,7 +3976,7 @@
                 }
             } else
                 $('input[name="paying_amount"]').val(
-                    '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                    '{{ number_format(0, $general_setting->decimal ) }}');
             change($('input[name="paying_amount"]').val(), $('input[name="paid_amount"]').val());
         });
 
@@ -4146,9 +4146,9 @@
                     data[16] *
                     currency['exchange_rate'] * customer_group_rate));
             else
-                wholesale_price.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                wholesale_price.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal ) }}');
             cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
-            product_discount.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+            product_discount.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal ) }}');
             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
             tax_name.splice(rowindex, 0, data[4]);
             tax_method.splice(rowindex, 0, data[5]);
@@ -4173,13 +4173,13 @@
             localStorageSaleUnitOperationValue.splice(rowindex, 0, data[8]);
             //put some dummy value
             localStorageNetUnitPrice.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                '{{ number_format(0, $general_setting->decimal ) }}');
             localStorageTaxValue.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                '{{ number_format(0, $general_setting->decimal ) }}');
             localStorageSubTotalUnit.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                '{{ number_format(0, $general_setting->decimal ) }}');
             localStorageSubTotal.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                '{{ number_format(0, $general_setting->decimal ) }}');
 
             localStorage.setItem("localStorageProductId", localStorageProductId);
             localStorage.setItem("localStorageSaleUnit", localStorageSaleUnit);
@@ -4571,7 +4571,7 @@
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
 
             if (!order_discount_value)
-                order_discount_value = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                order_discount_value = {{ number_format(0, $general_setting->decimal ) }};
 
             if (order_discount_type == 'Flat') {
                 if (!currencyChange) {
@@ -4591,7 +4591,7 @@
             else
                 var shipping_cost = parseFloat($('input[name="shipping_cost"]').val() * currency['exchange_rate']);
             if (!shipping_cost)
-                shipping_cost = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                shipping_cost = {{ number_format(0, $general_setting->decimal ) }};
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);
@@ -4606,7 +4606,7 @@
                 var coupon_discount = parseFloat($('input[name="coupon_discount"]').val() * currency[
                     'exchange_rate']);
             if (!coupon_discount)
-                coupon_discount = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                coupon_discount = {{ number_format(0, $general_setting->decimal ) }};
             grand_total -= coupon_discount;
 
             $('#item').text(item);

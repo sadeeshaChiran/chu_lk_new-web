@@ -242,11 +242,11 @@
                                                         <th></th>
                                                         <th></th>
                                                         <th id="total-discount">
-                                                            {{ number_format(0, $general_setting->decimal, '.', '') }}</th>
+                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
                                                         <th id="total-tax">
-                                                            {{ number_format(0, $general_setting->decimal, '.', '') }}</th>
+                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
                                                         <th id="total">
-                                                            {{ number_format(0, $general_setting->decimal, '.', '') }}</th>
+                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
                                                         <th><i class="dripicons-trash"></i></th>
                                                     </tfoot>
                                                 </table>
@@ -259,27 +259,27 @@
                                         <table class="table table-bordered table-condensed totals">
                                             <td><strong>{{ trans('file.Items') }}</strong>
                                                 <span class="pull-right"
-                                                    id="item">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="item">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Total') }}</strong>
                                                 <span class="pull-right"
-                                                    id="subtotal">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="subtotal">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Order Tax') }}</strong>
                                                 <span class="pull-right"
-                                                    id="order_tax">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="order_tax">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Order Discount') }}</strong>
                                                 <span class="pull-right"
-                                                    id="order_discount">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="order_discount">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Shipping Cost') }}</strong>
                                                 <span class="pull-right"
-                                                    id="shipping_cost">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="shipping_cost">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.grand total') }}</strong>
                                                 <span class="pull-right"
-                                                    id="grand_total">{{ number_format(0, $general_setting->decimal, '.', '') }}</span>
+                                                    id="grand_total">{{ number_format(0, $general_setting->decimal ) }}</span>
                                             </td>
                                         </table>
                                     </div>
@@ -572,7 +572,7 @@
                                                 <div class="form-group">
                                                     <label>{{ trans('file.Change') }}</label>
                                                     <p id="change" class="ml-2">
-                                                        {{ number_format(0, $general_setting->decimal, '.', '') }}</p>
+                                                        {{ number_format(0, $general_setting->decimal ) }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1632,7 +1632,7 @@
 
                             cols += '<td class="net_unit_price"></td>';
                             cols +=
-                                '<td class="discount">{{ number_format(0, $general_setting->decimal, '.', '') }}</td>';
+                                '<td class="discount">{{ number_format(0, $general_setting->decimal ) }}</td>';
                             cols += '<td class="tax"></td>';
                             cols += '<td class="sub-total"></td>';
                             cols +=
@@ -1693,10 +1693,10 @@
                                     customer_group_rate));
                             else
                                 wholesale_price.splice(rowindex, 0,
-                                    '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                                    '{{ number_format(0, $general_setting->decimal ) }}');
                             cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
                             product_discount.splice(rowindex, 0,
-                                '{{ number_format(0, $general_setting->decimal, '.', '') }}');
+                                '{{ number_format(0, $general_setting->decimal ) }}');
                             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                             tax_name.splice(rowindex, 0, data[4]);
                             tax_method.splice(rowindex, 0, data[5]);
@@ -2067,7 +2067,7 @@
             var order_discount_type = $('select[name="order_discount_type"]').val();
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
             if (!order_discount_value)
-                order_discount_value = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                order_discount_value = {{ number_format(0, $general_setting->decimal ) }};
 
             if (order_discount_type == 'Flat') {
                 if (!currencyChange)
@@ -2078,7 +2078,7 @@
                 var order_discount = parseFloat(subtotal * (order_discount_value / 100));
 
             if (!shipping_cost)
-                shipping_cost = {{ number_format(0, $general_setting->decimal, '.', '') }};
+                shipping_cost = {{ number_format(0, $general_setting->decimal ) }};
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);

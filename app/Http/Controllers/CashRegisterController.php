@@ -19,7 +19,7 @@ class CashRegisterController extends Controller
 
 			foreach ($lims_cash_register_all as $register) {
 
-				$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
+				$total_sale_amount = Sale::where('cash_register_id', $register->id)
 					->whereIn('sale_status', [1, 4])
 					->sum('grand_total');
 
@@ -68,7 +68,7 @@ class CashRegisterController extends Controller
 					->where('paying_method', 'Cash')
 					->sum('amount');
 
-				$cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
+				$cash_total_sale_return = Returns::where('cash_register_id', $register->id)
 				->whereHas('sale', function ($query) {
 					$query->where('payment_status', 4);
 				})
