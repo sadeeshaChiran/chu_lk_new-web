@@ -65,13 +65,13 @@
                                                             <td class="product-code">{{$preLoadedproduct[1]}}</td>
                                                             <td><input type="number" class="form-control qty" name="products[{{$key}}][quantity]" value="1" /></td>
                                                             <td><button type="button" class="ibtnDel btn btn-md btn-danger">Delete</button></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][product_id]" value="{{$preLoadedproduct[8]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][product_name]" value="{{$preLoadedproduct[0]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][sub_sku]" value="{{$preLoadedproduct[1]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][product_price]" value="{{$preLoadedproduct[2]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][product_promo_price]" value="{{$preLoadedproduct[4]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][currency]" value="{{$preLoadedproduct[5]}}"></td>
-                                                            <td><input type="hidden" name="products[{{$key}}][currency_position]" value="{{$preLoadedproduct[6]}}"></td>
+                                                            <input type="hidden" name="products[{{$key}}][product_id]" value="{{$preLoadedproduct[8]}}">
+                                                            <input type="hidden" name="products[{{$key}}][product_name]" value="{{$preLoadedproduct[0]}}">
+                                                            <input type="hidden" name="products[{{$key}}][sub_sku]" value="{{$preLoadedproduct[1]}}">
+                                                            <input type="hidden" name="products[{{$key}}][product_price]" value="{{$preLoadedproduct[2]}}">
+                                                            <input type="hidden" name="products[{{$key}}][product_promo_price]" value="{{$preLoadedproduct[4]}}">
+                                                            <input type="hidden" name="products[{{$key}}][currency]" value="{{$preLoadedproduct[5]}}">
+                                                            <input type="hidden" name="products[{{$key}}][currency_position]" value="{{$preLoadedproduct[6]}}">
                                                         </tr>
                                                         @endforeach
                                                     </tbody>
@@ -84,44 +84,57 @@
                                     <label><strong>{{trans('file.Information on Label')}} *</strong></label>
 
                                     <div class="row mt-2">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <strong><input type="checkbox" name="print[name]" checked value="1" /> {{trans('file.Product Name')}}</strong>&nbsp;
-                                            <div class="d-flex justify-content-start">
-                                                <div>Size:</div>&nbsp;
-                                                <div><input type="number" name="print[name_size]" value="15"></div>
+                                            <div class="col-md-12 form-group">
+                                                <label>Size</label>
+                                                <input type="number" name="print[name_size]" class="form-control col-md-12" value="15">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+
+                                        <div class="col-md-6">
                                             <strong><input type="checkbox" name="print[price]" checked value="1" /> {{trans('file.Price')}}</strong>&nbsp;
-                                            <div class="d-flex justify-content-start">
-                                                <div>Size:</div>&nbsp;
-                                                <div><input type="number" name="print[price_size]" value="15"></div>
+                                            <div class="col-md-12 form-group">
+                                                <label>Size</label>
+                                                <input type="number" name="print[price_size]" class="form-control" value="15">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+
+
+                                        <div class="col-md-6">
                                             <strong><input type="checkbox" name="print[promo_price]" checked value="1" /> {{trans('file.Promotional Price')}}</strong>
-                                            <div class="d-flex justify-content-start">
-                                                <div>Size:</div>&nbsp;
-                                                <div><input type="number" name="print[promo_price_size]" value="15"></div>
+                                            <div class="col-md-12 form-group">
+                                                <label>Size</label>
+                                                <input type="number" name="print[promo_price_size]" class="form-control" value="15">
                                             </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <strong><input type="checkbox" name="print[business_name]" checked value="1" /> {{trans('file.Business Name')}}</strong>
+                                            <div class="col-md-12 form-group">
+                                                <label>Size</label>
+                                                <input type="number" name="print[business_name_size]" class="form-control" value="15">
+                                            </div>
+                                        </div>
+
+                                    
                                     </div>
-                                    <div class="row mt-4">
-                                        <div class="col-md-4">
+                                    {{-- <div class="row mt-4">
+                                        <div class="col-md-6">
                                             <strong><input type="checkbox" name="print[business_name]" checked value="1" /> {{trans('file.Business Name')}}</strong>
                                             <div class="d-flex justify-content-start">
                                                 <div>Size:</div>&nbsp;
                                                 <div><input type="number" name="print[business_name_size]" value="15"></div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <input type="hidden" name="print[variations]" value="1">
                                     <input type="hidden" name="print[variations_size]" value="17">
                                     <input type="hidden" name="print[packing_date]" value="1">
                                     <input type="hidden" name="print[packing_date_size	]" value="12">
                                     <hr>
                                     <div class="row mt-4">
-                                        <div class="col-md-8">
+                                        <div class="col-md-12">
                                             <label><strong>Paper Size *</strong></label>
                                             {!! Form::select('barcode_setting', $barcode_settings, !empty($default) ? $default->id : null, ['class' => 'form-control']); !!}
 
@@ -137,7 +150,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group mt-3">
-				                                <button type="button" id="labels_preview" class="btn btn-primary btn-big">@lang( 'file.submit' )</button>
+				                                <button type="button" id="labels_preview" class="btn btn-primary btn-big mt-2 col-md-12">@lang( 'file.submit' )</button>
 
                                                 {{-- <button type="submit" value="{{trans('file.submit')}}" class="btn btn-primary"> --}}
                                             </div>
@@ -233,13 +246,13 @@
                         cols += '<td class="product-code">' + data[1] + '</td>';
                         cols += '<td><input type="number" class="form-control qty" name="products['+ key +'][quantity]" value="1" /></td>';
                         cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">Delete</button></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][product_id]" value="'+data[8]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][product_name]" value="'+data[0]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][sub_sku]" value="'+data[1]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][product_price]" value="'+data[2]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][product_promo_price]" value="'+data[4]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][currency]" value="'+data[5]+'"></td>';
-                        cols += '<td><input type="hidden" name="products['+ key +'][currency_position]" value="'+data[6]+'"></td>';
+                        cols += '<input type="hidden" name="products['+ key +'][product_id]" value="'+data[8]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][product_name]" value="'+data[0]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][sub_sku]" value="'+data[1]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][product_price]" value="'+data[2]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][product_promo_price]" value="'+data[4]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][currency]" value="'+data[5]+'">';
+                        cols += '<input type="hidden" name="products['+ key +'][currency_position]" value="'+data[6]+'">';
 
 
                         newRow.append(cols);

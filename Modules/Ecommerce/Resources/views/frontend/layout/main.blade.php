@@ -25241,7 +25241,7 @@
                 .search_result {
                     background: #FFF;
                     border: 1px solid #e4e6fc;
-                    border-radius: 5px;
+                    border-radius: 12px;
                     box-shadow: 0 5px 10px rgba(44, 44, 44.0.5);
                     display: none;
                     overflow-y: scroll;

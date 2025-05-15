@@ -47,49 +47,75 @@ class DeliveryController extends Controller
         $columns = array(
             1 => 'reference_no'
         );
+
         if($role->hasPermissionTo('delivery')) {
-            if(Auth::user()->role_id > 2 && config('staff_access') == 'own')
-                $lims_delivery_all = Delivery::orderBy('id', 'desc')->where('user_id', Auth::id())->get();
-            else
-                $lims_delivery_all = Delivery::orderBy('id', 'desc')->get();
-            $lims_courier_list = Courier::where('is_active', true)->get();
+            if(Auth::user()->role_id > 2 && config('staff_access') == 'own'){
+                $totalData = Delivery::orderBy('id', 'desc')->where('user_id', Auth::id())->count();
+            }else{
+                $totalData = Delivery::orderBy('id', 'desc')->count();
+
+            }
+                // $lims_courier_list = Courier::where('is_active', true)->get();
         }
 
         if($request->input('length') != -1)
             $limit = $request->input('length');
-        // $order = $columns[$request->input('order.0.column')];
+        else
+            $limit = $totalData;
+
+        if($role->hasPermissionTo('delivery')) {
+            if(Auth::user()->role_id > 2 && config('staff_access') == 'own'){
+                $lims_delivery_all = Delivery::orderBy('id', 'desc')->where('user_id', Auth::id())->limit($limit)->get();
+
+            }else{
+                $lims_delivery_all = Delivery::orderBy('id', 'desc')->limit($limit)->get();
+
+            }
+                // $lims_courier_list = Courier::where('is_active', true)->get();
+        }
+
+        $totalFiltered = $totalData;
+
+
+        // if($request->input('length') != -1)
+        //     $limit = $request->input('length');
+        // // $order = $columns[$request->input('order.0.column')];
+        // // $dir = $request->input('order.0.dir');
+
+        //   $start = $request->input('start');
+        // // $order = $columns[$request->input('order.0.column')];
         // $dir = $request->input('order.0.dir');
 
-          $start = $request->input('start');
-        // $order = $columns[$request->input('order.0.column')];
-        $dir = $request->input('order.0.dir');
+        // if($request->input('search.value')) {
+        //     $search = $request->input('search.value');
+        //     $totalData = Delivery::where([
+        //         ['reference_no', 'LIKE', "%{$search}%"]
+        //     ])->count();
+        //     // $lims_delivery_all = Delivery::where([
+        //     //                         ['reference_no', 'LIKE', "%{$search}%"]
+        //     //                     ])->get();
+        //     $lims_delivery_all =  Delivery::select('deliveries.*')
+        //                                     ->leftJoin('sales', 'deliveries.sale_id', '=', 'sales.id')
+        //                                     ->leftJoin('packing_slips', 'deliveries.packing_slip_ids', '=', 'packing_slips.id') // Adjust if multiple ids
+        //                                     ->leftJoin('customers', 'sales.customer_id', '=', 'customers.id') // Join the customers table via sales
+        //                                     ->where(function($q) use ($search) {
+        //                                         $q->where('deliveries.reference_no', 'LIKE', "%{$search}%")      // Search in deliveries reference_no
+        //                                         ->orWhere('sales.reference_no', 'LIKE', "%{$search}%")         // Search in sales reference_no
+        //                                         ->orWhere('packing_slips.reference_no', 'LIKE', "%{$search}%") // Search in packing_slips reference_no
+        //                                         ->orWhere('deliveries.packing_slip_ids', 'LIKE', "%{$search}%")// Search in packing_slip_ids
+        //                                         ->orWhere('customers.name', 'LIKE', "%{$search}%")             // Search in customer name
+        //                                         ->orWhere('customers.phone_number', 'LIKE', "%{$search}%");    // Search in customer phone number
+        //                                     })->get();
+        // }
+        // else {
+        //     $totalData = Delivery::count();
+        //     $lims_delivery_all = Delivery::get();
+        // }
 
-        if($request->input('search.value')) {
-            $search = $request->input('search.value');
-            $totalData = Delivery::where([
-                ['reference_no', 'LIKE', "%{$search}%"]
-            ])->count();
-            // $lims_delivery_all = Delivery::where([
-            //                         ['reference_no', 'LIKE', "%{$search}%"]
-            //                     ])->get();
-            $lims_delivery_all =  Delivery::select('deliveries.*')
-                                            ->leftJoin('sales', 'deliveries.sale_id', '=', 'sales.id')
-                                            ->leftJoin('packing_slips', 'deliveries.packing_slip_ids', '=', 'packing_slips.id') // Adjust if multiple ids
-                                            ->leftJoin('customers', 'sales.customer_id', '=', 'customers.id') // Join the customers table via sales
-                                            ->where(function($q) use ($search) {
-                                                $q->where('deliveries.reference_no', 'LIKE', "%{$search}%")      // Search in deliveries reference_no
-                                                ->orWhere('sales.reference_no', 'LIKE', "%{$search}%")         // Search in sales reference_no
-                                                ->orWhere('packing_slips.reference_no', 'LIKE', "%{$search}%") // Search in packing_slips reference_no
-                                                ->orWhere('deliveries.packing_slip_ids', 'LIKE', "%{$search}%")// Search in packing_slip_ids
-                                                ->orWhere('customers.name', 'LIKE', "%{$search}%")             // Search in customer name
-                                                ->orWhere('customers.phone_number', 'LIKE', "%{$search}%");    // Search in customer phone number
-                                            })->get();
-        }
-        else {
-            $totalData = Delivery::count();
-            $lims_delivery_all = Delivery::get();
-        }
-        $totalFiltered = $totalData;
+
+
+
+        
         $data = [];
         foreach ($lims_delivery_all as $key=>$delivery)
         {
@@ -160,6 +186,7 @@ class DeliveryController extends Controller
             "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
+
 
         echo json_encode($json_data);
     }

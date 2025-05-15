@@ -7,14 +7,14 @@ img {
 }
 
 .theme-color {
-    color: #7c5cc4;
+    color: #47469b;
 }
 
-a { color: #7c5cc4; }
+a { color: #47469b; }
 
 .btn-primary {
-    background-color: #7c5cc4;
-    border-color: #7c5cc4;
+    background-color: #47469b;
+    border-color: #47469b;
     border-radius: 0;
     margin-top: 30px;
 }
@@ -30,7 +30,7 @@ a { color: #7c5cc4; }
     border: 1px solid #E5E5E5;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     -moz-box-shadow: 0px 5px 15px #bbb;
     -webkit-box-shadow: 0px 5px 15px #bbb;
     box-shadow: 0px 5px 15px #ddd;
@@ -48,7 +48,7 @@ header img {
 }
 
 header h1 {
-    color: #7c5cc4;
+    color: #47469b;
     font-size: 24px;
 }
 

@@ -68,7 +68,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
                                             <input type="file" name="document" class="form-control" >
@@ -356,7 +356,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -418,7 +418,7 @@
                                     $tax_rate_all[] = $tax->rate;
                                 }
                             ?>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>{{trans('file.Tax Rate')}}</label>
                                 <select name="edit_tax_rate" class="form-control selectpicker">
                                     @foreach($tax_name_all as $key => $name)
@@ -426,13 +426,13 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>{{trans('file.Product Unit')}}</label>
                                 <select name="edit_unit" class="form-control selectpicker">
                                 </select>
                             </div>
                         </div>
-                        <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
+                        <button type="button" name="update_btn" class="btn btn-primary  mt-2 col-md-12">{{trans('file.update')}}</button>
                     </form>
                 </div>
             </div>

@@ -1008,7 +1008,7 @@ class SaleController extends Controller
                 $nestedData['sale'] = array(
                     '[ "' . date(config('date_format'), strtotime($sale->created_at->toDateString())) . '"',
                     ' "' . $sale->reference_no . '"',
-                    ' "' . $sale->packingSlip?->waybill_id ?? 'N/A' . '"',
+                    ' "' . $sale->packingSlip?->waybill_id  . '"',
                     ' "' . $sale_status . '"',
                     ' "' . $sale->biller->name . '"',
                     ' "' . $sale->biller->company_name . '"',

@@ -495,7 +495,7 @@
                     @endif
                     <div class="col-12 pl-0 pr-0">
                         <div class="search-box form-group mb-2">
-                            <input style="border: 1px solid #7c5cc4;" type="text" name="product_code_name" id="lims_productcodeSearch" placeholder="Scan/Search product by name/code" class="form-control" />
+                            <input style="border: 1px solid #47469b;" type="text" name="product_code_name" id="lims_productcodeSearch" placeholder="Scan/Search product by name/code" class="form-control" />
                         </div>
                     </div>
                     <div class="table-responsive transaction-list">

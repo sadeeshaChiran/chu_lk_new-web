@@ -81,7 +81,7 @@
 
 
 		@page {
-		    size: {{$paper_width}}in {{$paper_height}}in;
+		    /* size: {{$paper_width}}in {{$paper_height}}in; */
 
             /*width: {{$barcode_details->paper_width}}in !important;*/
             /*height:@if($barcode_details->paper_height != 0){{$barcode_details->paper_height}}in !important @else auto @endif;*/

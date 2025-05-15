@@ -13,7 +13,7 @@
                 <h3 class="text-center">{{trans('file.Purchase List')}}</h3>
             </div>
             {!! Form::open(['route' => 'purchases.index', 'method' => 'get']) !!}
-            <div class="row ml-1 mt-2">
+            <div class="row m-1 mt-2">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label><strong>{{trans('file.Date')}}</strong></label>
@@ -56,9 +56,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-2 mt-3">
+                <div class="mt-2 col-md-12">
                     <div class="form-group">
-                        <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
+                        <button class="btn btn-primary col-md-12 " id="filter-btn" type="submit">{{trans('file.submit')}}</button>
                     </div>
                 </div>
             </div>
@@ -473,9 +473,6 @@
             $.each(payment_date, function(index){
                 var newRow = $("<tr>");
                 var cols = '';
-
-                console.log(payment_date[index]);
-
                 cols += '<td>' + payment_date[index] + '</td>';
                 cols += '<td>' + payment_reference[index] + '</td>';
                 cols += '<td>' + account_name[index] + '</td>';

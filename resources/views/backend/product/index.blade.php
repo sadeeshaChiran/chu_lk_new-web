@@ -30,23 +30,25 @@
         @endif
         <div class="card mt-3">
             <h3 class="text-center mt-3">{{trans('file.Filter Products')}}</h3>
-            <div class="card-body">
+            <div class="card-body  ">
                 {!! Form::open(['route' => 'products.index', 'method' => 'get']) !!}
-                <div class="row">
-                    <div class="col-md-3 offset-3 @if(\Auth::user()->role_id > 8){{'d-none'}}@endif">
-                        <div class="form-group">
-                            <label><strong>{{trans('file.Warehouse')}}</strong></label>
-                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" >
-                                <option value="0">{{trans('file.All Warehouse')}}</option>
-                                @foreach($lims_warehouse_list as $warehouse)
-                                    <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
+                <div class="row align-items-end">
+                    <div class="col-md-7 offset-1 @if(\Auth::user()->role_id > 8) d-none @endif">
+                        <div class="form-group mb-0">
+                            <label><strong>{{ trans('file.Warehouse') }}</strong></label>
+                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control"
+                                data-live-search="true" data-live-search-style="begins">
+                                <option value="0">{{ trans('file.All Warehouse') }}</option>
+                                @foreach ($lims_warehouse_list as $warehouse)
+                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 mt-3">
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
+                    <div class="col-md-3">
+                        <div class="form-group mb-0">
+                            <label class="invisible d-block"><strong>Submit</strong></label>
+                            <button class="btn btn-primary col-md-12" id="filter-btn" type="submit">{{ trans('file.submit') }}</button>
                         </div>
                     </div>
                 </div>
@@ -109,7 +111,7 @@
                     </div>
                 </div>
            </div>
-            {{Form::submit('Submit', ['class' => 'btn btn-primary'])}}
+            {{Form::submit('Submit', ['class' => 'btn btn-primary mt-2 col-md-12'])}}
         </div>
         {!! Form::close() !!}
       </div>

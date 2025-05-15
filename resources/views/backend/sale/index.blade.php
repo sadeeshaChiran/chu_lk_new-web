@@ -1101,7 +1101,7 @@
         },*/
         "createdRow": function( row, data, dataIndex ) {
             $(row).addClass('sale-link');
-            // $(row).attr('data-sale', data['sale']);
+            $(row).attr('data-sale', data['sale']);
         },
         "columns": columns,
         'language': {
@@ -1205,14 +1205,18 @@
                         $(':checkbox:checked').each(function(i){
                             if(i){
                                 var sale = $(this).closest('tr').data('sale');
-                                if(sale)
-                                    sale_id[i-1] = sale[13];
+                                
+                                if(sale){
+                                    sale_id[i-1] = sale[14];
+                                }
+
                             }
                         });
+                        
                         if(sale_id.length && confirm("Are you sure want to delete?")) {
                             $.ajax({
                                 type:'POST',
-                                url:'sales/deletebyselection',
+                                url:'/sales/deletebyselection',
                                 data:{
                                     saleIdArray: sale_id
                                 },
@@ -1270,7 +1274,7 @@
     }
 
     function saleDetails(sale){
-        $("#sale-details input[name='sale_id']").val(sale[13]);
+        $("#sale-details input[name='sale_id']").val(sale[14]);
 
         var htmltext = '<strong>{{trans("file.date")}}: </strong>'+sale[0]+'<br><strong>{{trans("file.reference")}}: </strong>'+sale[1]+'<br><strong>{{trans("file.Warehouse")}}: </strong>'+sale[27]+'<br><strong>{{trans("file.Sale Status")}}: </strong>'+sale[2]+'<br><strong>{{trans("file.Currency")}}: </strong>'+sale[31];
         if(sale[32])
@@ -1280,7 +1284,7 @@
         if(sale[30])
             htmltext += '<strong>{{trans("file.Attach Document")}}: </strong><a href="documents/sale/'+sale[30]+'">Download</a><br>';
         htmltext += '<br><div class="row"><div class="col-md-6"><strong>{{trans("file.From")}}:</strong><br>'+sale[3]+'<br>'+sale[4]+'<br>'+sale[5]+'<br>'+sale[6]+'<br>'+sale[7]+'<br>'+sale[8]+'</div><div class="col-md-6"><div class="float-right"><strong>{{trans("file.To")}}:</strong><br>'+sale[9]+'<br>'+sale[10]+'<br>'+sale[11]+'<br>'+sale[12]+'</div></div></div>';
-        $.get('sales/product_sale/' + sale[13], function(data){
+        $.get('sales/product_sale/' + sale[14], function(data){
             $(".product-sale-list tbody").remove();
             var name_code = data[0];
             var qty = data[1];

@@ -152,7 +152,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>

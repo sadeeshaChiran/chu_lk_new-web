@@ -537,7 +537,7 @@
 
             <div class="form-group">
               <input type="hidden" class="category-ajax-check" name="ajax" value="0">
-              <button type="submit" class="btn btn-primary category-submit-btn">{{trans('file.submit')}}</button>
+              <button type="submit" class="btn btn-primary category-submit-btn col-md-12 mt-2">{{trans('file.submit')}}</button>
             </div>
           </div>
           {{ Form::close() }}

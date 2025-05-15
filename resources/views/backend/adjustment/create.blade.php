@@ -21,7 +21,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Warehouse') }} *</label>
                                                 <select required id="warehouse_id" name="warehouse_id"
@@ -33,7 +33,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Attach Document') }}</label>
                                                 <input type="file" name="document" class="form-control">
@@ -95,7 +95,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <input type="submit" value="{{ trans('file.submit') }}" class="btn btn-primary"
+                                        <input type="submit" value="{{ trans('file.submit') }}" class="btn btn-primary  mt-2 col-md-12" 
                                             id="submit-button">
                                     </div>
                                 </div>

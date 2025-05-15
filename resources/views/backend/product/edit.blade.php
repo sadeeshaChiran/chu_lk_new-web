@@ -605,7 +605,7 @@
                                 @endif
                                 <div class="col-md-12 mt-3">
                                     <div class="form-group">
-                                        <button class="btn btn-primary" type="submit" id="submit-btn">{{trans('file.submit')}}</button>
+                                        <button class="btn btn-primary mt-2 col-md-12" type="submit" id="submit-btn">{{trans('file.submit')}}</button>
                                     </div>
                                 </div>
                             </div>

@@ -325,7 +325,7 @@
                         </div>
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Change') }} : </label>
-                            <p class="change ml-2">{{ number_format(0, $general_setting->decimal ) }}</p>
+                            <p class="change ml-2">{{ number_format(0, $general_setting->decimal, '.', '') }}</p>
                         </div>
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Paid By') }}</label>
@@ -440,7 +440,7 @@
                         </div>
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Change') }} : </label>
-                            <p class="change ml-2">{{ number_format(0, $general_setting->decimal ) }}</p>
+                            <p class="change ml-2">{{ number_format(0, $general_setting->decimal, '.', '') }}</p>
                         </div>
                         <div class="col-md-6 mt-1">
                             <label>{{ trans('file.Paid By') }}</label>
@@ -1183,7 +1183,7 @@
             },*/
             "createdRow": function(row, data, dataIndex) {
                 $(row).addClass('sale-link');
-                // $(row).attr('data-sale', data['sale']);
+                $(row).attr('data-sale', data['sale']);
             },
             "columns": columns,
             'language': {
@@ -1301,7 +1301,7 @@
                             if (sale_id.length && confirm("Are you sure want to delete?")) {
                                 $.ajax({
                                     type: 'POST',
-                                    url: 'sales/deletebyselection',
+                                    url: '/sales/deletebyselection',
                                     data: {
                                         saleIdArray: sale_id
                                     },

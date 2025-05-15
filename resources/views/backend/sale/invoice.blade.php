@@ -103,6 +103,11 @@
                 page-break-inside: avoid;
                 page-break-before: avoid;
             }*/
+            .bill-container {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
         }
     </style>
 </head>

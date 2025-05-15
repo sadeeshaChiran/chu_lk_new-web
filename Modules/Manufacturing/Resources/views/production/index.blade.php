@@ -13,7 +13,7 @@
                 <h3 class="text-center">{{trans('file.Production List')}}</h3>
             </div>
             {!! Form::open(['route' => 'productions.index', 'method' => 'get']) !!}
-            <div class="row ml-1 mt-2">
+            <div class="row m-1 mt-2">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label><strong>{{trans('file.Date')}}</strong></label>

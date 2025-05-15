@@ -513,7 +513,7 @@
                             </div>
                             @endif
                             <div class="form-group mt-3">
-                                <button type="submit" id="submit-btn" class="btn btn-primary">{{trans('file.add_product')}}</button>
+                                <button type="submit" id="submit-btn" class="btn btn-primary mt-2 col-md-12">{{trans('file.add_product')}}</button>
                             </div>
                         </form>
                     </div>
@@ -560,7 +560,7 @@
                 @endif
                 <div class="form-group">
                     <input type="hidden" name="ajax" value="1">
-                    <button type="button" class="btn btn-primary brand-submit-btn">{{trans('file.submit')}}</button>
+                    <button type="button" class="btn btn-primary brand-submit-btn mt-2 col-md-12">{{trans('file.submit')}}</button>
                 </div>
             </div>
             </form>
@@ -589,7 +589,7 @@
                             {{Form::number('rate',null,array('required' => 'required', 'class' => 'form-control', 'step' => 'any'))}}
                         </div>
                         <input type="hidden" name="ajax" value="1">
-                        <button type="button" class="btn btn-primary tax-submit-btn">{{trans('file.submit')}}</button>
+                        <button type="button" class="btn btn-primary tax-submit-btn mt-2 col-md-12">{{trans('file.submit')}}</button>
                     </form>
                 </div>
             {{ Form::close() }}

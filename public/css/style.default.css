@@ -12,13 +12,14 @@ span {
 }
 
 body {
-    color: #5e5873;
+    background-color: #eaeffd;
+    color: #000000;
     overflow-x: hidden
 }
 
 body.dark-mode {
-    background-color: #141b2e;
-    color: #d0d2d6
+    background-color: #1a2138;
+    color: #ffffff
 }
 
 .mt-30px {
@@ -320,7 +321,7 @@ nav.navbar a.menu-btn {
     font-size: 16px;
     font-weight: 400;
     text-transform: capitalize;
-    color: #303030;
+    color: #000000;
     display: block;
     padding: 8px 10px
 }
@@ -332,7 +333,7 @@ nav.navbar a.menu-btn {
 }
 
 .side-navbar li a i {
-    color: #7c5cc4;
+    color: #1c2a4c;
     font-size: 15px;
     line-height: 10px;
     margin-right: 10px;
@@ -341,7 +342,7 @@ nav.navbar a.menu-btn {
 
 .dark-mode .right-sidebar a i,
 .dark-mode .side-navbar li a i {
-    color: #7c70f4
+    color: #baccff
 }
 
 .side-navbar li a i.icon {
@@ -364,14 +365,14 @@ nav.navbar a.menu-btn {
 }
 
 .side-navbar li ul {
-    background: #f7f7f7;
+    background: #eceff7;
     left: 0;
     padding: 10px
 }
 
 .dark-mode .side-navbar li ul {
-    background: #283046;
-    border: 1px solid #7c5cc4
+    background: #404353;
+    border: 1px solid #47469b
 }
 
 .side-navbar li ul li a {
@@ -1338,6 +1339,7 @@ button {
     border-color: #f8f9fa
 }
 
+
 .btn-light:hover {
     color: color-yiq(#e2e6ea);
     background-color: #e2e6ea;
@@ -1406,9 +1408,16 @@ button {
 
 .btn-default {
     color: color-yiq(#ced4da);
-    background-color: #ced4da;
-    border-color: #7c5cc4
+    background-color: #d7ddf7;
+    border-color: #b8c2ec
 }
+
+.dark-mode .btn-default {
+    color: #b1bbc4;
+    background-color: #b1bbc4;
+    border-color: #b1bbc4
+}
+
 
 .btn-default:hover {
     color: color-yiq(#b8c1ca);
@@ -1801,6 +1810,8 @@ mark {
     border-bottom-right-radius: .2rem
 }
 
+
+
 .dropdown-menu {
     z-index: 1000;
     min-width: 10rem;
@@ -1809,7 +1820,7 @@ mark {
     font-size: 13px;
     line-height: 2;
     color: #212529;
-    background-color: #fff;
+    background-color: #edf0f8;
     border: 1px solid rgba(0, 0, 0, .15);
     border-radius: 5px
 }
@@ -1821,7 +1832,7 @@ mark {
 }
 
 .dark-mode .dropdown-menu {
-    background-color: #283046;
+    background-color: #485474;
     border: 1px solid #3b4253
 }
 
@@ -2144,8 +2155,9 @@ a>code {
 }
 
 .card {
-    border-radius: 5px;
-    border: 1px solid #e4e6fc
+    border-radius: 12px;
+    /* border: 1px solid #8f93bb; */
+    box-shadow: #646df2 0px 0px 30px -10px;
 }
 
 .card-img-top,

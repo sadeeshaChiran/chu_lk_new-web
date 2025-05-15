@@ -67,7 +67,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Warehouse') }} *</label>
                                                 <input type="hidden" name="warehouse_id_hidden"
@@ -82,7 +82,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ trans('file.Biller') }} *</label>
                                                 <input type="hidden" name="biller_id_hidden"
@@ -585,15 +585,13 @@
                                                 <textarea rows="5" class="form-control" name="staff_note">{{ $lims_sale_data->staff_note }}</textarea>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
+                                      
                                                 <input type="hidden" name="payment_status"
                                                     value="{{ $lims_sale_data->payment_status }}" />
                                                 <input type="hidden" name="paid_amount"
                                                     value="{{ $lims_sale_data->paid_amount }}" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
+                                           
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Delivery Type *</label>
                                                 <input type="hidden" name="delivery_type_hidden"
@@ -605,7 +603,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Is Exchange</label>
                                                 <select id="is_exchange" name="is_exchange"
@@ -619,7 +617,7 @@
                                     </div>
                                     <div class="form-group">
                                         <input type="submit" value="{{ trans('file.submit') }}"
-                                            class="btn btn-primary col-12" id="submit-button">
+                                            class="btn btn-primary col-12 mt-2" id="submit-button">
                                     </div>
                                 </div>
                             </div>
@@ -704,7 +702,7 @@
                                 </div>
                             </div>
                             <button type="button" name="update_btn"
-                                class="btn btn-primary">{{ trans('file.update') }}</button>
+                                class="btn btn-primary mt-2 col-md-12">{{ trans('file.update') }}</button>
                         </form>
                     </div>
                 </div>
@@ -740,7 +738,7 @@
                                 <input type="number" name="cash_in_hand" required class="form-control">
                             </div>
                             <div class="col-md-12 form-group">
-                                <button type="submit" class="btn btn-primary">{{ trans('file.submit') }}</button>
+                                <button type="submit" class="btn btn-primary mt-2 col-md-12">{{ trans('file.submit') }}</button>
                             </div>
                         </div>
                     </div>

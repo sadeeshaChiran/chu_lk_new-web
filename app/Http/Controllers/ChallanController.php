@@ -185,7 +185,7 @@ class ChallanController extends Controller
                     if($packingSlip) {
                         if($index)
                             $nestedData['sale_reference'] .= ', ';
-                        $nestedData['sale_reference'] .= $packingSlip->sale->reference_no;
+                        $nestedData['sale_reference'] .= $packingSlip->sale?->reference_no ?? '<div class="badge badge-danger">Sale Not Found</div>';
                     }
                 }
 

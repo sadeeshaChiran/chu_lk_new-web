@@ -25,78 +25,8 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($lims_delivery_all as $key=>$delivery)
-                <?php
-                    $customer_sale = DB::table('sales')
-                                    ->join('customers', 'sales.customer_id', '=', 'customers.id')
-                                    ->where('sales.id', $delivery->sale_id)
-                                    ->select('sales.reference_no','customers.name', 'customers.phone_number', 'customers.city', 'sales.grand_total')
-                                    ->get();
-
-                    $product_names = DB::table('sales')
-                                        ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-                                        ->join('products', 'products.id', '=', 'product_sales.product_id')
-                                        ->where('sales.id', $delivery->sale_id)
-                                        ->pluck('products.name')
-                                        ->toArray();
-                    if($delivery->packing_slip_ids)
-                        $packing_slip_references = \App\Models\PackingSlip::whereIn('id', explode(",", $delivery->packing_slip_ids))->pluck('reference_no')->toArray();
-                    else
-                        $packing_slip_references[0] = 'N/A';
-
-                    if($delivery->status == 1)
-                        $status = trans('file.Packing');
-                    elseif($delivery->status == 2)
-                        $status = trans('file.Delivering');
-                    else
-                        $status = trans('file.Delivered');
-
-                    $barcode = \DNS2D::getBarcodePNG($delivery->reference_no, 'QRCODE');
-                ?>
-                @if($delivery->sale)
-                    <tr class="delivery-link" data-barcode="{{$barcode}}" data-delivery='["{{date($general_setting->date_format, strtotime($delivery->created_at->toDateString()))}}", "{{$delivery->reference_no}}", "{{$delivery->sale->reference_no}}", "{{$status}}", "{{$delivery->id}}", "{{$delivery->sale->customer->name}}", "{{$delivery->sale->customer->phone_number}}", "{{$delivery->sale->customer->address}}", "{{$delivery->sale->customer->city}}", "{{$delivery->note}}", "{{$delivery->user->name}}", "{{$delivery->delivered_by}}", "{{$delivery->recieved_by}}"]'>
-                        <td>{{$key}}</td>
-                        <td>{{ $delivery->reference_no }}</td>
-                        <td>{{ $customer_sale[0]->reference_no }}</td>
-                        <td>{{ implode(",", $packing_slip_references) }}</td>
-                        <td>{!!$customer_sale[0]->name .'<br>'. $customer_sale[0]->phone_number!!}</td>
-                        @if($delivery->courier_id)
-                            <td>{{ $delivery->courier->name }}</td>
-                        @else
-                            <td>N/A</td>
-                        @endif
-                        <td>{{ $delivery->address }}</td>
-                        <td>{{implode(",", $product_names)}}</td>
-                        <td>{{number_format($customer_sale[0]->grand_total, 2)}}</td>
-                        @if($delivery->status == 1)
-                        <td><div class="badge badge-info">{{$status}}</div></td>
-                        @elseif($delivery->status == 2)
-                        <td><div class="badge badge-primary">{{$status}}</div></td>
-                        @else
-                        <td><div class="badge badge-success">{{$status}}</div></td>
-                        @endif
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trans('file.action')}}
-                                  <span class="caret"></span>
-                                  <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                                    <li>
-                                        <button type="button" data-id="{{$delivery->id}}" class="open-EditCategoryDialog btn btn-link"><i class="dripicons-document-edit"></i> {{trans('file.edit')}}</button>
-                                    </li>
-                                    <li class="divider"></li>
-                                    {{ Form::open(['route' => ['delivery.delete', $delivery->id], 'method' => 'post'] ) }}
-                                    <li>
-                                      <button type="submit" class="btn btn-link" onclick="return confirmDelete()"><i class="dripicons-trash"></i> {{trans('file.delete')}}</button>
-                                    </li>
-                                    {{ Form::close() }}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                @endif
-                @endforeach
+       
+              
             </tbody>
         </table>
     </div>
@@ -392,7 +322,7 @@
             }
         ],
         'select': { style: 'multi',  selector: 'td:first-child'},
-        'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        'lengthMenu': [[50, 100, 150, -1], [50, 100, 150, "All"]],
         dom: '<"row"lfB>rtip',
         buttons: [
             {

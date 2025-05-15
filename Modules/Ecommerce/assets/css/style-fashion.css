@@ -110,7 +110,7 @@ h6 {
 
 .form-control {
     border: 1px solid #ced4da;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #212529;
     font-size: 14px;
     height: 45px;
@@ -819,7 +819,7 @@ a.underline:after {
 
 .cart__menu.fixed {
     background-color: var(--theme-color);
-    border-radius: 10px;
+    border-radius: 12px;
     color: #fff;
     display: none;
     padding: 10px;

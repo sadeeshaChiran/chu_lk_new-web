@@ -164,7 +164,7 @@
                 </div>
             </div>
             <div class="form-group">
-              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary  mt-2 col-md-12">
             </div>
         </div>
         {{ Form::close() }}
@@ -192,7 +192,7 @@
                 <textarea rows="3" name="note" class="form-control"></textarea>
             </div>
             <div class="form-group">
-                <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+                <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12">
               </div>
         </div>
       {{ Form::close() }}
@@ -296,7 +296,7 @@
                 });
 
                 if( !parseInt(data[5]) ) {
-                    htmlFooter = '<a class="btn btn-primary d-print-none" href="stock-count/'+stock_count[8]+'/qty_adjustment"><i class="dripicons-plus"></i> {{trans("file.Add Adjustment")}}</a>';
+                    htmlFooter = '<a class="btn btn-primary d-print-none  mt-2 col-md-12" href="stock-count/'+stock_count[8]+'/qty_adjustment"><i class="dripicons-plus"></i> {{trans("file.Add Adjustment")}}</a>';
                     $('#stock-count-footer').html(htmlFooter);
                 }
             }

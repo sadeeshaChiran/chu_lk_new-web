@@ -628,7 +628,7 @@
                                     <div class="form-group">
                                         {{-- <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button"> --}}
                                         <button id="submit-button" type="button"
-                                            class="btn btn-primary col-12">{{ trans('file.submit') }}</button>
+                                            class="btn btn-primary mt-2 col-12">{{ trans('file.submit') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -702,7 +702,7 @@
                                 </div>
                             </div>
                             <button type="button" name="update_btn"
-                                class="btn btn-primary">{{ trans('file.update') }}</button>
+                                class="btn btn-primary mt-2 col-md-12">{{ trans('file.update') }}</button>
                         </form>
                     </div>
                 </div>
@@ -790,7 +790,7 @@
                         <div class="form-group">
                             <input type="hidden" name="pos" value="1">
                             <button type="button"
-                                class="btn btn-primary customer-submit-btn">{{ trans('file.submit') }}</button>
+                                class="btn btn-primary mt-2 col-md-12 customer-submit-btn">{{ trans('file.submit') }}</button>
                         </div>
                     </div>
                     {{ Form::close() }}
@@ -875,7 +875,7 @@
                         <div class="form-group">
                             <input type="hidden" name="pos" value="1">
                             <button type="button"
-                                class="btn btn-primary customer-edit-btn">{{ trans('file.submit') }}</button>
+                                class="btn btn-primary mt-2 col-md-12 customer-edit-btn">{{ trans('file.submit') }}</button>
                         </div>
 
 
@@ -914,7 +914,7 @@
                                 <input type="number" step="any" name="cash_in_hand" required class="form-control">
                             </div>
                             <div class="col-md-12 form-group">
-                                <button type="submit" class="btn btn-primary">{{ trans('file.submit') }}</button>
+                                <button type="submit" class="btn btn-primary mt-2 col-md-12">{{ trans('file.submit') }}</button>
                             </div>
                         </div>
                     </div>

@@ -44,6 +44,7 @@ class PackingSlipController extends Controller
         $dir = $request->input('order.0.dir');
         if (empty($request->input('search.value'))) {
             $packing_slips = PackingSlip::with('sale', 'delivery', 'products', 'user')->offset($start)
+                ->whereHas('sale')
                 ->limit($limit)
                 ->orderBy(DB::raw('CAST(' . $order . ' AS SIGNED)'), $dir)
                 ->get();
@@ -58,6 +59,7 @@ class PackingSlipController extends Controller
                 ->with('sale', 'delivery', 'products')
                 ->join('sales', 'packing_slips.sale_id', '=', 'sales.id')
                 ->join('users', 'packing_slips.user_id', '=', 'users.id')
+                ->whereHas('sale')
                 ->where('users.name', 'LIKE', "%{$search}%")
                 ->where('packing_slips.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")

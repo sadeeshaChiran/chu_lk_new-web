@@ -6,12 +6,31 @@
             font-family: 'Inter', sans-serif
         }
 
+        .btn{
+            border-radius: 8px;
+        }
+
         .bootstrap-select-sm .btn {
             font-size: 13px;
             padding: 3px 25px 3px 10px;
             height: 30px !important
         }
 
+        .totals{
+            background-color:#f5f6f7;
+            border-top: 2px solid #2a2b3c
+
+        }
+
+        .dark-mode .totals{
+            background-color:#2a2b3c;
+            border-top: 2px solid #f5f6f7
+        }
+
+        .totals .col-sm-4 {
+            border-bottom: px ;
+        }
+        
         .minus,
         .plus {
             padding: .35rem .75rem
@@ -131,13 +150,19 @@
         }
 
         .top-fields label {
-            background: #FFF;
+            background: #eaeffd;
             font-size: 11px;
             margin-left: 10px;
-            padding: 0 3px;
+            padding: 0 8px;
             position: absolute;
             top: -8px;
             z-index: 9;
+            border-radius: 5px;
+        }
+
+        .dark-mode .top-fields label {
+            background: #2a2b3c;
+            color: #FFF;
         }
 
         .top-fields input,
@@ -298,6 +323,12 @@
             .hidden-print {
                 display: none !important;
             }
+
+            .bill-container {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
         }
 
         #print-layout * {
@@ -358,6 +389,8 @@
         #print-layout small {
             font-size: 10px;
         }
+
+
 
         @media print {
             #print-layout * {
@@ -753,7 +786,7 @@
                         <div class="collapse" id="moreOptions">
                             <div class="card card-body">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label>{{ trans('file.Sale Reference No.') }}</label>
                                         <div class="form-group">
                                             <input type="text" id="reference-no" name="reference_no"
@@ -766,7 +799,7 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label>{{ trans('file.Currency') }} & {{ trans('file.Exchange Rate') }}</label>
                                         <div class="form-group d-flex">
                                             <div class="input-group-prepend">
@@ -780,7 +813,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <input class="form-control" type="text" id="exchange_rate"
+                                            <input class="form-control" type="text" id="exchange_rate" readonly
                                                 name="exchange_rate" value="{{ $currency->exchange_rate }}">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" data-toggle="tooltip" title=""
@@ -886,7 +919,7 @@
                         @endif
                         <div class="col-12 pl-0 pr-0">
                             <div class="search-box form-group mb-2">
-                                <input style="border: 1px solid #7c5cc4;" type="text" name="product_code_name"
+                                <input style="border: 1px solid #47469b;" type="text" name="product_code_name"
                                     id="lims_productcodeSearch" placeholder="Scan/Search product by name/code"
                                     class="form-control" />
                             </div>
@@ -1098,8 +1131,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 totals"
-                            style="background-color:#f5f6f7;border-top: 2px solid #ebe9f1;padding-bottom: 7px;padding-top: 7px;">
+                        <div class="col-12 totals "
+                            style="padding-bottom: 7px;padding-top: 7px;">
                             <div class="row">
                                 <div class="col-sm-4 col-6">
                                     <strong class="totals-title">{{ trans('file.Items') }}</strong><strong
@@ -1301,6 +1334,16 @@
                                                     <textarea rows="3" class="form-control" name="staff_note"></textarea>
                                                 </div>
                                             </div>
+
+
+
+                                            <div class="col-md-12">
+                                                <button id="submit-btn" type="button"
+                                                    class="btn btn-primary col-12 p-2 mt-2">{{ trans('file.submit') }}
+                                                </button>
+                                            </div>
+
+                                            
                                         </div>
                                         <div class="col-md-2 p-2 bg-info text-light pt-4 pb-4">
                                             <div class="mt-4">
@@ -1317,14 +1360,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="mt-3">
-                                                <button id="submit-btn" type="button"
-                                                    class="btn btn-primary">{{ trans('file.submit') }}</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                  
                                 </div>
                             </div>
                         </div>
@@ -1359,7 +1395,7 @@
                                                 id="order-discount" onkeyup='saveValue(this);'>
                                         </div>
                                     </div>
-                                    <button type="button" name="order_discount_btn" class="btn btn-primary"
+                                    <button type="button" name="order_discount_btn" class="btn btn-primary col-md-12 p-2"
                                         data-dismiss="modal">{{ trans('file.submit') }}</button>
                                 </div>
                             </div>
@@ -1380,7 +1416,7 @@
                                         <input type="text" id="coupon-code" class="form-control"
                                             placeholder="Type Coupon Code...">
                                     </div>
-                                    <button type="button" class="btn btn-primary coupon-check"
+                                    <button type="button" class="btn btn-primary coupon-check col-md-12 p-2"
                                         data-dismiss="modal">{{ trans('file.submit') }}</button>
                                 </div>
                             </div>
@@ -1407,7 +1443,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <button type="button" name="order_tax_btn" class="btn btn-primary"
+                                    <button type="button" name="order_tax_btn" class="btn btn-primary col-md-12 p-2"
                                         data-dismiss="modal">{{ trans('file.submit') }}</button>
                                 </div>
                             </div>
@@ -1428,7 +1464,7 @@
                                         <input type="text" name="shipping_cost" class="form-control numkey"
                                             id="shipping-cost-val" step="any" onkeyup='saveValue(this);'>
                                     </div>
-                                    <button type="button" name="shipping_cost_btn" class="btn btn-primary"
+                                    <button type="button" name="shipping_cost_btn" class="btn btn-primary col-md-12 p-2"
                                         data-dismiss="modal">{{ trans('file.submit') }}</button>
                                 </div>
                             </div>
@@ -1517,7 +1553,7 @@
                                             </div>
                                         </div>
                                         <button type="button" name="update_btn"
-                                            class="btn btn-primary">{{ trans('file.update') }}</button>
+                                            class="btn btn-primary col-md-12 p-2">{{ trans('file.update') }}</button>
                                     </form>
                                 </div>
                             </div>
@@ -1595,7 +1631,7 @@
                                     <div class="form-group">
                                         <input type="hidden" name="pos" value="1">
                                         <button type="button"
-                                            class="btn btn-primary customer-submit-btn">{{ trans('file.submit') }}</button>
+                                            class="btn btn-primary customer-submit-btn col-md-12 p-2 mt-2">{{ trans('file.submit') }}</button>
                                     </div>
                                 </div>
                                 {{ Form::close() }}
@@ -3397,6 +3433,7 @@
                 var val = $(this).val().trim(); // Get the value of the input
                 if (val) {
                     $(".payment-form").submit();
+                    $('#submit-btn').prop('disabled', true);
                 } else {
                     alert("Please Enter Amount");
                 }
@@ -3691,7 +3728,7 @@
                     appendElement = `
                 <div class="col-12">
                 <div class="row add-more-row mt-2">
-                                                <div class="col-md-12 text-center"><button type="button" class="btn btn-info add-more">+
+                                                <div class="col-md-12 text-center"><button type="button" class="btn btn-info add-more col-md-8 mt-2 p-2">+
                                                         {{ trans('file.Add More Payment') }}</button></div>
                                             </div></div>`;
 

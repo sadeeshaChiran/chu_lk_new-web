@@ -110,7 +110,7 @@ h6 {
 
 .form-control {
     border: 1px solid #ced4da;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #212529;
     font-size: 14px;
     height: 45px;
@@ -818,7 +818,7 @@ a.underline:after {
 
 .cart__menu.fixed {
     background-color: var(--theme-color);
-    border-radius: 10px;
+    border-radius: 12px;
     color: #fff;
     display: none;
     padding: 10px;
@@ -1645,7 +1645,7 @@ a.underline:after {
 
 .single-product-wrapper {
     border: 1px solid transparent;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     padding: 20px;
     position: relative;
@@ -2866,7 +2866,7 @@ input[type=number] {
 }
 
 .banner-img {
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 #scrolltotop {
@@ -3263,11 +3263,11 @@ input[type=number] {
 }
 
 .swiper-slide{
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .rounded-2xl{
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .bg-gray {
