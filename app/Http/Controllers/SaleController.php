@@ -246,7 +246,7 @@ class SaleController extends Controller
             ->select('sales.id', 'sales.*');
 
         if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
-            $q = $q->where('user_id', Auth::id());
+            $q = $q->where('sales.user_id', Auth::id());
         elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
             $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
         if ($sale_status)
@@ -279,13 +279,13 @@ class SaleController extends Controller
         }
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-                ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
+                ->whereDate('sales.created_at', '>=', value: $request->input('starting_date'))
                 ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
-                $q = $q->where('user_id', Auth::id());
+                $q = $q->where('sales.user_id', Auth::id());
             elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
                 $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
             if ($warehouse_id)
@@ -635,7 +635,7 @@ class SaleController extends Controller
 
 
         if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
-            $q = $q->where('user_id', Auth::id());
+            $q = $q->where('sales.user_id', Auth::id());
         elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
             $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
         if ($sale_status)
@@ -676,7 +676,7 @@ class SaleController extends Controller
                 ->limit($limit)
                 ->orderBy($order, $dir);
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
-                $q = $q->where('user_id', Auth::id());
+                $q = $q->where('sales.user_id', Auth::id());
             elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
                 $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
             if ($warehouse_id)
