@@ -22,3 +22,6 @@ ALTER TABLE `purchases` ADD `due_at` TIMESTAMP NULL AFTER `note`;
 UPDATE `purchases`
 SET due_at = CURDATE() - INTERVAL 1 DAY
 WHERE due_at IS NULL;
+
+--2025/05/17
+ALTER TABLE `payments` ADD `document` VARCHAR(255) NULL AFTER `payment_note`;

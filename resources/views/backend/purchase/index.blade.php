@@ -174,6 +174,7 @@
                             <th>{{trans('file.Paid By')}}</th>
                             <th>{{trans('file.Account')}}</th>
                             <th>{{trans('file.Payment Note')}}</th>
+                            <th>{{trans('file.Attach Document')}}</th>
                             <th>{{trans('file.action')}}</th>
                         </tr>
                     </thead>
@@ -193,7 +194,7 @@
                 <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><i class="dripicons-cross"></i></span></button>
             </div>
             <div class="modal-body">
-                {!! Form::open(['route' => 'purchase.add-payment', 'method' => 'post', 'class' => 'payment-form' ]) !!}
+                {!! Form::open(['route' => 'purchase.add-payment', 'method' => 'post', 'files' => true, 'class' => 'payment-form' ]) !!}
                     <div class="row">
                         <input type="hidden" name="balance">
                         <div class="col-md-12">
@@ -247,6 +248,15 @@
                         @endforeach
                         </select>
                     </div>
+                   
+                     <div class="form-group">
+                                                <label>{{ trans('file.Attach Document') }}</label> <i
+                                                    class="dripicons-question" data-toggle="tooltip"
+                                                    title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
+                                                <input type="file" name="document" class="form-control" />
+                                            </div>
+                                   
+                                        
                     <div class="form-group">
                         <label>{{trans('file.Payment Note')}}</label>
                         <textarea rows="3" class="form-control" name="payment_note"></textarea>
@@ -269,7 +279,7 @@
                 <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><i class="dripicons-cross"></i></span></button>
             </div>
             <div class="modal-body">
-                {!! Form::open(['route' => 'purchase.update-payment', 'method' => 'post', 'class' => 'payment-form' ]) !!}
+                {!! Form::open(['route' => 'purchase.update-payment', 'method' => 'post', 'files' => true, 'class' => 'payment-form' ]) !!}
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -317,6 +327,10 @@
                             <option value="{{$account->id}}">{{$account->name}} [{{$account->account_no}}]</option>
                         @endforeach
                         </select>
+                    </div>
+                    <div class="form-group">
+                     <label>{{ trans('file.Attach Document') }}</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
+                       <input type="file" name="document" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>{{trans('file.Payment Note')}}</label>
@@ -456,6 +470,7 @@
     $(document).on("click", "table.purchase-list tbody .get-payment", function(event) {
         var id = $(this).data('id').toString();
         $.get('purchases/getpayment/' + id, function(data) {
+            console.log(data);
             $(".payment-list tbody").remove();
             var newBody = $("<tbody>");
             payment_date  = data[0];
@@ -469,6 +484,7 @@
             paying_amount = data[8];
             account_name = data[9];
             account_id = data[10];
+            document_path = data[11];
 
             $.each(payment_date, function(index){
                 var newRow = $("<tr>");
@@ -480,6 +496,12 @@
                 cols += '<td>' + paying_method[index] + '</td>';
                 cols += '<td>' + account_name[index] + '</td>';
                 cols += '<td>' + payment_note[index] + '</td>';
+                console.log(document_path);
+                if(document_path[index] != null){
+                    cols += '<td><a href="/documents/payment/purchase/' + document_path[index] + '" target="_blank">View</a></td>';
+                } else {
+                    cols += '<td>N/A</td>';
+                }
                 cols += '<td><div class="btn-group"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
                 if(all_permission.indexOf("purchase-payment-edit") != -1)
                     cols += '<li><button type="button" class="btn btn-link edit-btn" data-id="' + payment_id[index] +'" data-clicked=false data-toggle="modal" data-target="#edit-payment"><i class="dripicons-document-edit"></i> Edit</button></li><li class="divider"></li>';

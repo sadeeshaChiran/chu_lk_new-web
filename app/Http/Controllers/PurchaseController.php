@@ -1165,6 +1165,33 @@ class PurchaseController extends Controller
         } else
             $data['created_at'] = date("Y-m-d H:i:s");
 
+
+         $document = $request->document;
+        if ($document) {
+            $v = Validator::make(
+                [
+                    'extension' => strtolower($request->document->getClientOriginalExtension()),
+                ],
+                [
+                    'extension' => 'in:jpg,jpeg,png,gif,pdf,csv,docx,xlsx,txt',
+                ]
+            );
+            if ($v->fails())
+                return redirect()->back()->with('not_permitted', 'Please upload a valid document');
+
+
+            $ext = pathinfo($document->getClientOriginalName(), PATHINFO_EXTENSION);
+            $documentName = date("Ymdhis");
+            if (!config('database.connections.saleprosaas_landlord')) {
+                $documentName = $documentName . '.' . $ext;
+                $document->move(public_path('documents/payment/purchase'), $documentName);
+            } else {
+                $documentName = $this->getTenantId() . '_' . $documentName . '.' . $ext;
+                $document->move(public_path('documents/payment/purchase'), $documentName);
+            }
+            $data['document'] = $documentName;
+        }
+
         $lims_purchase_data = Purchase::find($data['purchase_id']);
         $lims_purchase_data->paid_amount += $data['amount'];
         $balance = $lims_purchase_data->grand_total - $lims_purchase_data->paid_amount;
@@ -1195,6 +1222,8 @@ class PurchaseController extends Controller
             $cash_register_id = $lims_cash_register_data->id;
         else
             $cash_register_id = null;
+
+       
         $lims_payment_data = new Payment();
         $lims_payment_data->user_id = Auth::id();
         $lims_payment_data->purchase_id = $lims_purchase_data->id;
@@ -1206,6 +1235,7 @@ class PurchaseController extends Controller
         $lims_payment_data->paying_method = $paying_method;
         $lims_payment_data->payment_note = $data['payment_note'];
         $lims_payment_data->created_at = $data['created_at'];
+        $lims_payment_data->document = $data['document'] ?? null;
         $lims_payment_data->save();
 
         $lims_payment_data = Payment::latest()->first();
@@ -1251,6 +1281,7 @@ class PurchaseController extends Controller
         $paying_amount = [];
         $account_name = [];
         $account_id = [];
+        $document = [];
         foreach ($lims_payment_list as $payment) {
             $date[] = date(config('date_format'), strtotime($payment->created_at->toDateString())) . ' ' . $payment->created_at->toTimeString();
             $payment_reference[] = $payment->payment_reference;
@@ -1274,6 +1305,7 @@ class PurchaseController extends Controller
                 $account_name[] = 'N/A';
                 $account_id[] = 0;
             }
+            $document[] = $payment->document;
         }
         $payments[] = $date;
         $payments[] = $payment_reference;
@@ -1286,6 +1318,7 @@ class PurchaseController extends Controller
         $payments[] = $paying_amount;
         $payments[] = $account_name;
         $payments[] = $account_id;
+        $payments[] = $document;
 
         return $payments;
     }
@@ -1300,10 +1333,40 @@ class PurchaseController extends Controller
         } else
             $data['edit_created_at'] = date("Y-m-d H:i:s");
 
+
+        
         $lims_payment_data = Payment::find($data['payment_id']);
         $lims_purchase_data = Purchase::find($lims_payment_data->purchase_id);
-        //updating purchase table
 
+        $document = $request->document;
+
+        if ($document) {
+            $v = Validator::make(
+                [
+                    'extension' => strtolower($request->document->getClientOriginalExtension()),
+                ],
+                [
+                    'extension' => 'in:jpg,jpeg,png,gif,pdf,csv,docx,xlsx,txt',
+                ]
+            );
+            if ($v->fails())
+                return redirect()->back()->with('not_permitted', 'Please upload a valid document');
+
+            $this->fileDelete(public_path('documents/payment/purchase/'), $lims_payment_data->document);
+
+            $ext = pathinfo($document->getClientOriginalName(), PATHINFO_EXTENSION);
+            $documentName = date("Ymdhis");
+            if (!config('database.connections.saleprosaas_landlord')) {
+                $documentName = $documentName . '.' . $ext;
+                $document->move(public_path('documents/payment/purchase'), $documentName);
+            } else {
+                $documentName = $this->getTenantId() . '_' . $documentName . '.' . $ext;
+                $document->move(public_path('documents/payment/purchase'), $documentName);
+            }
+            $lims_payment_data->document = $documentName;
+        }
+
+        //updating purchase table
         $lims_payment_data->created_at = $data['edit_created_at'];
 
 
@@ -1413,6 +1476,7 @@ class PurchaseController extends Controller
             $lims_payment_cheque_data->delete();
         }
         $lims_payment_data->delete();
+        $this->fileDelete(public_path('documents/payment/purchase/'), $lims_payment_data->document);
         return redirect('purchases')->with('not_permitted', 'Payment deleted successfully');
     }
 

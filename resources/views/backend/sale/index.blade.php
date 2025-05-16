@@ -1261,7 +1261,6 @@
 
         }
         else {
-            $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 14 ).footer() ).html(dt_selector.cells( rows, 14, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 15 ).footer() ).html(dt_selector.cells( rows, 15, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
             $( dt_selector.column( 16 ).footer() ).html(dt_selector.cells( rows, 16, { page: 'current' } ).data().sum().toFixed({{$general_setting->decimal}}));
@@ -1274,16 +1273,22 @@
     }
 
     function saleDetails(sale){
+        console.log(sale);
         $("#sale-details input[name='sale_id']").val(sale[14]);
 
-        var htmltext = '<strong>{{trans("file.date")}}: </strong>'+sale[0]+'<br><strong>{{trans("file.reference")}}: </strong>'+sale[1]+'<br><strong>{{trans("file.Warehouse")}}: </strong>'+sale[27]+'<br><strong>{{trans("file.Sale Status")}}: </strong>'+sale[2]+'<br><strong>{{trans("file.Currency")}}: </strong>'+sale[31];
-        if(sale[32])
-            htmltext += '<br><strong>{{trans("file.Exchange Rate")}}: </strong>'+sale[32]+'<br>';
+        var htmltext = '<strong>{{trans("file.date")}}: </strong>'+sale[0]+'<br><strong>{{trans("file.reference")}}: </strong>'+sale[1]+'<br><strong>{{trans("file.Warehouse")}}: </strong>'+sale[8]+'<br><strong>{{trans("file.Sale Status")}}: </strong>'+sale[3]+'<br><strong>{{trans("file.Currency")}}: </strong>'+sale[32];
+        if(sale[33])
+            htmltext += '<br><strong>{{trans("file.Exchange Rate")}}: </strong>'+sale[33]+'<br>';
         else
             htmltext += '<br><strong>{{trans("file.Exchange Rate")}}: </strong>N/A<br>';
-        if(sale[30])
-            htmltext += '<strong>{{trans("file.Attach Document")}}: </strong><a href="documents/sale/'+sale[30]+'">Download</a><br>';
-        htmltext += '<br><div class="row"><div class="col-md-6"><strong>{{trans("file.From")}}:</strong><br>'+sale[3]+'<br>'+sale[4]+'<br>'+sale[5]+'<br>'+sale[6]+'<br>'+sale[7]+'<br>'+sale[8]+'</div><div class="col-md-6"><div class="float-right"><strong>{{trans("file.To")}}:</strong><br>'+sale[9]+'<br>'+sale[10]+'<br>'+sale[11]+'<br>'+sale[12]+'</div></div></div>';
+        if(sale[2])
+            htmltext += '<strong>Waybill Id: </strong>'+sale[2]+'<br>';
+        else
+            htmltext += '<strong>Waybill Id: </strong>N/A<br>';
+
+        if(sale[31])
+            htmltext += '<br><strong>{{trans("file.Attach Document")}}: </strong><a href="documents/sale/'+sale[31]+'">Download</a><br>';
+        htmltext += '<br><div class="row"><div class="col-md-6"><strong>{{trans("file.From")}}:</strong><br>'+sale[4]+'<br>'+sale[5]+'<br>'+sale[6]+'<br>'+sale[7]+'<br>'+sale[8]+'<br>'+sale[9]+'</div><div class="col-md-6"><div class="float-right"><strong>{{trans("file.To")}}:</strong><br>'+sale[10]+'<br>'+sale[11]+'<br>'+sale[12]+'<br>'+sale[13]+'</div></div></div>';
         $.get('sales/product_sale/' + sale[14], function(data){
             $(".product-sale-list tbody").remove();
             var name_code = data[0];
@@ -1321,9 +1326,9 @@
             cols += '<td colspan=3><strong>{{trans("file.Total")}}:</strong></td>';
             cols += '<td>' + total_qty + '</td>';
             cols += '<td colspan=2></td>';
-            cols += '<td>' + sale[14] + '</td>';
             cols += '<td>' + sale[15] + '</td>';
             cols += '<td>' + sale[16] + '</td>';
+            cols += '<td>' + sale[17] + '</td>';
             cols += '<td></td>';
             newRow.append(cols);
             newBody.append(newRow);
@@ -1331,50 +1336,50 @@
             var newRow = $("<tr>");
             cols = '';
             cols += '<td colspan=9><strong>{{trans("file.Order Tax")}}:</strong></td>';
-            cols += '<td>' + sale[17] + '(' + sale[18] + '%)' + '</td>';
+            cols += '<td>' + sale[18] + '(' + sale[19] + '%)' + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
 
             var newRow = $("<tr>");
             cols = '';
             cols += '<td colspan=9><strong>{{trans("file.Order Discount")}}:</strong></td>';
-            cols += '<td>' + sale[19] + '</td>';
+            cols += '<td>' + parseFloat(sale[20]).toFixed({{$general_setting->decimal}}) + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
-            if(sale[28]) {
+            if(sale[29]) {
                 var newRow = $("<tr>");
                 cols = '';
-                cols += '<td colspan=9><strong>{{trans("file.Coupon Discount")}} ['+sale[28]+']:</strong></td>';
-                cols += '<td>' + sale[29] + '</td>';
+                cols += '<td colspan=9><strong>{{trans("file.Coupon Discount")}} ['+sale[29]+']:</strong></td>';
+                cols += '<td>' + sale[30] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
             }
 
             var newRow = $("<tr>");
             cols = '';
-            cols += '<td colspan=9><strong>{{trans("file.Shipping Cost")}}:</strong></td>';
-            cols += '<td>' + sale[20] + '</td>';
+            cols += '<td colspan=9><strong>Delivery Amount:</strong></td>';
+            cols += '<td>' + parseFloat(sale[21]).toFixed({{$general_setting->decimal}}) + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
 
             var newRow = $("<tr>");
             cols = '';
             cols += '<td colspan=9><strong>{{trans("file.grand total")}}:</strong></td>';
-            cols += '<td>' + sale[21] + '</td>';
+            cols += '<td>' + parseFloat(sale[22]).toFixed({{$general_setting->decimal}}) + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
 
             var newRow = $("<tr>");
             cols = '';
             cols += '<td colspan=9><strong>{{trans("file.Paid Amount")}}:</strong></td>';
-            cols += '<td>' + sale[22] + '</td>';
+            cols += '<td>' + parseFloat(sale[23]).toFixed({{$general_setting->decimal}}) + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
 
             var newRow = $("<tr>");
             cols = '';
             cols += '<td colspan=9><strong>{{trans("file.Due")}}:</strong></td>';
-            cols += '<td>' + parseFloat(sale[21] - sale[22]).toFixed({{$general_setting->decimal}}) + '</td>';
+            cols += '<td>' + parseFloat(sale[22] - sale[23]).toFixed({{$general_setting->decimal}}) + '</td>';
             newRow.append(cols);
             newBody.append(newRow);
 
