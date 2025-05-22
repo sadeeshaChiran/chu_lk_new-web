@@ -24,7 +24,7 @@
                 <h3 class="text-center mt-3">{{ trans('file.Filter Sales') }}</h3>
                 <div class="card-body">
                     {!! Form::open(['route' => 'sale.pos.list', 'method' => 'get']) !!}
-                    <div class="row mt-2">
+                    <div class="row mt-2 justify-content-center">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label><strong>{{ trans('file.Date') }}</strong></label>

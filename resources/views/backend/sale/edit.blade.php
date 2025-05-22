@@ -23,7 +23,7 @@
                             ]) !!}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
+                                    <div class="row justify-content-center">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Sale type *</label>
@@ -233,8 +233,7 @@
                                                                     {{ number_format((float) $product_sale->tax, $general_setting->decimal ) }}
                                                                 </td>
                                                                 <td class="sub-total">
-                                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal ) }}
-                                                                </td>
+                                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal, '.', '') }}                                                                </td>
                                                                 <td><button type="button"
                                                                         class="ibtnDel btn btn-md btn-danger">{{ trans('file.delete') }}</button>
                                                                 </td>
@@ -302,7 +301,7 @@
                                                             {{ number_format((float) $lims_sale_data->total_tax, $general_setting->decimal ) }}
                                                         </th>
                                                         <th id="total">
-                                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal ) }}
+                                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal, '.','' ) }}
                                                         </th>
                                                         <th><i class="dripicons-trash"></i></th>
                                                     </tfoot>

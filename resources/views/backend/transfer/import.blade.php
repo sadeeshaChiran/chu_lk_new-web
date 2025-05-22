@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>
                                                 <strong>{{trans('file.Shipping Cost')}}</strong>
@@ -98,7 +98,7 @@
                                             <input type="number" name="shipping_cost" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
                                             <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>

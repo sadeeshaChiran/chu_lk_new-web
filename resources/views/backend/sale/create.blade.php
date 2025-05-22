@@ -33,7 +33,7 @@
                             {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
+                                    <div class="row justify-content-center">
 
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -246,7 +246,7 @@
                                                         <th id="total-tax">
                                                             {{ number_format(0, $general_setting->decimal ) }}</th>
                                                         <th id="total">
-                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
+                                                            {{ number_format(0, $general_setting->decimal, '.', '' ) }}</th>
                                                         <th><i class="dripicons-trash"></i></th>
                                                     </tfoot>
                                                 </table>

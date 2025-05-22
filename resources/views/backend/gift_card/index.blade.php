@@ -176,7 +176,7 @@
                       <input type="text" id="expired_date" name="expired_date" class="form-control">
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary col-md-12">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>
@@ -236,7 +236,7 @@
                     <input type="text" id="expired_date_edit" name="expired_date_edit" class="form-control">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                    <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                 </div>
               {{ Form::close() }}
           </div>
@@ -260,7 +260,7 @@
                     <input type="number" name="amount" step="any" required class="form-control">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                    <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                 </div>
               {{ Form::close() }}
           </div>

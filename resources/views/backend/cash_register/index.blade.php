@@ -16,8 +16,19 @@
                 <thead>
                     <tr>
                         <th class="not-exported"></th>
+                        <th class="not-exported">{{ trans('file.action') }}</th>
+                        <th>{{ trans('file.Status') }}</th>
                         <th>{{ trans('file.User') }}</th>
                         <th>{{ trans('file.Warehouse') }}</th>
+                        <th>{{ trans('file.Opened at') }}</th>
+                        <th>{{ trans('file.Closed at') }}</th>
+                        <th>Note</th>
+                        <th>Shortage Balance</th>
+                        <th>Closing Balance</th>
+                        <th>Next Day Opening Balance</th>
+                        <th>Total Expense</th>
+                        <th>Total Cash</th>
+
                         <th>{{ trans('file.Cash in Hand') }}</th>
                         <th>Total Sale Amount</th>
                         <th>Total Payment</th>
@@ -28,27 +39,61 @@
                         <th>Cheque Payment</th>
                         <th>Paypal Payment</th>
                         <th>Total Sale Return</th>
-                        <th>Total Expense</th>
-                        <th>Total Cash</th>
-                        <th>Next Day Opening Balance</th>
-                        <th>Closing Balance</th>
-                        <th>Shortage Balance</th>
-                        <th>Note</th>
-                        <th>{{ trans('file.Opened at') }}</th>
-                        <th>{{ trans('file.Closed at') }}</th>
-                        <th>{{ trans('file.Status') }}</th>
-                        <th class="not-exported">{{ trans('file.action') }}</th>
+                        
+                        
+                       
+                        
+
+
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($lims_cash_register_all as $key => $cash_register)
                         <tr data-id="{{ $cash_register->id }}">
                             <td>{{ $key }}</td>
+                             <td>
+                                <div class="btn-group">
+                                    <button type="button" data-id="{{ $cash_register->id }}"
+                                        class="register-details-btn btn btn-sm btn-info" data-toggle="modal"
+                                        data-target="#register-details-modal" title="{{ trans('file.View') }}"><i
+                                            class="dripicons-preview"></i></button>
+                                </div>
+                            </td>
+                            @if ($cash_register->status)
+                                <td>
+                                    <div class="badge badge-success">{{ trans('file.Active') }}</div>
+                                </td>
+                            @else
+                                <td>
+                                    <div class="badge badge-danger">{{ trans('file.Closed') }}</div>
+                                </td>
+                            @endif
+
                             <td>{{ $cash_register->user->name }}</td>
                             <td>{{ $cash_register->warehouse->name }}</td>
+
+
+                            <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->created_at)) }}</td>
+                            @if ($cash_register->status)
+                                <td>-</td>
+                            @else
+                                <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->updated_at)) }}</td>
+                                
+                            @endif
+
+
+                            @if ($cash_register->note)
+                                <td>{{ $cash_register->note }}</td>
+                            @else
+                                <td>N/A</td>
+                            @endif
+                            <td>{{ $cash_register->closing_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}</td>
+                            <td>{{ $cash_register->closing_balance }}</td>
+                            <td>{{ $cash_register->next_day_opening_balance }}</td>
+                            <td>{{ $cash_register->total_expense }}</td>
+                            <td>{{ $cash_register->total_cash }}</td>
                             <td>{{ $cash_register->cash_in_hand }}</td>
                             <td>{{ $cash_register->total_sale_amount }}</td>
-
                             <td>{{ $cash_register->total_payment }}</td>
                             <td>{{ $cash_register->cash_payment }}</td>
                             <td>{{ $cash_register->credit_card_payment }}</td>
@@ -57,40 +102,11 @@
                             <td>{{ $cash_register->cheque_payment }}</td>
                             <td>{{ $cash_register->paypal_payment }}</td>
                             <td>{{ $cash_register->total_sale_return }}</td>
-                            <td>{{ $cash_register->total_expense }}</td>
-                            <td>{{ $cash_register->total_cash }}</td>
-                            <td>{{ $cash_register->next_day_opening_balance }}</td>
-                            <td>{{ $cash_register->closing_balance }}</td>
-                            <td>{{ $cash_register->closing_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}
-                            </td>
+                          
 
-                            @if ($cash_register->note)
-                                <td>{{ $cash_register->note }}</td>
-                            @else
-                                <td>N/A</td>
-                            @endif
-                            <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->created_at)) }}
-                            </td>
-                            @if ($cash_register->status)
-                                <td>N/A</td>
-                                <td>
-                                    <div class="badge badge-success">{{ trans('file.Active') }}</div>
-                                </td>
-                            @else
-                                <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->updated_at)) }}
-                                </td>
-                                <td>
-                                    <div class="badge badge-danger">{{ trans('file.Closed') }}</div>
-                                </td>
-                            @endif
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" data-id="{{ $cash_register->id }}"
-                                        class="register-details-btn btn btn-sm btn-info" data-toggle="modal"
-                                        data-target="#register-details-modal" title="{{ trans('file.View') }}"><i
-                                            class="dripicons-preview"></i></button>
-                                </div>
-                            </td>
+                           
+                            
+                           
                         </tr>
                     @endforeach
                 </tbody>
@@ -226,7 +242,14 @@
 @endsection
 
 @push('scripts')
+
     <script type="text/javascript">
+
+        // this is for datatable datetime sorting
+        $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
+
+
+        
         function confirmClose() {
             if (confirm("Are you sure want to close?")) {
                 return true;
@@ -300,6 +323,7 @@
                     'targets': [0]
                 }
             ],
+            
             'select': {
                 style: 'multi',
                 selector: 'td:first-child'

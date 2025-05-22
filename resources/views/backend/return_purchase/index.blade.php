@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-md-2 mt-3">
                     <div class="form-group">
-                        <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
+                        <button class="btn btn-primary Add Return" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
                     </div>
                 </div>
             </div>

@@ -187,7 +187,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -239,7 +239,7 @@
                       <input type="number" name="cash_in_hand" required class="form-control">
                   </div>
                   <div class="col-md-12 form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                   </div>
                 </div>
             </div>
@@ -261,7 +261,7 @@
                         <div class="row modal-element">
 
                         </div>
-                        <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
+                        <button type="button" name="update_btn" class="btn btn-primary col-md-12 mt-2">{{trans('file.update')}}</button>
                     </form>
                 </div>
             </div>

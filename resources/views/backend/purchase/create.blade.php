@@ -195,7 +195,7 @@
                                                     <th></th>
                                                     <th id="total-discount">{{number_format(0, $general_setting->decimal )}}</th>
                                                     <th id="total-tax">{{number_format(0, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{number_format(0, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{number_format(0, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>

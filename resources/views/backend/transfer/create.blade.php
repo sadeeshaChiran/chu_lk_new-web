@@ -16,14 +16,14 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-4">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Date')}}</label>
                                             <input type="text" name="created_at" class="form-control date" placeholder="Choose date"/>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.From Warehouse')}} *</label>
                                             <select required name="from_warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" id="from-warehouse-id" title="Select warehouse...">
@@ -33,7 +33,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.To Warehouse')}} *</label>
                                             <select required name="to_warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select warehouse...">
@@ -43,7 +43,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans("file.Status")}}</label>
                                             <select name="status" class="form-control selectpicker">
@@ -89,14 +89,14 @@
                                                     <th id="total-qty">0</th>
                                                     <th></th>
                                                     <th id="total-tax">{{number_format(0, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{number_format(0, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{number_format(0, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="hidden" name="total_qty" />
@@ -132,13 +132,13 @@
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Shipping Cost')}}</label>
                                             <input type="number" name="shipping_cost" class="form-control" step="any"/>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
                                             <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
@@ -160,7 +160,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -210,7 +210,7 @@
                                 </select>
                             </div>
                         </div>
-                            <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
+                            <button type="button" name="update_btn" class="btn btn-primary mt-2 col-md-12">{{trans('file.update')}}</button>
                     </form>
                 </div>
             </div>
@@ -498,7 +498,7 @@ function edit() {
         var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number').val();
         if(imeiNumbers.length) {
             imeiArrays = imeiNumbers.split(",");
-            htmlText = `<div class="col-md-8 form-group imei-section">
+            htmlText = `<div class="col-md-12 form-group imei-section">
                         <label>IMEI or Serial Numbers</label>
                         <div class="table-responsive ml-2">
                             <table id="imei-table" class="table table-hover">

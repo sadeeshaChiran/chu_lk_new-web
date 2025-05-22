@@ -84,7 +84,7 @@
                       <input type="hidden" name="is_active" value="1">
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>
@@ -118,7 +118,7 @@
                   <input type="hidden" name="id">
               </div>
               <div class="form-group">
-                  <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                  <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
               </div>
               {{ Form::close() }}
           </div>

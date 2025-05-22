@@ -190,9 +190,25 @@
         window.onload = function() {
             window.print();
         };
-        window.onafterprint = function() {
-            window.location.href = "{{ route('sales.index', ['sale_status' => 2]) }}";
-        };
+        function getDateStr(date) {
+        return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    }
+
+    window.onafterprint = function () {
+        const today = new Date();
+        const priorDate = new Date();
+        priorDate.setDate(today.getDate() - 30);
+
+        const startingDate = getDateStr(priorDate);
+        const endingDate = getDateStr(today);
+
+        const url = "{{ route('sales.index') }}" +
+            "?sale_status=2" +
+            "&starting_date=" + encodeURIComponent(startingDate) +
+            "&ending_date=" + encodeURIComponent(endingDate);
+
+        window.location.href = url;
+    };
     </script>
 </body>
 

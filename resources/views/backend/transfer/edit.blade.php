@@ -15,8 +15,8 @@
                         {!! Form::open(['route' => ['transfers.update', $lims_transfer_data->id], 'method' => 'put', 'files' => true, 'id' => 'transfer-form']) !!}
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-6">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>{{trans('file.Date')}}</label>
                                             <input type="text" name="created_at" class="form-control date" value="{{date($general_setting->date_format, strtotime($lims_transfer_data->created_at->toDateString()))}}" />
@@ -40,7 +40,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.From Warehouse')}} *</label>
@@ -162,7 +162,7 @@
                                                         <td><input type="number" class="form-control qty" name="qty[]" value="{{$product_transfer->qty}}" required step="any" /></td>
                                                         <td class="net_unit_cost">{{ number_format((float)$product_transfer->net_unit_cost, $general_setting->decimal )}} </td>
                                                         <td class="tax">{{ number_format((float)$product_transfer->tax, $general_setting->decimal )}}</td>
-                                                        <td class="sub-total">{{ number_format((float)$product_transfer->total, $general_setting->decimal )}}</td>
+                                                        <td class="sub-total">{{ number_format((float)$product_transfer->total, $general_setting->decimal, '.', '' )}}</td>
                                                         <td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>
                                                         <input type="hidden" class="product-id" name="product_id[]" value="{{$product_data->id}}"/>
                                                         <input type="hidden" name="product_variant_id[]" value="{{$product_variant_id}}"/>
@@ -190,7 +190,7 @@
                                                     <th id="total-qty">{{$lims_transfer_data->total_qty}}</th>
                                                     <th></th>
                                                     <th id="total-tax">{{ number_format((float)$lims_transfer_data->total_tax, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_transfer_data->total_cost, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{ number_format((float)$lims_transfer_data->total_cost, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -227,7 +227,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>
                                                 <strong>{{trans('file.Shipping Cost')}}</strong>
@@ -235,7 +235,7 @@
                                             <input type="number" name="shipping_cost" class="form-control" value="{{ $lims_transfer_data->shipping_cost }}" step="any" />
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
                                             <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
@@ -252,12 +252,12 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>{{trans('file.Note')}}</label>
-                                            <textarea rows="5" class="form-control" name="note">{{ $lims_transfer_data->note }}</textarea>
+                                            <textarea rows="5" class="form-control " name="note">{{ $lims_transfer_data->note }}</textarea>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -643,7 +643,7 @@ function edit() {
     var imeiNumbers = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.imei-number').val();
     if(imeiNumbers || is_imei[rowindex]) {
         imeiArrays = imeiNumbers.split(",");
-        htmlText = `<div class="col-md-8 form-group imei-section">
+        htmlText = `<div class="col-md-12 form-group imei-section">
                     <label>IMEI or Serial Numbers</label>
                     <div class="table-responsive ml-2">
                         <table id="imei-table" class="table table-hover">

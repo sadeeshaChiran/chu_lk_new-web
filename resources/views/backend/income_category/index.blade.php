@@ -79,7 +79,7 @@
             </div>
             <input type="hidden" name="is_active" value="1">
             <div class="form-group">
-              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2">
             </div>
         </div>
         {{ Form::close() }}
@@ -107,7 +107,7 @@
             </div>
         <input type="hidden" name="income_category_id">
         <div class="form-group">
-            <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+            <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12">
           </div>
         </div>
       {{ Form::close() }}

@@ -140,13 +140,13 @@
                           <label>Qty *</label>
                           <input type="number" name="quantity" step="any" required class="form-control">
                       </div>
-                      <div class="col-md-6 form-group">
+                      <div class="col-md-12 form-group">
                           <label>{{trans('file.Expired Date')}}</label>
                           <input type="text" name="expired_date" class="expired_date form-control">
                       </div>
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>
@@ -199,13 +199,13 @@
                     <label>Qty *</label>
                     <input type="number" name="quantity" step="any" required class="form-control">
                 </div>
-                <div class="col-md-6 form-group">
+                <div class="col-md-12 form-group">
                     <label>{{trans('file.Expired Date')}}</label>
                     <input type="text" name="expired_date" class="expired_date form-control">
                 </div>
               </div>
               <div class="form-group">
-                  <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                  <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
               </div>
               {{ Form::close() }}
           </div>

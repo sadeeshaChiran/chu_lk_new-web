@@ -93,7 +93,7 @@
 		                                            <th></th>
 		                                            <th id="total-discount">{{number_format(0, $general_setting->decimal )}}</th>
 		                                            <th id="total-tax">{{number_format(0, $general_setting->decimal )}}</th>
-		                                            <th id="total">{{number_format(0, $general_setting->decimal )}}</th>
+		                                            <th id="total">{{number_format(0, $general_setting->decimal, '.', '' )}}</th>
 		                                            <th><i class="dripicons-trash"></i></th>
 		                                        </tfoot>
 		                                    </table>
@@ -158,7 +158,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
                                 	<div class="col-md-4">
                                 		<div class="form-group">
                                 			<label>{{trans('file.Status')}}</label>
@@ -190,7 +190,7 @@
                                 	</div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -232,7 +232,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="row modal-element">
+                        <div class="row justify-content-center modal-element">
                             <div class="col-md-4 form-group">
                                 <label>{{trans('file.Quantity')}}</label>
                                 <input type="number" name="edit_qty" class="form-control" step="any">
@@ -268,7 +268,7 @@
                             </div>
                         </div>
 
-                            <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
+                            <button type="button" name="update_btn" class="btn btn-primary mt-2 col-md-12">{{trans('file.update')}}</button>
                     </form>
                 </div>
             </div>

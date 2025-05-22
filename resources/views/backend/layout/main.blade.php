@@ -568,7 +568,7 @@
               $lims_warehouse_list = DB::table('warehouses')->where('is_active', true)->get();
             $lims_account_list = \App\Models\Account::where('is_active', true)->get();
             ?>
-            <div class="row">
+            <div class="row justify-content-center">
               <div class="col-md-6 form-group">
                 <label>{{trans('file.Date')}}</label>
                 <input type="text" name="created_at" class="form-control date" placeholder="Choose date" />
@@ -593,7 +593,7 @@
                 <label>{{trans('file.Amount')}} *</label>
                 <input type="number" name="amount" step="any" required class="form-control">
               </div>
-              <div class="col-md-6 form-group">
+              <div class="col-md-12 form-group">
                 <label> {{trans('file.Account')}}</label>
                 <select class="form-control selectpicker" name="account_id">
                   @foreach($lims_account_list as $account)
@@ -611,7 +611,7 @@
               <textarea name="note" rows="3" class="form-control"></textarea>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+              <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
             </div>
             {{ Form::close() }}
           </div>
@@ -641,7 +641,7 @@
               $lims_warehouse_list = DB::table('warehouses')->where('is_active', true)->get();
             $lims_account_list = \App\Models\Account::where('is_active', true)->get();
             ?>
-            <div class="row">
+            <div class="row justify-content-center">
               <div class="col-md-6 form-group">
                 <label>{{trans('file.Date')}}</label>
                 <input type="text" name="created_at" class="form-control date" placeholder="Choose date" />
@@ -666,7 +666,7 @@
                 <label>{{trans('file.Amount')}} *</label>
                 <input type="number" name="amount" step="any" required class="form-control">
               </div>
-              <div class="col-md-6 form-group">
+              <div class="col-md-12 form-group">
                 <label> {{trans('file.Account')}}</label>
                 <select class="form-control selectpicker" name="account_id">
                   @foreach($lims_account_list as $account)
@@ -684,7 +684,7 @@
               <textarea name="note" rows="3" class="form-control"></textarea>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+              <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
             </div>
             {{ Form::close() }}
           </div>
@@ -705,14 +705,14 @@
           <div class="modal-body">
             <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
                   <label>{{trans('file.Sale Reference')}} *</label>
                   <input type="text" name="reference_no" class="form-control">
                 </div>
               </div>
             </div>
-            {{Form::submit('Submit', ['class' => 'btn btn-primary'])}}
+            {{Form::submit('Submit', ['class' => 'btn btn-primary mt-2 col-md-12'])}}
           </div>
           {!! Form::close() !!}
         </div>
@@ -732,14 +732,14 @@
           <div class="modal-body">
             <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
                   <label>{{trans('file.Purchase Reference')}} *</label>
                   <input type="text" name="reference_no" class="form-control">
                 </div>
               </div>
             </div>
-            {{Form::submit('Submit', ['class' => 'btn btn-primary'])}}
+            {{Form::submit('Submit', ['class' => 'btn btn-primary col-md-12 mt-2'])}}
           </div>
           {!! Form::close() !!}
         </div>
@@ -775,7 +775,7 @@
               <textarea name="note" rows="3" class="form-control"></textarea>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+              <button type="submit" class="btn btn-primary mt-2 col-md-12">{{trans('file.submit')}}</button>
             </div>
             {{ Form::close() }}
           </div>
@@ -1161,9 +1161,14 @@
   <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
   @endif
   @endif
+
+  <!-- DataTables datetime sorting plugin -->
+  <script src="https://cdn.datatables.net/plug-ins/1.13.4/sorting/datetime-moment.js"></script>
   @stack('scripts')
 
   <script type="text/javascript">
+
+
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -181,7 +181,7 @@
                                                         <td class="net_unit_price">{{ number_format((float)$product_quotation->net_unit_price, $general_setting->decimal )}} </td>
                                                         <td class="discount">{{ number_format((float)$product_quotation->discount, $general_setting->decimal )}}</td>
                                                         <td class="tax">{{ number_format((float)$product_quotation->tax, $general_setting->decimal )}}</td>
-                                                        <td class="sub-total">{{ number_format((float)$product_quotation->total, $general_setting->decimal )}}</td>
+                                                        <td class="sub-total">{{ number_format((float)$product_quotation->total, $general_setting->decimal, '.', '' )}}</td>
                                                         <td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>
                                                         <input type="hidden" class="product-id" name="product_id[]" value="{{$product_data->id}}"/>
                                                         <input type="hidden" name="product_variant_id[]" value="{{$product_variant_id}}"/>
@@ -211,7 +211,7 @@
                                                     <th></th>
                                                     <th id="total-discount">{{ number_format((float)$lims_quotation_data->total_discount, $general_setting->decimal )}}</th>
                                                     <th id="total-tax">{{ number_format((float)$lims_quotation_data->total_tax, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_quotation_data->total_price, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{ number_format((float)$lims_quotation_data->total_price, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -281,7 +281,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
@@ -314,7 +314,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary  mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -355,15 +355,16 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
+                        <div class="row justify-content-center modal-element">
+                        <div class="form-group col-md-4">
                             <label>{{trans('file.Quantity')}}</label>
                             <input type="number" name="edit_qty" class="form-control" step="any">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-md-4">
                             <label>{{trans('file.Unit Discount')}}</label>
                             <input type="number" name="edit_discount" class="form-control" step="any">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-md-4">
                             <label>{{trans('file.Unit Price')}}</label>
                             <input type="number" name="edit_unit_price" class="form-control" step="any">
                         </div>
@@ -375,7 +376,7 @@
                                 $tax_rate_all[] = $tax->rate;
                             }
                         ?>
-                            <div class="form-group">
+                            <div class="form-group col-md-4">
                                 <label>{{trans('file.Tax Rate')}}</label>
                                 <select name="edit_tax_rate" class="form-control selectpicker">
                                     @foreach($tax_name_all as $key => $name)
@@ -383,13 +384,14 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div id="edit_unit" class="form-group">
+                            <div id="edit_unit" class="form-group col-md-4">
                                 <label>{{trans('file.Product Unit')}}</label>
                                 <select name="edit_unit" class="form-control selectpicker">
                                 </select>
                             </div>
-                            <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
-                    </form>
+                            <button type="button" name="update_btn" class="btn btn-primary  mt-2 col-md-12">{{trans('file.update')}}</button>
+                        </div>
+                        </form>
                 </div>
             </div>
         </div>

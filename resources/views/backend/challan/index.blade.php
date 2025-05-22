@@ -12,8 +12,8 @@
                 <h3 class="text-center">Challan List</h3>
             </div>
             <form action="{{route('challan.index')}}", method="GET">
-                <div class="row mb-3 offset-1">
-                    <div class="col-md-3 mt-3">
+                <div class="row justify-content-center mb-3 offset-1">
+                    <div class="col-md-5 mt-3">
                         <label class="">Courier</label>
                         <select name="courier_id" id="courier-id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select courier...">
                             <option value="All Courier">All Courier</option>
@@ -26,7 +26,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-5 mt-3">
                         <label class="">Status</label>
                         <select id="status" name="status" class="selectpicker form-control">
                             <option value="0">All</option>

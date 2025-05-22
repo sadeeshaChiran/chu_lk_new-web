@@ -269,7 +269,7 @@
                                                     <th class="recieved-product-qty d-none"></th>
                                                     <th id="total-discount">{{ number_format((float)$lims_purchase_data->total_discount, $general_setting->decimal )}}</th>
                                                     <th id="total-tax">{{ number_format((float)$lims_purchase_data->total_tax, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_purchase_data->total_cost, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{ number_format((float)$lims_purchase_data->total_cost, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>

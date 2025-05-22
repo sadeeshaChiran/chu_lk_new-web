@@ -163,7 +163,7 @@
                                                         <td class="net_unit_price">{{ number_format((float)$product_return->net_unit_price, $general_setting->decimal )}} </td>
                                                         <td class="discount">{{ number_format((float)$product_return->discount, $general_setting->decimal )}}</td>
                                                         <td class="tax">{{ number_format((float)$product_return->tax, $general_setting->decimal )}}</td>
-                                                        <td class="sub-total">{{ number_format((float)$product_return->total, $general_setting->decimal )}}</td>
+                                                        <td class="sub-total">{{ number_format((float)$product_return->total, $general_setting->decimal, '.', '' )}}</td>
                                                         <td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>
                                                         <input type="hidden" class="product-code" name="product_code[]" value="{{$product_data->code}}"/>
                                                         <input type="hidden" name="product_id[]" class="product-id" value="{{$product_data->id}}"/>
@@ -194,7 +194,7 @@
                                                     <th></th>
                                                     <th id="total-discount">{{ number_format((float)$lims_return_data->total_discount, $general_setting->decimal )}}</th>
                                                     <th id="total-tax">{{ number_format((float)$lims_return_data->total_tax, $general_setting->decimal )}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_return_data->total_price, $general_setting->decimal )}}</th>
+                                                    <th id="total">{{ number_format((float)$lims_return_data->total_price, $general_setting->decimal, '.', '' )}}</th>
                                                     <th><i class="dripicons-trash"></i></th>
                                                 </tfoot>
                                             </table>
@@ -235,7 +235,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <input type="hidden" name="order_tax_rate_hidden" value="{{$lims_return_data->order_tax_rate}}">
                                             <label>{{trans('file.Order Tax')}}</label>
@@ -247,7 +247,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                	<div class="col-md-4">
+                                	<div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
                                             <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
@@ -275,7 +275,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary mt-2 col-md-12" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -311,7 +311,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="row modal-element">
+                        <div class="row modal-element justify-content-center">
                             <div class="col-md-4 form-group">
                                 <label>{{trans('file.Quantity')}}</label>
                                 <input type="number" name="edit_qty" class="form-control" step="any">
@@ -346,7 +346,7 @@
                                 </select>
                             </div>
                         </div>
-                        <button type="button" name="update_btn" class="btn btn-primary">{{trans('file.update')}}</button>
+                        <button type="button" name="update_btn" class="btn btn-primary mt-2 col-md-12">{{trans('file.update')}}</button>
                     </form>
                 </div>
             </div>
@@ -377,7 +377,7 @@
                       <input type="number" name="cash_in_hand" required class="form-control">
                   </div>
                   <div class="col-md-12 form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary mt-2 col-md-12">{{trans('file.submit')}}</button>
                   </div>
                 </div>
             </div>

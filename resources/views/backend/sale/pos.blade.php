@@ -675,7 +675,7 @@
                     @endphp
                     <div class="row">
                         <div class="col-md-11 col-12">
-                            <div class="row">
+                            <div class="row justify-content-center">
                                 <div class="col-md-3 col-6">
                                     <div class="form-group top-fields">
                                         <label>{{ trans('file.Date') }}</label>

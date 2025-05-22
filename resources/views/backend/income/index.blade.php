@@ -13,8 +13,8 @@
                 <h3 class="text-center">{{trans('file.Income List')}}</h3>
             </div>
             {!! Form::open(['route' => 'incomes.index', 'method' => 'get']) !!}
-            <div class="row mb-3">
-                <div class="col-md-4 offset-md-2 mt-3">
+            <div class="row mb-3 justify-content-center offset-1">
+                <div class="col-md-5 mt-3">
                     <div class="form-group row">
                         <label class="d-tc mt-2"><strong>{{trans('file.Choose Your Date')}}</strong> &nbsp;</label>
                         <div class="d-tc">
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mt-3 @if(\Auth::user()->role_id > 8){{'d-none'}}@endif">
+                <div class="col-md-5 mt-3 @if(\Auth::user()->role_id > 8){{'d-none'}}@endif">
                     <div class="form-group row">
                         <label class="d-tc mt-2"><strong>{{trans('file.Choose Warehouse')}}</strong> &nbsp;</label>
                         <div class="d-tc">
@@ -108,7 +108,7 @@
                       <label>{{trans('file.reference')}}</label>
                       <p id="reference">{{'er-' . date("Ymd") . '-'. date("his")}}</p>
                   </div>
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="col-md-6 form-group">
                             <label>{{trans('file.Date')}}</label>
                             <input type="text" name="created_at" class="form-control date" placeholder="Choose date"/>
@@ -133,7 +133,7 @@
                             <label>{{trans('file.Amount')}} *</label>
                             <input type="number" name="amount" step="any" required class="form-control">
                         </div>
-                        <div class="col-md-6 form-group">
+                        <div class="col-md-12 form-group">
                             <label> {{trans('file.Account')}}</label>
                             <select class="form-control selectpicker" name="account_id">
                             @foreach($lims_account_list as $account)
@@ -151,7 +151,7 @@
                       <textarea name="note" rows="3" class="form-control"></textarea>
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>

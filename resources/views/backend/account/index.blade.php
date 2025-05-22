@@ -107,7 +107,7 @@
                         <textarea name="note" rows="3" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">{{trans('file.update')}}</button>
+                        <button type="submit" class="btn btn-primary mt-2 col-md-12">{{trans('file.update')}}</button>
                     </div>
                 {{ Form::close() }}
             </div>

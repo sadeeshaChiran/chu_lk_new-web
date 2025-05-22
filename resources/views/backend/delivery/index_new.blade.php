@@ -199,7 +199,7 @@
                         <label>{{trans('file.customer')}} *</label>
                         <p id="customer"></p>
                     </div>
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-12 form-group">
                         <label>{{trans('file.Attach File')}}</label>
                         <input type="file" name="file" class="form-control">
                     </div>
@@ -214,7 +214,7 @@
                 </div>
                 <input type="hidden" name="reference_no">
                 <input type="hidden" name="delivery_id">
-                <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                <button type="submit" class="btn btn-primary col-md-12">{{trans('file.submit')}}</button>
                 {{ Form::close() }}
             </div>
         </div>

@@ -76,7 +76,7 @@
             <div class="modal-body">
               <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
                 {!! Form::open(['route' => 'money-transfers.store', 'method' => 'post']) !!}
-                  <div class="row">
+                  <div class="row justify-content-center">
                       <div class="col-md-6 form-group">
                           <label> {{trans('file.From Account')}} *</label>
                           <select class="form-control selectpicker" name="from_account_id" data-live-search="true" data-live-search-style="begins" title="Select from account..." required>
@@ -94,13 +94,13 @@
                           </select>
                       </div>
 
-                      <div class="col-md-6 form-group">
+                      <div class="col-md-12 form-group">
                           <label>{{trans('file.Amount')}} *</label>
                           <input type="number" name="amount" class="form-control" step="any" required>
                       </div>
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary mt-2 col-md-12">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>
@@ -149,7 +149,7 @@
                       </div>
                   </div>
                   <div class="form-group">
-                      <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                      <button type="submit" class="btn btn-primary mt-2 col-md-12">{{trans('file.submit')}}</button>
                   </div>
                 {{ Form::close() }}
             </div>
