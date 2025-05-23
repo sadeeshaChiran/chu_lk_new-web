@@ -24,12 +24,12 @@
                         <th>{{ trans('file.Closed at') }}</th>
                         <th>Note</th>
                         <th>Shortage Balance</th>
-                        <th>Closing Balance</th>
+                        <th>Cash Hand Over Amount</th>
                         <th>Next Day Opening Balance</th>
+                        <th>Today Opening Balance</th>
                         <th>Total Expense</th>
                         <th>Total Cash</th>
 
-                        <th>{{ trans('file.Cash in Hand') }}</th>
                         <th>Total Sale Amount</th>
                         <th>Total Payment</th>
                         <th>Cash Payment</th>
@@ -90,9 +90,9 @@
                             <td>{{ $cash_register->closing_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}</td>
                             <td>{{ $cash_register->closing_balance }}</td>
                             <td>{{ $cash_register->next_day_opening_balance }}</td>
+                            <td>{{ $cash_register->cash_in_hand }}</td>
                             <td>{{ $cash_register->total_expense }}</td>
                             <td>{{ $cash_register->total_cash }}</td>
-                            <td>{{ $cash_register->cash_in_hand }}</td>
                             <td>{{ $cash_register->total_sale_amount }}</td>
                             <td>{{ $cash_register->total_payment }}</td>
                             <td>{{ $cash_register->cash_payment }}</td>

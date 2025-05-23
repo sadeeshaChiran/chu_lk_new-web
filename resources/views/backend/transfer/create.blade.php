@@ -561,21 +561,26 @@ function checkQuantity(purchase_qty, flag) {
     else if(operator[0] == '/')
         total_qty = purchase_qty / operation_value[0];
 
-    if (total_qty > parseFloat(product_qty[pos])) {
-        alert('Quantity exceeds stock quantity!');
-        if (flag) {
-            purchase_qty = purchase_qty.substring(0, purchase_qty.length - 1);
-            $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
-        }
-        else {
-            edit();
-            return;
-        }
-    }
-    else {
-        $('#editModal').modal('hide');
-        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
-    }
+
+    // temparary 
+    // if (total_qty > parseFloat(product_qty[pos])) {
+    //     alert('Quantity exceeds stock quantity!');
+    //     if (flag) {
+    //         purchase_qty = purchase_qty.substring(0, purchase_qty.length - 1);
+    //         $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
+    //     }
+    //     else {
+    //         edit();
+    //         return;
+    //     }
+    // }
+    // else {
+    //     $('#editModal').modal('hide');
+    //     $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
+    // }
+    $('#editModal').modal('hide');
+    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
+  
     calculateRowProductData(purchase_qty);
 }
 
