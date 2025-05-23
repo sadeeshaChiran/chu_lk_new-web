@@ -125,7 +125,8 @@
                 }
             ],
             'select': { style: 'multi', selector: 'td:first-child'},
-            'lengthMenu': [[50, 100, 150], [50, 100, 150]],
+            'lengthMenu': [[50, 100, 150, -1], [50, 100, 150, 'All']],
+
             dom: '<"row"lfB>rtip',
             buttons: [
                 {
