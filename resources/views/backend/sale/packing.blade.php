@@ -306,6 +306,12 @@
         $(document).on("change", "#warehouse_id", function() {
             localStorage.setItem("packing_warehouse_id", $(this).val());
         });
+
+        $(document).on('submit', '.packing-slip-form', function(e) {
+            const button = document.getElementById('submit-button');
+            button.disabled = true;
+            button.innerText = 'Submitting...';
+        });
         $(document).ready(function() {
             // Restore warehouse selection
             let savedWarehouseId = localStorage.getItem("packing_warehouse_id");
@@ -536,11 +542,8 @@
             });
 
             if (allCompleted) {
-                console.log("1");
                 $("#submit-button").prop("disabled", false);
             } else {
-                console.log("2");
-
                 $("#submit-button").prop("disabled", true);
             }
         }
