@@ -74,7 +74,6 @@
 
 	td{
 		border: 1px dotted lightgray;
-        margin: 100px;
 	}
 	@media print{
 
