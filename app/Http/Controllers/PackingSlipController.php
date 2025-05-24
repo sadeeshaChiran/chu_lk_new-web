@@ -29,7 +29,9 @@ class PackingSlipController extends Controller
     {
         $columns = array(
             1 => 'reference_no',
-            4 => 'amount',
+            4 => 'waybill_id',
+            8 => 'created_at',
+            9 => 'status',
         );
 
         $totalData = PackingSlip::count();
@@ -39,7 +41,7 @@ class PackingSlipController extends Controller
             $limit = $request->input('length');
         else
             $limit = $totalData;
-        $start = $request->input('start');
+        $start = $request->input('start');;
         $order = 'packing_slips.' . $columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
         if (empty($request->input('search.value'))) {
@@ -61,7 +63,7 @@ class PackingSlipController extends Controller
                 ->join('users', 'packing_slips.user_id', '=', 'users.id')
                 ->whereHas('sale')
                 ->where('users.name', 'LIKE', "%{$search}%")
-                ->where('packing_slips.reference_no', 'LIKE', "%{$search}%")
+                ->orwhere('packing_slips.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
                 ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                 ->offset($start)
@@ -86,7 +88,7 @@ class PackingSlipController extends Controller
                 $nestedData['delivery_reference'] = $packing_slip->delivery->reference_no;
                 $nestedData['waybill_id'] = $packing_slip->waybill_id ? $packing_slip->waybill_id : 'N/A';
                 $nestedData['created_by'] = $packing_slip->user->name;
-                $nestedData['created_at'] = date('d-m-Y', strtotime($packing_slip->created_at));
+                $nestedData['created_at'] = date('d-m-Y h:i A', strtotime($packing_slip->created_at));
                 //$nestedData['delivery_reference'] = 'j';
                 $nestedData['amount'] = $packing_slip->amount;
                 $nestedData['item_list'] = '';

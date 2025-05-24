@@ -51,6 +51,10 @@
 
     <script type="text/javascript">
 
+
+        // this is for datatable datetime sorting
+        $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
+        
         $("ul#sale").siblings('a').attr('aria-expanded','true');
         $("ul#sale").addClass("show");
         $("ul#sale #packing-list-menu").addClass("active");
@@ -107,7 +111,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [2, 3, 4, 5, 6, 7]
+                    'targets': [2, 3, 5, 6, 7, 9, 10]
                 },
                 {
                     'render': function(data, type, row, meta){
