@@ -88,7 +88,7 @@
                                             <strong><input type="checkbox" name="print[name]" checked value="1" /> {{trans('file.Product Name')}}</strong>&nbsp;
                                             <div class="col-md-12 form-group">
                                                 <label>Size</label>
-                                                <input type="number" name="print[name_size]" class="form-control col-md-12" value="15">
+                                                <input type="number" name="print[name_size]" class="form-control col-md-12" value="12">
                                             </div>
                                         </div>
 
@@ -96,7 +96,7 @@
                                             <strong><input type="checkbox" name="print[price]" checked value="1" /> {{trans('file.Price')}}</strong>&nbsp;
                                             <div class="col-md-12 form-group">
                                                 <label>Size</label>
-                                                <input type="number" name="print[price_size]" class="form-control" value="15">
+                                                <input type="number" name="print[price_size]" class="form-control" value="12">
                                             </div>
                                         </div>
 
@@ -105,15 +105,15 @@
                                             <strong><input type="checkbox" name="print[promo_price]" checked value="1" /> {{trans('file.Promotional Price')}}</strong>
                                             <div class="col-md-12 form-group">
                                                 <label>Size</label>
-                                                <input type="number" name="print[promo_price_size]" class="form-control" value="15">
+                                                <input type="number" name="print[promo_price_size]" class="form-control" value="12">
                                             </div>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <strong><input type="checkbox" name="print[business_name]" checked value="1" /> {{trans('file.Business Name')}}</strong>
+                                            <strong><input type="checkbox" name="print[business_name]" value="1" /> {{trans('file.Business Name')}}</strong>
                                             <div class="col-md-12 form-group">
                                                 <label>Size</label>
-                                                <input type="number" name="print[business_name_size]" class="form-control" value="15">
+                                                <input type="number" name="print[business_name_size]" class="form-control" value="12">
                                             </div>
                                         </div>
 
@@ -124,7 +124,7 @@
                                             <strong><input type="checkbox" name="print[business_name]" checked value="1" /> {{trans('file.Business Name')}}</strong>
                                             <div class="d-flex justify-content-start">
                                                 <div>Size:</div>&nbsp;
-                                                <div><input type="number" name="print[business_name_size]" value="15"></div>
+                                                <div><input type="number" name="print[business_name_size]" value="12"></div>
                                             </div>
                                         </div>
                                     </div> --}}
