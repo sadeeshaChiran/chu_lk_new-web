@@ -22971,11 +22971,13 @@
             var payment_mode = $('input[name="payment_mode"]:checked').val(); // Get selected radio button value
 
             if (payment_mode == 'payhere') {
-                const merchantId = "1221455";
+                /* const merchantId = "1221455"; */
+                const merchantId = "231672";
                 const orderId = "ORDER_" + new Date().getTime();
                 const amount = parseFloat($('#input_total').val());
                 const currency = "LKR";
-                const merchantSecret = "Mjc1NzE1MTgwNTE2NjQ1MTg5NjkyNTIzNDk2NTQxMjUxMDEzODE4NA==";
+                const merchantSecret = "NDI0Njk3Nzg2MDE3MTIxMDMzMzUxNTQ3OTM4MzEyMTUwODY3MTg1Mw==";
+                /* const merchantSecret = "Mjc1NzE1MTgwNTE2NjQ1MTg5NjkyNTIzNDk2NTQxMjUxMDEzODE4NA=="; */
 
                 const hash = generateHash(orderId, amount, currency, merchantSecret, merchantId);
                 let name = $("#name").val() || "";

@@ -462,9 +462,13 @@
                 '<br><strong>{{ trans('file.reference') }}: </strong>' + transfer[1] +
                 '<br><strong> {{ trans('file.Transfer') }} {{ trans('file.Status') }}: </strong>' + transfer[2] +
                 '<br><br><div class="row"><div class="col-md-6"><strong>{{ trans('file.From') }}:</strong><br>' + transfer[
-                    4] + '<br>' + transfer[5] + '<br>' + transfer[6] +
-                '</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}:</strong><br>' +
-                transfer[7] + '<br>' + transfer[8] + '<br>' + transfer[9] + '</div></div></div>';
+                    4] 
+                    // + '<br>' 
+                    // + transfer[5] + '<br>' + transfer[6] 
+                    +'</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}:</strong><br>' +
+                transfer[7] 
+                // + '<br>' + transfer[8] + '<br>' + transfer[9] 
+                + '</div></div></div>';
 
             $.get('transfers/product_transfer/' + transfer[3], function(data) {
                 $(".product-transfer-list tbody").remove();

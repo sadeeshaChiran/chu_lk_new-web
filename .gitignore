@@ -12,3 +12,6 @@ yarn-error.log
 /storage/*
 !/storage/app/
 !/storage/logs/
+bootstrap/cache/packages.php
+bootstrap/cache/routes-v7.php
+storage/logs/laravel.log
