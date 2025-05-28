@@ -222,11 +222,14 @@ class ProductController extends Controller
                 else
                     $nestedData['unit'] = 'N/A';
 
+                $last_purchase_price = ProductPurchase::where('product_id', $product->id)->orderBy('id', 'desc')->first();
                 $nestedData['price'] = $product->price;
                 $nestedData['wholesale_price'] = $product->wholesale_price;
                 $nestedData['retail_price'] = $product->retail_price;
                 $nestedData['online_price'] = $product->online_price;
                 $nestedData['cost'] = $product->cost;
+                $nestedData['last_purches_cost'] = $last_purchase_price->net_unit_cost ?? 'N/A';
+
                 $nestedData['product_weight'] = $product->product_weight;
 
                 if (config('currency_position') == 'prefix')
