@@ -611,12 +611,13 @@ class ReportController extends Controller
         );
         config()->set('database.connections.mysql.strict', false);
         DB::reconnect();
-        $product_sale_data = Product_Sale::join('sales', 'product_sales.sale_id', '=', 'sales.id')
-                            ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                            ->whereDate('sales.created_at', '>=' , $start_date)
-                            ->whereDate('sales.created_at', '<=' , $end_date)
-                            ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
-                            ->get();
+        $product_sale_data = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+                ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
+                ->where('sales.sale_status', 1)
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
+                ->get();
 
         config()->set('database.connections.mysql.strict', true);
             DB::reconnect();
@@ -659,9 +660,10 @@ class ReportController extends Controller
         }*/
         $purchase = Purchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query1))->get();
         $total_purchase = Purchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->count();
-        $sale = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query1))->get();
-        $total_sale = Sale::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->count();
+        $sale = Sale::whereDate('created_at', '>=' , $start_date)->where('sale_status', 1)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query1))->get();
+        $total_sale = Sale::whereDate('created_at', '>=' , $start_date)->where('sale_status', 1)->whereDate('created_at', '<=' , $end_date)->count();
         $return = Returns::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
+        
         $total_return = Returns::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->count();
         $purchase_return = ReturnPurchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
         $total_purchase_return = ReturnPurchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->count();
@@ -732,7 +734,7 @@ class ReportController extends Controller
         $warehouse_expense = [];
         foreach ($lims_warehouse_all as $warehouse) {
             $warehouse_name[] = $warehouse->name;
-            $warehouse_sale[] = Sale::where('warehouse_id', $warehouse->id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
+            $warehouse_sale[] = Sale::where('warehouse_id', $warehouse->id)->where('sale_status', 1)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
             $warehouse_purchase[] = Purchase::where('warehouse_id', $warehouse->id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
             $warehouse_return[] = Returns::where('warehouse_id', $warehouse->id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();
             $warehouse_purchase_return[] = ReturnPurchase::where('warehouse_id', $warehouse->id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->selectRaw(implode(',', $query2))->get();

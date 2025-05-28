@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">{{trans('file.submit')}}</button>
+                    <button type="submit" class="btn btn-primary col-md-12 mt-2">{{trans('file.submit')}}</button>
                 </div>
                 {{ Form::close() }}
             </div>

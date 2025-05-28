@@ -71,7 +71,7 @@
                 {{Form::text('name',null,array('required' => 'required', 'class' => 'form-control', 'placeholder' => 'Type department name...'))}}
             </div>
             <div class="form-group">
-              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+              <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2">
             </div>
           </form>
         </div>
@@ -96,7 +96,7 @@
             </div>
             <input type="hidden" name="department_id">
             <div class="form-group">
-                <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+                <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2">
               </div>
             </div>
       {{ Form::close() }}

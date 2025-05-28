@@ -110,7 +110,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group mt-4">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary">
+                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary col-md-12 mt-2">
                                 </div>
                             </div>
                         </div>

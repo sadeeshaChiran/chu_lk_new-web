@@ -461,11 +461,11 @@
             var htmltext = '<strong>{{ trans('file.Date') }}: </strong>' + transfer[0] +
                 '<br><strong>{{ trans('file.reference') }}: </strong>' + transfer[1] +
                 '<br><strong> {{ trans('file.Transfer') }} {{ trans('file.Status') }}: </strong>' + transfer[2] +
-                '<br><br><div class="row"><div class="col-md-6"><strong>{{ trans('file.From') }}:</strong><br>' + transfer[
+                '<br><br><div class="row"><div class="col-md-6"><strong>{{ trans('file.From') }}: </strong>' + transfer[
                     4] 
                     // + '<br>' 
                     // + transfer[5] + '<br>' + transfer[6] 
-                    +'</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}:</strong><br>' +
+                    +'</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}: </strong>' +
                 transfer[7] 
                 // + '<br>' + transfer[8] + '<br>' + transfer[9] 
                 + '</div></div></div>';
