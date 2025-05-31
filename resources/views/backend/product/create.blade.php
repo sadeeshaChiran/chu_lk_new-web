@@ -630,7 +630,7 @@
                     $('.search_result').html('').css('height','200px');
                     $.each(data,function(key, value){
                         var image = value.image.split(',');
-                        $('.search_result').append('<div data-id="'+value.id+'"><img src="{{asset("images/product/small/")}}/'+image[0]+'"><h4>'+value.name+'</h4><i class="dripicons-checkmark d-none"></i></div>')
+                        $('.search_result').append('<div data-id="'+value.id+'"><img src="{{asset("images/product/")}}/'+image[0]+'"><h4>'+value.name+'</h4><i class="dripicons-checkmark d-none"></i></div>')
                     })
                 }
             })

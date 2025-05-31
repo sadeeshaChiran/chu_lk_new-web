@@ -27,15 +27,19 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Sale type *</label>
-                                                <select name="saleType" id="saleType" class="form-control selectpicker"
-                                                    data-toggle="tooltip" title="" data-original-title="Sale type">
-                                                    <option value="retail"
-                                                        {{ $lims_sale_data->sale_type != 'wholesale' ? 'selected' : '' }}>
-                                                        Retail</option>
-                                                    <option value="wholesale"
-                                                        {{ $lims_sale_data->sale_type == 'wholesale' ? 'selected' : '' }}>
-                                                        Wholesale</option>
-                                                </select>
+                                                @if ($lims_sale_data->sale_type == 'pos')
+                                                    <input type="hidden" name="saleType" value="pos" />
+                                                @else
+                                                    <select name="saleType" id="saleType" class="form-control selectpicker"
+                                                        data-toggle="tooltip" title="" data-original-title="Sale type">
+                                                        <option value="retail"
+                                                            {{ $lims_sale_data->sale_type != 'wholesale' ? 'selected' : '' }}>
+                                                            Retail</option>
+                                                        <option value="wholesale"
+                                                            {{ $lims_sale_data->sale_type == 'wholesale' ? 'selected' : '' }}>
+                                                            Wholesale</option>
+                                                    </select>
+                                                @endif
 
                                             </div>
                                         </div>
@@ -559,6 +563,7 @@
                                                 <select name="sale_status" class="form-control">
                                                     <option value="1">{{ trans('file.Completed') }}</option>
                                                     <option value="2">{{ trans('file.Pending') }}</option>
+                                                    <option value="3" >{{ trans('file.Draft') }}</option>
                                                 </select>
                                             </div>
                                         </div>

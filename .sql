@@ -25,3 +25,6 @@ WHERE due_at IS NULL;
 
 --2025/05/17
 ALTER TABLE `payments` ADD `document` VARCHAR(255) NULL AFTER `payment_note`;
+
+--2025/06/30
+ALTER TABLE `adjustments` ADD `created_by` INT NULL AFTER `note`, ADD `updated_by` INT NULL AFTER `created_by`;

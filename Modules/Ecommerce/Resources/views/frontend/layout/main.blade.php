@@ -25961,7 +25961,7 @@
                                 var url = "{{ url('/product') }}/" + value.slug + "/" + value
                                     .id;
                                 $('.search_result').append('<a href="' + url +
-                                    '"><img src="{{ asset('images/product/small/') }}/' +
+                                    '"><img src="{{ asset('images/product/') }}/' +
                                     image[0] + '"><h4>' + value.name + '</h4></a>')
                             })
                         @else
@@ -26031,7 +26031,7 @@
                                     $('.search-page .product-grid').append(
                                         '<div class="single-product-wrapper"><div class="single-product-item"><a href="' +
                                         url +
-                                        '"  class="view-details"><img src="{{ asset('images/product/medium/') }}/' +
+                                        '"  class="view-details"><img src="{{ asset('images/product/') }}/' +
                                         image[0] +
                                         '"></a></div><div class="product-details"><a class="product-name" href="' +
                                         url + '">' + value.name +
@@ -26042,7 +26042,7 @@
                                     $('.search-page .product-grid').append(
                                         '<div class="single-product-wrapper"><div class="single-product-item"><a href="' +
                                         url +
-                                        '"  class="view-details"><img src="{{ asset('images/product/medium/') }}/' +
+                                        '"  class="view-details"><img src="{{ asset('images/product/') }}/' +
                                         image[0] +
                                         '"></a></div><div class="product-details"><a class="product-name" href="' +
                                         url + '">' + value.name +
@@ -26107,7 +26107,7 @@
                                 variant = '(<span>' + value.variant.join(' | ') + '</span>)';
                                 id = value.id + '-' + value.variant.join('-')
                             }
-                            var imageSrc = image[0] ? '{{ url("/images/product/medium") }}/' + image[0] : '{{ url("images/product/large/nullImage1.jpg") }}';
+                            var imageSrc = image[0] ? '{{ url("/images/product") }}/' + image[0] : '{{ url("images/product/nullImage1.jpg") }}';
 
 var item = '<div class="shp__single__product" id="cart-item-' + id +
     '"><div class="shp__pro__thumb"><a href="{{ url('/product') }}/' +
@@ -26228,13 +26228,13 @@ $('.shp__cart__wrap').append(item);
 
 
                             $('#detailsModal .modal-image').append(
-                                '<img src="{{ url('images/product/large') }}/' + image[0] +
+                                '<img src="{{ url('images/product') }}/' + image[0] +
                                 '" alt="' + response.name + '" />')
 
 
                         } else {
                             $('#detailsModal .modal-image').html(
-                                '<img src="src="{{ url('images/product/large/nullImage1.jpg') }}" alt="' +
+                                '<img src="src="{{ url('images/product/nullImage1.jpg') }}" alt="' +
                                 response.name + '"/>');
                         }
 

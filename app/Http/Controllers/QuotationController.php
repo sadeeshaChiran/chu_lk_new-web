@@ -326,6 +326,11 @@ class QuotationController extends Controller
                     $nestedData['options'] .= '<li>
                         <a href="'.route('quotations.edit', $quotation->id).'" class="btn btn-link"><i class="dripicons-document-edit"></i> '.trans('file.edit').'</a>
                         </li>';
+                else if (in_array("quotes-draft-edit", $request['all_permission']) && $quotation->quotation_status == 1)
+                    $nestedData['options'] .= '<li>
+                        <a href="'.route('quotations.edit', $quotation->id).'" class="btn btn-link"><i class="dripicons-document-edit"></i> '.trans('file.edit').'</a>
+                        </li>';
+
                 $nestedData['options'] .= '<li>
                         <a href="'.route('quotation.create_sale', $quotation->id).'" class="btn btn-link"><i class="fa fa-shopping-cart"></i> '.trans('file.Create Sale').'</a>
                         </li>';
@@ -888,13 +893,14 @@ class QuotationController extends Controller
     public function edit($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if($role->hasPermissionTo('quotes-edit')){
+        $lims_quotation_data = Quotation::find($id);
+        if($role->hasPermissionTo('quotes-edit') || ($role->hasPermissionTo('quotes-draft-edit') && $lims_quotation_data->quotation_status == 1)) {
             $lims_customer_list = Customer::where('is_active', true)->get();
             $lims_warehouse_list = Warehouse::where('is_active', true)->get();
             $lims_biller_list = Biller::where('is_active', true)->get();
             $lims_supplier_list = Supplier::where('is_active', true)->get();
             $lims_tax_list = Tax::where('is_active', true)->get();
-            $lims_quotation_data = Quotation::find($id);
+
             $lims_product_quotation_data = ProductQuotation::where('quotation_id', $id)->get();
             return view('backend.quotation.edit',compact('lims_customer_list', 'lims_warehouse_list', 'lims_biller_list', 'lims_tax_list', 'lims_quotation_data','lims_product_quotation_data', 'lims_supplier_list'));
         }

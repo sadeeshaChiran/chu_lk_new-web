@@ -490,7 +490,7 @@ class ReturnController extends Controller
         $lims_sale_data = Sale::select('id', 'warehouse_id', 'customer_id', 'biller_id', 'currency_id', 'exchange_rate', 'sale_status')->find($data['sale_id']);
         $data['user_id'] = Auth::id();
         $data['customer_id'] = $lims_sale_data->customer_id;
-        $data['warehouse_id'] = $lims_sale_data->warehouse_id;
+        // $data['warehouse_id'] = $lims_sale_data->warehouse_id;
         $data['biller_id'] = $lims_sale_data->biller_id;
         $data['currency_id'] = $lims_sale_data->currency_id;
         $data['exchange_rate'] = $lims_sale_data->exchange_rate;

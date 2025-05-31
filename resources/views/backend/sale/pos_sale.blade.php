@@ -737,12 +737,12 @@
         $(".daterangepicker-field").daterangepicker({
 
             autoUpdateInput: false,
-            ranges: {
-                'Today': [moment().startOf('day'), moment().endOf('day')],
-                'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
-                'Last 7 Days': [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')],
-                'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
-            },
+        ranges: {
+            'Today': [moment().startOf('day'), moment().endOf('day')],
+            'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+            'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
+            'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
+        },
             locale: {
                 format: 'YYYY-MM-DD'
             },
@@ -1159,7 +1159,7 @@
             }
         }
 
-
+        let user_role_id = {{ Auth::user()->role_id }};
         $('#sale-table').DataTable({
             "processing": true,
             "serverSide": true,
@@ -1229,7 +1229,7 @@
             ],
             dom: '<"row"lfB>rtip',
             rowId: 'ObjectID',
-            buttons: [{
+            buttons: (user_role_id <= 8) ? [{
                     extend: 'pdf',
                     text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
                     exportOptions: {
@@ -1285,6 +1285,47 @@
                     },
                     footer: true
                 },
+                {
+                    text: '<i title="delete" class="dripicons-cross"></i>',
+                    className: 'buttons-delete',
+                    action: function(e, dt, node, config) {
+                        if (user_verified == '1') {
+                            sale_id.length = 0;
+                            $(':checkbox:checked').each(function(i) {
+                                if (i) {
+                                    var sale = $(this).closest('tr').data('sale');
+                                    if (sale)
+                                        sale_id[i - 1] = sale[13];
+                                }
+                            });
+                            if (sale_id.length && confirm("Are you sure want to delete?")) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/sales/deletebyselection',
+                                    data: {
+                                        saleIdArray: sale_id
+                                    },
+                                    success: function(data) {
+                                        alert(data);
+                                        //dt.rows({ page: 'current', selected: true }).deselect();
+                                        dt.rows({
+                                            page: 'current',
+                                            selected: true
+                                        }).remove().draw(false);
+                                    }
+                                });
+                            } else if (!sale_id.length)
+                                alert('Nothing is selected!');
+                        } else
+                            alert('This feature is disable for demo!');
+                    }
+                },
+                {
+                    extend: 'colvis',
+                    text: '<i title="column visibility" class="fa fa-eye"></i>',
+                    columns: ':gt(0)'
+                },
+            ]: [
                 {
                     text: '<i title="delete" class="dripicons-cross"></i>',
                     className: 'buttons-delete',

@@ -292,6 +292,10 @@ class PurchaseController extends Controller
                     $nestedData['options'] .= '<li>
                         <a href="' . route('purchases.edit', $purchase->id) . '" class="btn btn-link"><i class="dripicons-document-edit"></i> ' . trans('file.edit') . '</a>
                         </li>';
+                else if ($purchase->status == 3 && in_array("purchases-draft-edit", $request['all_permission']))
+                    $nestedData['options'] .= '<li>
+                        <a href="' . route('purchases.edit', $purchase->id) . '" class="btn btn-link"><i class="dripicons-document-edit"></i> ' . trans('file.edit') . '</a>
+                        </li>';
                 if (in_array("purchase-payment-index", $request['all_permission']))
                     $nestedData['options'] .=
                         '<li>
@@ -868,13 +872,13 @@ class PurchaseController extends Controller
     public function edit($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('purchases-edit')) {
+        $lims_purchase_data = Purchase::find($id);
+        if ($role->hasPermissionTo('purchases-edit') ||($role->hasPermissionTo('purchases-draft-edit') && $lims_purchase_data->status == 3)) {
             $lims_supplier_list = Supplier::where('is_active', true)->get();
             $lims_warehouse_list = Warehouse::where('is_active', true)->get();
             $lims_tax_list = Tax::where('is_active', true)->get();
             $lims_product_list_without_variant = $this->productWithoutVariant();
             $lims_product_list_with_variant = $this->productWithVariant();
-            $lims_purchase_data = Purchase::find($id);
             $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
             if ($lims_purchase_data->exchange_rate)
                 $currency_exchange_rate = $lims_purchase_data->exchange_rate;

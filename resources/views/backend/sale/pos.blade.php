@@ -2264,7 +2264,7 @@
                 let totalCash = parseFloat($('#register-details-modal #total_cash').text()) || 0;
                 const closing = parseFloat($('#closing_balance').val()) || 0;
                 const opening = parseFloat($('#next_day_opening_balance').val()) || 0;
-                const shortage =  (totalCash) - (closing + opening) ;
+                const shortage =   (closing + opening) - (totalCash) ;
                 $('#shortage_balance').text(shortage.toFixed(2));
             }
             // $('select[name="customer_id"]').on('change', function() {
@@ -3022,11 +3022,11 @@
                 tableData += '<td>' + sale.grand_total + '</td>';
 
                 tableData += '<td>'
-                if (all_permission.includes("sales-edit")) {
+                if (all_permission.includes("pos-sales-edit")) {
                     tableData += '<a href="sales/' + sale.id +
                         '/edit" class="btn btn-success btn-sm" title="Edit"><i class="dripicons-document-edit"></i></a>&nbsp';
                 }
-                if (all_permission.includes("sales-delete")) {
+                if (all_permission.includes("pos-sales-delete")) {
                     tableData += '<form class="d-inline" action="{{ url('/sales') }}/' + sale.id +
                         '" method ="POST"><input name="_method" type="hidden" value="DELETE">@csrf';
                     tableData +=
@@ -3052,11 +3052,11 @@
                 tableData += '<td>' + draft.grand_total + '</td>';
 
                 tableData += '<td>'
-                if (all_permission.includes("sales-edit")) {
+                if (all_permission.includes("pos-sales-draft-edit")) {
                     tableData += '<a href="sales/' + draft.id +
                         '/create" class="btn btn-success btn-sm" title="Edit"><i class="dripicons-document-edit"></i></a>&nbsp';
                 }
-                if (all_permission.includes("sales-delete")) {
+                if (all_permission.includes("pos-sales-delete")) {
                     tableData += '<form class="d-inline" action="{{ url('/sales') }}/' + draft.id +
                         '" method ="POST"><input name="_method" type="hidden" value="DELETE">@csrf';
                     tableData +=
@@ -4029,6 +4029,7 @@
         }
 
         function productSearch(data) {
+            console.log("sdsad");
             var product_info = data.split("|");
             var item_code = product_info[0];
             var pre_qty = 0;

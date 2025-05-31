@@ -165,13 +165,12 @@
                 if (ui.content.length == 1) {
                     var data = ui.content[0].value;
                     $(this).autocomplete("close");
-                    productSearch(ui.content);
+                    productSearch(data);
                 };
             },
             select: function(event, ui) {
                 var data = ui.item.value;
-
-                productSearch(ui.content);
+                productSearch(data);
             }
         });
 
@@ -213,6 +212,7 @@
         });
 
         function productSearch(data) {
+            console.log(data);
             $.ajax({
                 type: 'GET',
                 url: 'lims_product_search',

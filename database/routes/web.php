@@ -356,6 +356,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
             Route::get('getproduct/{id}', 'getProduct')->name('transfer.getproduct');
             Route::get('lims_product_search', 'limsProductSearch')->name('product_transfer.search');
             Route::post('deletebyselection', 'deleteBySelection');
+            Route::get('complete/{id}', 'completeTransfer')->name('transfer.complete');
          });
         Route::post('importtransfer', 'importTransfer')->name('transfer.import');
     });

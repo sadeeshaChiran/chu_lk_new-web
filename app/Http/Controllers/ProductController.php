@@ -403,18 +403,18 @@ class ProductController extends Controller
         $image_names = [];
         if ($images) {
             // Ensure the necessary directories exist using public_path()
-            if (!file_exists(public_path("images/product/xlarge")) && !is_dir(public_path("images/product/xlarge"))) {
-                mkdir(public_path("images/product/xlarge"), 0755, true);
-            }
-            if (!file_exists(public_path("images/product/large")) && !is_dir(public_path("images/product/large"))) {
-                mkdir(public_path("images/product/large"), 0755, true);
-            }
-            if (!file_exists(public_path("images/product/medium")) && !is_dir(public_path("images/product/medium"))) {
-                mkdir(public_path("images/product/medium"), 0755, true);
-            }
-            if (!file_exists(public_path("images/product/small")) && !is_dir(public_path("images/product/small"))) {
-                mkdir(public_path("images/product/small"), 0755, true);
-            }
+            // if (!file_exists(public_path("images/product/xlarge")) && !is_dir(public_path("images/product/xlarge"))) {
+            //     mkdir(public_path("images/product/xlarge"), 0755, true);
+            // }
+            // if (!file_exists(public_path("images/product/large")) && !is_dir(public_path("images/product/large"))) {
+            //     mkdir(public_path("images/product/large"), 0755, true);
+            // }
+            // if (!file_exists(public_path("images/product/medium")) && !is_dir(public_path("images/product/medium"))) {
+            //     mkdir(public_path("images/product/medium"), 0755, true);
+            // }
+            // if (!file_exists(public_path("images/product/small")) && !is_dir(public_path("images/product/small"))) {
+            //     mkdir(public_path("images/product/small"), 0755, true);
+            // }
 
             foreach ($images as $key => $image) {
                 $ext = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
@@ -432,13 +432,13 @@ class ProductController extends Controller
                 $manager = new ImageManager(Driver::class);
                 $image = $manager->read(public_path('images/product/') . $imageName);
 
-                $image->cover(1000, 1250)->save(public_path('images/product/xlarge/') . $imageName, 100);
+                // $image->cover(1000, 1250)->save(public_path('images/product/xlarge/') . $imageName, 100);
 
-                $image->cover(500, 500)->save(public_path('images/product/large/') . $imageName, 100);
+                // $image->cover(500, 500)->save(public_path('images/product/large/') . $imageName, 100);
 
-                $image->cover(250, 250)->save(public_path('images/product/medium/' . $imageName), 100);
+                // $image->cover(250, 250)->save(public_path('images/product/medium/' . $imageName), 100);
 
-                $image->cover(100, 100)->save(public_path('images/product/small/' . $imageName), 100);
+                // $image->cover(100, 100)->save(public_path('images/product/small/' . $imageName), 100);
 
                 // Collect image names for saving in the database
                 $image_names[] = $imageName;
@@ -1312,6 +1312,13 @@ class ProductController extends Controller
             $previous_images = [];
             //dealing with previous images
             if ($request->prev_img) {
+                $storedImages = $lims_product_data->image ? explode(',', $lims_product_data->image) : [];
+                $keptImages = $request->prev_img ?? []; 
+                $imagesToDelete = array_diff($storedImages, $keptImages);
+
+                foreach ($imagesToDelete as $image) {
+                    $this->fileDelete(public_path(path: 'images/product/'), $image);
+                }
                 foreach ($request->prev_img as $key => $prev_img) {
                     if (!in_array($prev_img, $previous_images))
                         $previous_images[] = $prev_img;
@@ -1322,22 +1329,23 @@ class ProductController extends Controller
                 $lims_product_data->image = null;
                 $lims_product_data->save();
             }
+            
+           
 
-            //dealing with new images
             if ($request->image) {
                 // Ensure the necessary directories exist using public_path()
-                if (!file_exists(public_path("images/product/xlarge")) && !is_dir(public_path("images/product/xlarge"))) {
-                    mkdir(public_path("images/product/xlarge"), 0755, true);
-                }
-                if (!file_exists(public_path("images/product/large")) && !is_dir(public_path("images/product/large"))) {
-                    mkdir(public_path("images/product/large"), 0755, true);
-                }
-                if (!file_exists(public_path("images/product/medium")) && !is_dir(public_path("images/product/medium"))) {
-                    mkdir(public_path("images/product/medium"), 0755, true);
-                }
-                if (!file_exists(public_path("images/product/small")) && !is_dir(public_path("images/product/small"))) {
-                    mkdir(public_path("images/product/small"), 0755, true);
-                }
+                // if (!file_exists(public_path("images/product/xlarge")) && !is_dir(public_path("images/product/xlarge"))) {
+                //     mkdir(public_path("images/product/xlarge"), 0755, true);
+                // }
+                // if (!file_exists(public_path("images/product/large")) && !is_dir(public_path("images/product/large"))) {
+                //     mkdir(public_path("images/product/large"), 0755, true);
+                // }
+                // if (!file_exists(public_path("images/product/medium")) && !is_dir(public_path("images/product/medium"))) {
+                //     mkdir(public_path("images/product/medium"), 0755, true);
+                // }
+                // if (!file_exists(public_path("images/product/small")) && !is_dir(public_path("images/product/small"))) {
+                //     mkdir(public_path("images/product/small"), 0755, true);
+                // }
 
                 $images = $request->image;
                 $image_names = [];
@@ -1354,16 +1362,16 @@ class ProductController extends Controller
 
                     $image->move(public_path('images/product'), $imageName);
 
-                    $manager = new ImageManager(Driver::class);
-                    $image = $manager->read(public_path('images/product/') . $imageName);
+                    // $manager = new ImageManager(Driver::class);
+                    // $image = $manager->read(public_path('images/product/') . $imageName);
 
-                    $image->cover(1000, 1250)->save(public_path('images/product/xlarge/') . $imageName, 100);
+                    // $image->cover(1000, 1250)->save(public_path('images/product/xlarge/') . $imageName, 100);
 
-                    $image->cover(500, 500)->save(public_path('images/product/large/') . $imageName, 100);
+                    // $image->cover(500, 500)->save(public_path('images/product/large/') . $imageName, 100);
 
-                    $image->cover(250, 250)->save(public_path('images/product/medium/' . $imageName), 100);
+                    // $image->cover(250, 250)->save(public_path('images/product/medium/' . $imageName), 100);
 
-                    $image->cover(100, 100)->save(public_path('images/product/small/' . $imageName), 100);
+                    // $image->cover(100, 100)->save(public_path('images/product/small/' . $imageName), 100);
 
                     $image_names[] = $imageName;
                 }
@@ -1916,9 +1924,9 @@ class ProductController extends Controller
                 $images = explode(",", $lims_product_data->image);
                 foreach ($images as $key => $image) {
                     $this->fileDelete(public_path('images/product/'), $image);
-                    $this->fileDelete(public_path('images/product/large/'), $image);
-                    $this->fileDelete(public_path('images/product/medium/'), $image);
-                    $this->fileDelete(public_path('images/product/small/'), $image);
+                    // $this->fileDelete(public_path('images/product/large/'), $image);
+                    // $this->fileDelete(public_path('images/product/medium/'), $image);
+                    // $this->fileDelete(public_path('images/product/small/'), $image);
                 }
             }
             $lims_product_data->save();

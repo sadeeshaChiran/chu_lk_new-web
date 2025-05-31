@@ -29,13 +29,13 @@
                                         @if($category->image)
                                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/large') }}/{{ $category->image }}" alt="{{ $category->name }}">
                                         @else
-                                            <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $category->name }}">
+                                            <img loading="lazy" src="{{ url('images/product/nullImage1.jpg') }}" alt="{{ $category->name }}">
                                         @endif
                                     @else
                                         @if($category->icon)
                                             <img loading="lazy" class="category-img" data-src="{{ url('images/category/icons/') }}/{{ $category->icon }}" alt="{{ $category->name }}">
                                         @else
-                                            <img loading="lazy" src="{{ url('images/product/large/nullImage1.jpg') }}" alt="{{ $category->name }}">
+                                            <img loading="lazy" src="{{ url('images/product/nullImage1.jpg') }}" alt="{{ $category->name }}">
                                         @endif
                                     @endif
 

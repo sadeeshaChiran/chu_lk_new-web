@@ -16,7 +16,27 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 form-group">
+                                        @if (isset(auth()->user()->warehouse_id))
+                                            <input type="hidden" name="warehouse_id" id="warehouse_id"
+                                                value="{{ auth()->user()->warehouse_id }}" />
+                                        @else
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>{{ trans('file.Warehouse') }} *</label>
+                                                    <select required name="warehouse_id" id="warehouse_id" 
+                                                        class="selectpicker form-control" data-live-search="true"
+                                                        data-live-search-style="begins" title="Select warehouse..." required>
+                                                        @foreach ($lims_warehouse_list as $warehouse)
+                                                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-12 mt-2">
                                         <input type="hidden" name="sale_id" value="{{$lims_sale_data->id}}">
                                         <h5>{{trans('file.Order Table')}} *</h5>
                                         <div class="table-responsive mt-3">
@@ -148,7 +168,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Order Tax')}}</label>
                                             <select class="form-control" name="order_tax_rate">
@@ -159,7 +179,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Attach Document')}}</label>
                                             <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>

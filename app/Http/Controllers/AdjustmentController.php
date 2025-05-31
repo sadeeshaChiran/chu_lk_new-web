@@ -126,6 +126,7 @@ class AdjustmentController extends Controller
                 ])->first();
         }
 
+        
         $product[] = $lims_product_data->name;
         $product_variant_id = null;
         if($lims_product_data->is_variant) {
@@ -163,6 +164,7 @@ class AdjustmentController extends Controller
             $document->move(public_path('documents/adjustment'), $documentName);
             $data['document'] = $documentName;
         }
+        $data['created_by'] = Auth::id();
         $lims_adjustment_data = Adjustment::create($data);
 
         $product_id = $data['product_id'];
@@ -244,6 +246,7 @@ class AdjustmentController extends Controller
 
         $lims_adjustment_data = Adjustment::find($id);
         $lims_product_adjustment_data = ProductAdjustment::where('adjustment_id', $id)->get();
+        $data['updated_by'] = Auth::id();
         $product_id = $data['product_id'];
         $product_variant_id = $data['product_variant_id'];
         $product_code = $data['product_code'];

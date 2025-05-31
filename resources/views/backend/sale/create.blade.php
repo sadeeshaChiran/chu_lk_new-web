@@ -464,6 +464,7 @@
                                                 <select name="sale_status" class="form-control">
                                                     <option value="1">{{ trans('file.Completed') }}</option>
                                                     <option value="2" selected>{{ trans('file.Pending') }}</option>
+                                                     <option value="3" >{{ trans('file.Draft') }}</option>
                                                 </select>
                                             </div>
                                         </div>

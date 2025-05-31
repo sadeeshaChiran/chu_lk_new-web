@@ -20,6 +20,8 @@
                     <th>{{trans('file.reference')}}</th>
                     <th>{{trans('file.Warehouse')}}</th>
                     <th>{{trans('file.product')}}s</th>
+                    <th>Created By</th>
+                    <th>Updated By</th>
                     <th>{{trans('file.Note')}}</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
@@ -54,6 +56,29 @@
                     	 	echo $product->name.'<br>'.$product_adjustment->qty.' x '.$product_adjustment->unit_cost;
                     	 }
                     ?>
+                    </td>
+                    <td>
+                        <?php
+                            if($adjustment->created_by) {
+                                $user = DB::table('users')->find($adjustment->created_by);
+                                echo $user->name;
+                            }else{
+                                echo '-';
+                            }
+                        ?>
+                    </td>
+                    <td>
+
+                        <?php
+                            if($adjustment->updated_by) {
+                                $user = DB::table('users')->find($adjustment->updated_by);
+                                echo $user->name;
+                            }else{
+                                echo '-';
+                            }
+
+                        ?>
+
                     </td>
                     <td>{{$adjustment->note}}</td>
                     <td>

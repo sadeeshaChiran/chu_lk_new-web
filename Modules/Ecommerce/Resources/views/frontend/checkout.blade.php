@@ -22642,14 +22642,14 @@
                                                 $cart_product['image'] = $images[0];
                                             @endphp
                                             @if (!config('database.connections.saleprosaas_landlord'))
-                                                <img src="{{ asset('images/product/small') }}/{{ $cart_product['image'] }}"
+                                                <img src="{{ asset('images/product') }}/{{ $cart_product['image'] }}"
                                                     alt="{{ $cart_product['name'] }}">
                                             @else
-                                                <img src="{{ asset('../../images/product/small') }}/{{ $cart_product['image'] }}"
+                                                <img src="{{ asset('../../images/product') }}/{{ $cart_product['image'] }}"
                                                     alt="{{ $cart_product['name'] }}">
                                             @endif
                                         @else
-                                            <img src="{{ url('images/product/small/nullImage1.jpg') }}"
+                                            <img src="{{ url('images/product/nullImage1.jpg') }}"
                                                 alt="{{ $cart_product['name'] }}">
                                         @endif
                                     </div>

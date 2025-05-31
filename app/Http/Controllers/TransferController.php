@@ -206,6 +206,11 @@ class TransferController extends Controller
                         <a href="'.route('transfers.edit', $transfer->id).'" class="btn btn-link"><i class="dripicons-document-edit"></i> '.trans('file.edit').'</a>
                         </li>';
                 }
+
+                else if (in_array("transfers-draft-edit", $request['all_permission']) && $transfer->status == 2)
+                    $nestedData['options'] .= '<li>
+                        <a href="'.route('transfers.edit', $transfer->id).'" class="btn btn-link"><i class="dripicons-document-edit"></i> '.trans('file.edit').'</a>
+                        </li>';
                 if(in_array("transfers-delete", $request['all_permission']))
                     $nestedData['options'] .= \Form::open(["route" => ["transfers.destroy", $transfer->id], "method" => "DELETE"] ).'
                             <li>
@@ -213,7 +218,14 @@ class TransferController extends Controller
                             </li>'.\Form::close().'
                         </ul>
                     </div>';
-                // data for transfer details by one click
+                if(in_array("complete-transfer", $request['all_permission']) && $transfer->status == 3)
+                    $nestedData['options'] .= \Form::open(["route" => ["transfer.complete", $transfer->id], "method" => "GET"] ).'
+                            <li>
+                              <button type="submit" class="btn btn-link" onclick="return confirmComplete()"><i class="dripicons-thumbs-up"></i> '. "Complete".'</button>
+                            </li>'.\Form::close().'
+                        </ul>
+                    </div>';
+                    // data for transfer details by one click
 
                 $nestedData['transfer'] = array( '[ "'.date(config('date_format'), strtotime($transfer->created_at->toDateString())).'"', ' "'.$transfer->reference_no.'"', ' "'.$status.'"', ' "'.$transfer->id.'"', ' "'.$transfer->fromWarehouse->name.'"', ' "'.$transfer->fromWarehouse->phone.'"', ' "'.preg_replace('/\s+/S', " ", $transfer->fromWarehouse->address).'"', ' "'.$transfer->toWarehouse->name.'"', ' "'.$transfer->toWarehouse->phone.'"', ' "'.preg_replace('/\s+/S', " ", $transfer->toWarehouse->address).'"', ' "'.$transfer->total_tax.'"', ' "'.$transfer->total_cost.'"', ' "'.$transfer->shipping_cost.'"', ' "'.$transfer->grand_total.'"', ' "'.preg_replace('/[\n\r]/', "<br>", $transfer->note).'"', ' "'.$transfer->user->name.'"', ' "'.$transfer->user->email.'"]'
                 );
@@ -227,6 +239,19 @@ class TransferController extends Controller
             "data"            => $data
         );
         echo json_encode($json_data);
+    }
+
+    public function completeTransfer($id)
+    {
+        $role = Role::find(Auth::user()->role_id);
+        if($role->hasPermissionTo('complete-transfer')) {
+            $lims_transfer_data = Transfer::find($id);
+            $lims_transfer_data->status = 1;
+            $lims_transfer_data->save();
+             return redirect('transfers')->with('message', 'Transfer status updated successfully');
+        }
+        else
+            return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
     }
 
     public function create()
@@ -1073,9 +1098,9 @@ class TransferController extends Controller
     public function edit($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if($role->hasPermissionTo('transfers-edit')){
+        $lims_transfer_data = Transfer::find($id);
+        if($role->hasPermissionTo('transfers-edit') || ($role->hasPermissionTo('transfers-add') && $lims_transfer_data->status == 2)){
             $lims_warehouse_list = Warehouse::where('is_active',true)->get();
-            $lims_transfer_data = Transfer::find($id);
             $lims_product_transfer_data = ProductTransfer::where('transfer_id', $id)->get();
             return view('backend.transfer.edit', compact('lims_warehouse_list', 'lims_transfer_data', 'lims_product_transfer_data'));
         }

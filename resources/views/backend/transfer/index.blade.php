@@ -196,6 +196,15 @@
             return false;
         }
 
+        function confirmComplete() {
+            if (confirm("Are you sure want to send this transfer?")) {
+                return true;
+            }
+            return false;
+        }
+
+
+
         $(document).on("click", "tr.transfer-link td:not(:first-child, :last-child)", function() {
             var transfers = $(this).parent().data('transfer');
             transferDetails(transfers);

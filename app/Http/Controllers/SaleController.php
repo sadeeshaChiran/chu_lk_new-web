@@ -65,6 +65,7 @@ use App\Models\SmsTemplate;
 use App\Services\SmsService;
 use App\SMSProviders\TonkraSms;
 use App\ViewModels\ISmsModel;
+use Carbon\Carbon;
 use PHPUnit\Framework\MockObject\Stub\ReturnSelf;
 use Salla\ZATCA\GenerateQrCode;
 use Salla\ZATCA\Tags\InvoiceDate;
@@ -239,10 +240,31 @@ class SaleController extends Controller
         $sale_type = $request->input('sale_type');
         $payment_method = $request->input('payment_method');
 
+        // Get input dates from request
+        $starting_date_input = $request->input('starting_date');
+        $ending_date_input = $request->input('ending_date');
+        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8)  {
+            $default_ending_date = Carbon::today();
+            $default_starting_date = $default_ending_date->copy()->subDays(30);
+            $starting_date = Carbon::parse($starting_date_input);
+            $ending_date = Carbon::parse($ending_date_input);
+
+            if ($starting_date->lt($default_starting_date)) {
+                $starting_date = Carbon::today()->subDays(30); 
+                $ending_date = Carbon::today();
+            }
+        } else {
+            // If no dates provided, use default last 30 days
+             $starting_date = Carbon::parse($starting_date_input);
+            $ending_date = Carbon::parse($ending_date_input);
+        }
+
+
+
         // $q = Sale::whereDate('sales.created_at', '>=' ,$request->input('starting_date'))->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
         $q = Sale::leftJoin('payments', 'sales.id', '=', 'payments.sale_id')
-            ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
-            ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+            ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
             ->select('sales.id', 'sales.*');
 
         if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
@@ -279,8 +301,8 @@ class SaleController extends Controller
         }
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-                ->whereDate('sales.created_at', '>=', value: $request->input('starting_date'))
-                ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+                ->whereDate('sales.created_at', '>=', value: $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
@@ -460,16 +482,15 @@ class SaleController extends Controller
                 // </button>';
 
                 // Edit button (if allowed)
-                if (in_array("pos-sales-edit", $request['all_permission'])) {
-                    if ($sale->sale_status != 3) {
-                        $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
+
+                if (in_array("pos-sales-edit", $request['all_permission']) && $sale->sale_status != 3) {
+                    $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
-                    } else {
-                        $nestedData['action'] .= '<a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-sm btn-warning" title="Edit">
+                } else if ((in_array("pos-sales-edit", $request['all_permission']) && $sale->sale_status == 3) || (in_array("pos-sales-draft-edit", $request['all_permission']) && $sale->sale_status == 3)) {
+                    $nestedData['action'] .= '<a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
-                    }
                 }
 
                 // Packing Slip button (if applicable)
@@ -627,10 +648,30 @@ class SaleController extends Controller
 
         $payment_method = $request->input('payment_method');
 
+        // Get input dates from request
+        $starting_date_input = $request->input('starting_date');
+        $ending_date_input = $request->input('ending_date');
+        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8)  {
+            $default_ending_date = Carbon::today();
+            $default_starting_date = $default_ending_date->copy()->subDays(30);
+            $starting_date = Carbon::parse($starting_date_input);
+            $ending_date = Carbon::parse($ending_date_input);
+
+            if ($starting_date->lt($default_starting_date)) {
+                $starting_date = Carbon::today()->subDays(30); 
+                $ending_date = Carbon::today();
+            }
+        } else {
+            // If no dates provided, use default last 30 days
+             $starting_date = Carbon::parse($starting_date_input);
+            $ending_date = Carbon::parse($ending_date_input);
+        }
+
+
         // $q = Sale::whereDate('sales.created_at', '>=' ,$request->input('starting_date'))->whereDate('sales.created_at', '<=' ,$request->input('ending_date'));
         $q = Sale::leftJoin('payments', 'sales.id', '=', 'payments.sale_id')
-            ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
-            ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+            ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
             ->select('sales.id', 'sales.*');
 
 
@@ -670,8 +711,8 @@ class SaleController extends Controller
         }
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
-                ->whereDate('sales.created_at', '>=', $request->input('starting_date'))
-                ->whereDate('sales.created_at', '<=', $request->input('ending_date'))
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
@@ -901,16 +942,27 @@ class SaleController extends Controller
                 // </button>';
 
                 // Edit button (if allowed)
+                // if (in_array("sales-edit", $request['all_permission'])) {
+                //     if ($sale->sale_status != 3) {
+                //         $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
+                //             <i class="dripicons-document-edit"></i>
+                //         </a>';
+                //     } else {
+                // $nestedData['action'] .= '<a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-sm btn-warning" title="Edit">
+                //     <i class="dripicons-document-edit"></i>
+                // </a>';
+                //     }
+                // }
+
+
                 if (in_array("sales-edit", $request['all_permission'])) {
-                    if ($sale->sale_status != 3) {
-                        $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
+                    $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
-                    } else {
-                        $nestedData['action'] .= '<a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-sm btn-warning" title="Edit">
+                } else if (in_array("sales-draft-edit", $request['all_permission']) && $sale->sale_status == 3) {
+                    $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
-                    }
                 }
 
                 // Packing Slip button (if applicable)
@@ -1061,7 +1113,7 @@ class SaleController extends Controller
         $role = Role::find(Auth::user()->role_id);
         if ($role->hasPermissionTo('sales-add')) {
             $lims_customer_list = Customer::where('is_active', true)->get();
-            if (Auth::user()->role_id > 8 ) {
+            if (Auth::user()->role_id > 8) {
                 $lims_warehouse_list = Warehouse::where([
                     ['is_active', true],
                     ['id', Auth::user()->warehouse_id]
@@ -1144,7 +1196,7 @@ class SaleController extends Controller
                 $balance = $balance - $paid_amount;
             }
 
-            if ($data['paid_amount'] ) {
+            if ($data['paid_amount']) {
                 if (is_array($data['paid_amount'])) {
                     $data['paid_amount'] = array_sum($data['paid_amount']);
                 }
@@ -1216,7 +1268,7 @@ class SaleController extends Controller
         $lims_sale_data = Sale::create($data);
 
         // add the $new_data variable value to $data['paid_amount'] variable
-        if ($data['paid_amount'] ) {
+        if ($data['paid_amount']) {
             $data['paid_amount'] = $new_data['paid_amount'];
         }
         //inserting data for custom fields
@@ -2063,7 +2115,7 @@ class SaleController extends Controller
             if (isset($id)) {
                 $lims_sale_data = Sale::find($id);
                 $lims_product_sale_data = Product_Sale::where('sale_id', $id)->get();
-                return view('backend.sale.pos', compact('cities','lims_sale_data', 'lims_product_sale_data', 'currency_list', 'role', 'all_permission', 'lims_customer_list', 'lims_customer_group_all', 'lims_warehouse_list', 'lims_reward_point_setting_data', 'lims_tax_list', 'lims_biller_list', 'lims_pos_setting_data', 'options', 'lims_brand_list', 'lims_category_list', 'lims_table_list', 'lims_coupon_list', 'flag', 'numberOfInvoice', 'custom_fields'));
+                return view('backend.sale.pos', compact('cities', 'lims_sale_data', 'lims_product_sale_data', 'currency_list', 'role', 'all_permission', 'lims_customer_list', 'lims_customer_group_all', 'lims_warehouse_list', 'lims_reward_point_setting_data', 'lims_tax_list', 'lims_biller_list', 'lims_pos_setting_data', 'options', 'lims_brand_list', 'lims_category_list', 'lims_table_list', 'lims_coupon_list', 'flag', 'numberOfInvoice', 'custom_fields'));
             }
 
             return view('backend.sale.pos', compact('cities', 'currency_list', 'role', 'all_permission', 'lims_customer_list', 'lims_customer_group_all', 'lims_warehouse_list', 'lims_reward_point_setting_data', 'lims_tax_list', 'lims_biller_list', 'lims_pos_setting_data', 'options', 'lims_brand_list', 'lims_category_list', 'lims_table_list', 'lims_coupon_list', 'flag', 'numberOfInvoice', 'custom_fields'));
@@ -2102,7 +2154,7 @@ class SaleController extends Controller
     public function createSale($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('sales-edit')) {
+        if ($role->hasPermissionTo('pos-sales-edit') || $role->hasPermissionTo('pos-sales-draft-edit')) {
             $lims_biller_list = Biller::where('is_active', true)->get();
             $lims_reward_point_setting_data = RewardPointSetting::latest()->first();
             $lims_customer_list = Customer::where('is_active', true)->get();
@@ -2614,16 +2666,16 @@ class SaleController extends Controller
             $product_sale->product_id = $product['id'];
             $product_sale->qty = $mail_data['qty'][$key] = $qty[$key];
             $product_sale->sale_unit_id = $sale_unit_id;
-            $product_sale->net_unit_price = number_format((float)$net_unit_price, config('decimal') );
+            $product_sale->net_unit_price = number_format((float)$net_unit_price, config('decimal'));
             $product_sale->discount = $discount[$key] * $qty[$key];
             $product_sale->tax_rate = $tax[$key]['rate'];
-            $product_sale->tax = number_format((float)$product_tax, config('decimal') );
-            $product_sale->total = $mail_data['total'][$key] = number_format((float)$total, config('decimal') );
+            $product_sale->tax = number_format((float)$product_tax, config('decimal'));
+            $product_sale->total = $mail_data['total'][$key] = number_format((float)$total, config('decimal'));
             $product_sale->save();
             $lims_sale_data->total_qty += $qty[$key];
             $lims_sale_data->total_discount += $discount[$key] * $qty[$key];
-            $lims_sale_data->total_tax += number_format((float)$product_tax, config('decimal') );
-            $lims_sale_data->total_price += number_format((float)$total, config('decimal') );
+            $lims_sale_data->total_tax += number_format((float)$product_tax, config('decimal'));
+            $lims_sale_data->total_price += number_format((float)$total, config('decimal'));
         }
         $lims_sale_data->item = $key + 1;
         $lims_sale_data->order_tax = ($lims_sale_data->total_price - $lims_sale_data->order_discount) * ($data['order_tax_rate'] / 100);
@@ -2676,7 +2728,7 @@ class SaleController extends Controller
             } else
                 return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
         } else {
-            if ($role->hasPermissionTo('sales-edit')) {
+            if ($role->hasPermissionTo('sales-edit') || ($role->hasPermissionTo('sales-draft-edit') && $lims_sale_data->sale_status == 3)) {
                 $lims_customer_list = Customer::where('is_active', true)->get();
                 $lims_warehouse_list = Warehouse::where('is_active', true)->get();
                 $lims_biller_list = Biller::where('is_active', true)->get();
@@ -3128,8 +3180,8 @@ class SaleController extends Controller
                 new Seller(config('company_name')), // seller name
                 new TaxNumber(config('vat_registration_number')), // seller tax number
                 new InvoiceDate($lims_sale_data->created_at->toDateString() . "T" . $lims_sale_data->created_at->toTimeString()), // invoice date as Zulu ISO8601 @see https://en.wikipedia.org/wiki/ISO_8601
-                new InvoiceTotalAmount(number_format((float)$lims_sale_data->grand_total, 4 )), // invoice total amount
-                new InvoiceTaxAmount(number_format((float)($lims_sale_data->total_tax + $lims_sale_data->order_tax), 4 )) // invoice tax amount
+                new InvoiceTotalAmount(number_format((float)$lims_sale_data->grand_total, 4)), // invoice total amount
+                new InvoiceTaxAmount(number_format((float)($lims_sale_data->total_tax + $lims_sale_data->order_tax), 4)) // invoice tax amount
                 // TODO :: Support others tags
             ])->toBase64();
         } else {
@@ -3651,54 +3703,54 @@ class SaleController extends Controller
     {
 
         $cash_register_data = CashRegister::where([
-			['status', true]
-		])->first();
-		
+            ['status', true]
+        ])->first();
 
-		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
+
+        $data['cash_in_hand'] = $cash_register_data->cash_in_hand;
 
         $data['total_sale_amount'] = Sale::whereDate('created_at', date("Y-m-d"))->whereIn('sale_status', [1, 4])->sum('grand_total');
 
 
         // INCOME SIDE (Received)
         $data['total_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('sale_id')
-        ->sum('amount');
+            ->whereNotNull('sale_id')
+            ->sum('amount');
 
         $data['cash_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('sale_id')
-        ->where('paying_method', 'Cash')
-        ->sum('amount');
+            ->whereNotNull('sale_id')
+            ->where('paying_method', 'Cash')
+            ->sum('amount');
 
         $data['credit_card_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('sale_id')
-        ->where('paying_method', 'Credit Card')
-        ->sum('amount');
+            ->whereNotNull('sale_id')
+            ->where('paying_method', 'Credit Card')
+            ->sum('amount');
 
         $data['bank_payment_received'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('sale_id')
-        ->where('paying_method', 'Bank Transfer')
-        ->sum('amount');
+            ->whereNotNull('sale_id')
+            ->where('paying_method', 'Bank Transfer')
+            ->sum('amount');
 
         // EXPENSE SIDE (Paid)
         $data['total_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('purchase_id')
-        ->sum('amount');
+            ->whereNotNull('purchase_id')
+            ->sum('amount');
 
         $data['cash_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('purchase_id')
-        ->where('paying_method', 'Cash')
-        ->sum('amount');
+            ->whereNotNull('purchase_id')
+            ->where('paying_method', 'Cash')
+            ->sum('amount');
 
         $data['credit_card_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('purchase_id')
-        ->where('paying_method', 'Credit Card')
-        ->sum('amount');
+            ->whereNotNull('purchase_id')
+            ->where('paying_method', 'Credit Card')
+            ->sum('amount');
 
         $data['bank_payment_paid'] = Payment::whereDate('created_at', date("Y-m-d"))
-        ->whereNotNull('purchase_id')
-        ->where('paying_method', 'Bank Transfer')
-        ->sum('amount');
+            ->whereNotNull('purchase_id')
+            ->where('paying_method', 'Bank Transfer')
+            ->sum('amount');
 
 
         $data['gift_card_payment'] = Payment::where([
@@ -3715,12 +3767,12 @@ class SaleController extends Controller
         ])->whereDate('created_at', date("Y-m-d"))->sum('amount');
         $data['total_sale_return'] = Returns::whereDate('created_at', date("Y-m-d"))->sum('grand_total');
         $cash_total_sale_return = Returns::where('cash_register_id', $cash_register_data->id)
-			->whereHas('sale', function ($query) {
-				$query->where('payment_status', 4);
-			})
-			->sum('grand_total');
+            ->whereHas('sale', function ($query) {
+                $query->where('payment_status', 4);
+            })
+            ->sum('grand_total');
         $data['total_expense'] = Expense::whereDate('created_at', date("Y-m-d"))->sum('amount');
-		$data['total_cash'] = $data['cash_in_hand'] + ($data['cash_payment_received'] - $data['cash_payment_paid']) - ($cash_total_sale_return + $data['total_expense']);
+        $data['total_cash'] = $data['cash_in_hand'] + ($data['cash_payment_received'] - $data['cash_payment_paid']) - ($cash_total_sale_return + $data['total_expense']);
         return $data;
     }
 

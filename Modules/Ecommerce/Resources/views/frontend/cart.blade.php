@@ -66,7 +66,7 @@
                                                             $cart_product['image'] = 'nullImage1.jpg';
                                                         @endphp
                                                 @endif
-                                                <img src="{{ url('images/product/small') }}/{{ $cart_product['image'] }}" alt="{{ $cart_product['name'] }}"> 
+                                                <img src="{{ url('images/product') }}/{{ $cart_product['image'] }}" alt="{{ $cart_product['name'] }}"> 
                                             </div>
                                             <span class="align-self-center">{!! $cart_product['name'] !!} @if($variant != 0)({{$variant}})@endif</span>
                                         </div>

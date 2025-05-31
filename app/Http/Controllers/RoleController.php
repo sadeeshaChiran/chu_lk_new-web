@@ -1154,6 +1154,86 @@ class RoleController extends Controller
                 $role->revokePermissionTo('custom_field');
         }
 
+        // Draft Permissions
+        if ($request->has('purchases-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'purchases-draft-edit']);
+            if (!$role->hasPermissionTo('purchases-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'purchases-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('purchases-draft-edit');
+        }
+
+        if ($request->has('sales-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'sales-draft-edit']);
+            if (!$role->hasPermissionTo('sales-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'sales-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('sales-draft-edit');
+        }
+
+        if ($request->has('pos-sales-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'pos-sales-draft-edit']);
+            if (!$role->hasPermissionTo('pos-sales-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'pos-sales-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('pos-sales-draft-edit');
+        }
+
+
+        if ($request->has('quotes-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'quotes-draft-edit']);
+            if (!$role->hasPermissionTo('quotes-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'quotes-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('quotes-draft-edit');
+        }
+
+        if ($request->has('transfers-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'transfers-draft-edit']);
+            if (!$role->hasPermissionTo('transfers-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'transfers-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('transfers-draft-edit');
+        }
+
+        if ($request->has('adjustment-draft-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'adjustment-draft-edit']);
+            if (!$role->hasPermissionTo('adjustment-draft-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'adjustment-draft-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('adjustment-draft-edit');
+        }
+
+        if ($request->has('complete-transfer')) {
+            $permission = Permission::firstOrCreate(['name' => 'complete-transfer']);
+            if (!$role->hasPermissionTo('complete-transfer')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'complete-transfer')->first();
+            if ($permission)
+                $role->revokePermissionTo('complete-transfer');
+        }
+
+
         cache()->forget('permissions');
 
         return redirect('role')->with('message', 'Permission updated successfully');
