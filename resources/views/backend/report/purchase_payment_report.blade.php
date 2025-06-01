@@ -59,8 +59,8 @@
                         @endif
                     </td>
                     <td>
-                        @if($payment->note)
-                        {{$payment->note}}
+                        @if($payment->payment_note)
+                        {{$payment->payment_note}}
                         @else
                         -
                         @endif
@@ -85,7 +85,9 @@
 @endsection
 
 @push('scripts')
-<script type="text/javascript">
+ <script type="text/javascript">       
+        // this is for datatable datetime sorting
+        $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
     $("ul#report").siblings('a').attr('aria-expanded','true');
     $("ul#report").addClass("show");
     $("ul#report #purchase-payment-report-menu").addClass("active");

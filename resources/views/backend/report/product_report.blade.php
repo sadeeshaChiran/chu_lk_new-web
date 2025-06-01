@@ -93,7 +93,9 @@
 @endsection
 
 @push('scripts')
-<script type="text/javascript">
+ <script type="text/javascript">       
+        // this is for datatable datetime sorting
+        $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

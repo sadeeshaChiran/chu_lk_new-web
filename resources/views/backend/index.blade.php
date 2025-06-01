@@ -72,8 +72,17 @@
                             </select>
                         @endif
 
+                        <div class="form-group">
+                            <label><strong>{{ trans('file.Date') }}</strong></label>
+                            <input type="text" id="daterange" class="form-control"   value="{{ date((('Y') . '-' . date('m') . '-' . '01')) . ' To ' . date('Y-m-d') }}" />
+                        </div>
+
+
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d') }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.Today') }}</button>
+                        <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d', strtotime('-1 day')) }}"
+                            data-end_date="{{ date('Y-m-d', strtotime('-1 day')) }}">{{ trans('file.Yesterday') }}</button>
+
                         <button class="btn btn-default date-btn"
                             data-start_date="{{ date('Y-m-d', strtotime(' -7 day')) }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.Last 7 Days') }}</button>
@@ -82,6 +91,8 @@
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.This Month') }}</button>
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y') . '-01' . '-01' }}"
                             data-end_date="{{ date('Y') . '-12' . '-31' }}">{{ trans('file.This Year') }}</button>
+
+
                     </div>
                 @endif
             </div>
@@ -168,7 +179,8 @@
                                 <!-- Revenue -->
                                 <div class="mx-2">
                                     <div style="color: #733686;">{{ trans('file.revenue') }}</div>
-                                    <div class="pos-revenue">{{ number_format((float) $pos_revenue, $general_setting->decimal) }}</div>
+                                    <div class="pos-revenue">
+                                        {{ number_format((float) $pos_revenue, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- − -->
@@ -177,7 +189,8 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="pos-Return">{{ number_format((float) $pos_return, $general_setting->decimal) }}</div>
+                                    <div class="pos-Return">
+                                        {{ number_format((float) $pos_return, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- ) -->
@@ -189,7 +202,8 @@
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
-                                    <div class="pos-product-cost">{{ number_format((float) $pos_product_cost, $general_setting->decimal) }}
+                                    <div class="pos-product-cost">
+                                        {{ number_format((float) $pos_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
 
@@ -199,7 +213,8 @@
                                 <!-- Net Profit -->
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">{{ trans('file.Net Profit') }}</div>
-                                    <div class="pos-net-profit">{{ number_format((float) $pos_net_profit, $general_setting->decimal) }}
+                                    <div class="pos-net-profit">
+                                        {{ number_format((float) $pos_net_profit, $general_setting->decimal) }}
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +235,8 @@
                                 <!-- Revenue -->
                                 <div class="mx-2">
                                     <div style="color: #733686;">{{ trans('file.revenue') }}</div>
-                                    <div class="online-revenue">{{ number_format((float) $online_revenue, $general_setting->decimal) }}</div>
+                                    <div class="online-revenue">
+                                        {{ number_format((float) $online_revenue, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- − -->
@@ -229,7 +245,8 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="online-Return">{{ number_format((float) $online_return, $general_setting->decimal) }}</div>
+                                    <div class="online-Return">
+                                        {{ number_format((float) $online_return, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- ) -->
@@ -241,7 +258,8 @@
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
-                                    <div class="online-product-cost">{{ number_format((float) $online_product_cost, $general_setting->decimal) }}
+                                    <div class="online-product-cost">
+                                        {{ number_format((float) $online_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
 
@@ -251,7 +269,8 @@
                                 <!-- Net Profit -->
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">{{ trans('file.Net Profit') }}</div>
-                                    <div class="online-net-profit">{{ number_format((float) $online_net_profit, $general_setting->decimal) }}
+                                    <div class="online-net-profit">
+                                        {{ number_format((float) $online_net_profit, $general_setting->decimal) }}
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +292,8 @@
                                 <!-- Revenue -->
                                 <div class="mx-2">
                                     <div style="color: #733686;">{{ trans('file.revenue') }}</div>
-                                    <div class="website-revenue">{{ number_format((float) $website_revenue, $general_setting->decimal) }}</div>
+                                    <div class="website-revenue">
+                                        {{ number_format((float) $website_revenue, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- − -->
@@ -282,7 +302,8 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="website-Return">{{ number_format((float) $website_return, $general_setting->decimal) }}</div>
+                                    <div class="website-Return">
+                                        {{ number_format((float) $website_return, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- ) -->
@@ -294,7 +315,8 @@
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
-                                    <div class="website-product-cost">{{ number_format((float) $website_product_cost, $general_setting->decimal) }}
+                                    <div class="website-product-cost">
+                                        {{ number_format((float) $website_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
 
@@ -304,7 +326,8 @@
                                 <!-- Net Profit -->
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">{{ trans('file.Net Profit') }}</div>
-                                    <div class="website-net-profit">{{ number_format((float) $website_net_profit, $general_setting->decimal) }}
+                                    <div class="website-net-profit">
+                                        {{ number_format((float) $website_net_profit, $general_setting->decimal) }}
                                     </div>
                                 </div>
                             </div>
@@ -326,7 +349,8 @@
                                 <!-- Revenue -->
                                 <div class="mx-2">
                                     <div style="color: #733686;">{{ trans('file.revenue') }}</div>
-                                    <div class="wholesale-revenue">{{ number_format((float) $wholesale_revenue, $general_setting->decimal) }}</div>
+                                    <div class="wholesale-revenue">
+                                        {{ number_format((float) $wholesale_revenue, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- − -->
@@ -335,7 +359,8 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="wholesale-Return">{{ number_format((float) $wholesale_return, $general_setting->decimal) }}</div>
+                                    <div class="wholesale-Return">
+                                        {{ number_format((float) $wholesale_return, $general_setting->decimal) }}</div>
                                 </div>
 
                                 <!-- ) -->
@@ -347,7 +372,8 @@
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
-                                    <div class="wholesale-product-cost">{{ number_format((float) $wholesale_product_cost, $general_setting->decimal) }}
+                                    <div class="wholesale-product-cost">
+                                        {{ number_format((float) $wholesale_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
 
@@ -357,7 +383,8 @@
                                 <!-- Net Profit -->
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">{{ trans('file.Net Profit') }}</div>
-                                    <div class="wholesale-net-profit">{{ number_format((float) $wholesale_net_profit, $general_setting->decimal) }}
+                                    <div class="wholesale-net-profit">
+                                        {{ number_format((float) $wholesale_net_profit, $general_setting->decimal) }}
                                     </div>
                                 </div>
                             </div>
@@ -372,51 +399,57 @@
 
                             <div class="d-flex flex-wrap justify-content-center align-items-end text-center p-2 "
                                 style="font-size: 16px; font-weight: 500;">
-  
+
                                 <div class="mx-2" style="font-size: 36px;">(</div>
 
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">POS Sale {{ trans('file.Net Profit') }}</div>
-                                    <div class="pos-net-profit">{{ number_format((float) $pos_net_profit, $general_setting->decimal) }}</div>
+                                    <div class="pos-net-profit">
+                                        {{ number_format((float) $pos_net_profit, $general_setting->decimal) }}</div>
                                 </div>
                                 <div class="mx-2" style="font-size: 36px;">+</div>
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">Online Sales {{ trans('file.Net Profit') }}</div>
-                                    <div class="online-net-profit">{{ number_format((float) $online_net_profit, $general_setting->decimal) }}</div>
+                                    <div class="online-net-profit">
+                                        {{ number_format((float) $online_net_profit, $general_setting->decimal) }}</div>
                                 </div>
                                 <div class="mx-2" style="font-size: 36px;">+</div>
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">Website Sales {{ trans('file.Net Profit') }}</div>
-                                    <div class="website-net-profit">{{ number_format((float) $website_net_profit, $general_setting->decimal) }}</div>
+                                    <div class="website-net-profit">
+                                        {{ number_format((float) $website_net_profit, $general_setting->decimal) }}</div>
                                 </div>
                                 <div class="mx-2" style="font-size: 36px;">+</div>
                                 <div class="mx-2">
                                     <div style="color: #297ff9;">Wholesale Sales {{ trans('file.Net Profit') }}</div>
-                                    <div class="wholesale-net-profit">{{ number_format((float) $wholesale_net_profit, $general_setting->decimal) }}</div>
+                                    <div class="wholesale-net-profit">
+                                        {{ number_format((float) $wholesale_net_profit, $general_setting->decimal) }}</div>
                                 </div>
-                    
+
                                 <div class="mx-2" style="font-size: 36px;">)</div>
                                 <div class="mx-2" style="font-size: 36px;">+</div>
                                 <div class="mx-2">
                                     <div style="color: #158a0b;">{{ trans('file.Income') }}</div>
-                                    <div class="income">{{ number_format((float) $income, $general_setting->decimal) }}</div>
+                                    <div class="income">{{ number_format((float) $income, $general_setting->decimal) }}
+                                    </div>
                                 </div>
                                 <div class="mx-2" style="font-size: 36px;">-</div>
                                 <div class="mx-2">
                                     <div style="color: #a22626;">{{ trans('file.Expense') }}</div>
-                                    <div class="expense">{{ number_format((float) $expense, $general_setting->decimal) }}</div>
+                                    <div class="expense">{{ number_format((float) $expense, $general_setting->decimal) }}
+                                    </div>
                                 </div>
-                                
+
                                 <div class="mx-2" style="font-size: 36px;">=</div>
                                 <div class="mx-2">
                                     <div style="color: #48bfff;">{{ trans('file.Profit') }}</div>
-                                    <div class="summary-profit">{{ number_format((float) (($pos_net_profit + $online_net_profit + $website_net_profit + $wholesale_net_profit) + $income - $expense), $general_setting->decimal) }}
+                                    <div class="summary-profit">
+                                        {{ number_format((float) ($pos_net_profit + $online_net_profit + $website_net_profit + $wholesale_net_profit + $income - $expense), $general_setting->decimal) }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                 @endif
 
                 @php
@@ -660,26 +693,48 @@
 
 @push('scripts')
     <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajax({
-                url: '{{ url('/yearly-best-selling-price') }}',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    var url = '{{ url('/images/product') }}';
-                    data.forEach(function(item) {
-                        if (item.product_images)
-                            var images = item.product_images.split(',');
-                        else
-                            var images = ['zummXD2dvAtI.png'];
-                        $('#yearly-best-selling-price').find('tbody').append(
-                            '<tr><td><img src="' + url + '/' + images[0] +
-                            '" height="25" width="30"> ' + item.product_name + ' [' + item
-                            .product_code + ']</td><td>' + item.total_price + '</td></tr>');
-                    })
-                }
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            startDate: moment().startOf('month'), // optional default range
+            endDate: moment() // optional default range
+        }, function(start, end) {
+            $(".date-btn").removeClass("active"); // Unselect buttons
+
+            var start_date = start.format('YYYY-MM-DD');
+            var end_date = end.format('YYYY-MM-DD');
+            var warehouse_id = $("#warehouse_btn").val();
+
+            $('#daterange').val(start_date + ' To ' + end_date);
+
+            $.get("dashboard-filter/" + start_date + "/" + end_date + "/" + warehouse_id, function(data) {
+                dashboardFilter(data);
             });
         });
+
+
+        $.ajax({
+            url: '{{ url('/yearly-best-selling-price') }}',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                var url = '{{ url('/images/product') }}';
+                data.forEach(function(item) {
+                    if (item.product_images)
+                        var images = item.product_images.split(',');
+                    else
+                        var images = ['zummXD2dvAtI.png'];
+                    $('#yearly-best-selling-price').find('tbody').append(
+                        '<tr><td><img src="' + url + '/' + images[0] +
+                        '" height="25" width="30"> ' + item.product_name + ' [' + item
+                        .product_code + ']</td><td>' + item.total_price + '</td></tr>');
+                })
+            }
+        });
+
+
+
 
         $(document).ready(function() {
             $.ajax({
@@ -876,6 +931,8 @@
             var start_date = $(this).data('start_date');
             var end_date = $(this).data('end_date');
             var warehouse_id = $("#warehouse_btn").val();
+            $('#daterange').val(start_date + ' To ' + end_date);
+
             $.get('dashboard-filter/' + start_date + '/' + end_date + '/' + warehouse_id, function(data) {
                 dashboardFilter(data);
             });
@@ -914,7 +971,7 @@
             $('.pos-revenue').hide();
             $('.pos-revenue').html(parseFloat(data[19]).toFixed({{ $general_setting->decimal }}));
             $('.pos-revenue').show(500);
-            
+
             $('.pos-return').hide();
             $('.pos-return').html(parseFloat(data[20]).toFixed({{ $general_setting->decimal }}));
             $('.pos-return').show(500);
@@ -932,7 +989,7 @@
             $('.online-revenue').hide();
             $('.online-revenue').html(parseFloat(data[7]).toFixed({{ $general_setting->decimal }}));
             $('.online-revenue').show(500);
-            
+
             $('.online-return').hide();
             $('.online-return').html(parseFloat(data[8]).toFixed({{ $general_setting->decimal }}));
             $('.online-return').show(500);
@@ -940,14 +997,14 @@
             $('.online-product-cost').hide();
             $('.online-product-cost').html(parseFloat(data[10]).toFixed({{ $general_setting->decimal }}));
             $('.online-product-cost').show(500);
-            
+
             $('.online-net-profit').hide();
             $('.online-net-profit').html(parseFloat(data[9]).toFixed({{ $general_setting->decimal }}));
             $('.online-net-profit').show(500);
 
 
 
-            $('.wholesale-revenue').hide(); 
+            $('.wholesale-revenue').hide();
             $('.wholesale-revenue').html(parseFloat(data[15]).toFixed({{ $general_setting->decimal }}));
             $('.wholesale-revenue').show(500);
 
@@ -980,23 +1037,24 @@
             $('.website-net-profit').hide();
             $('.website-net-profit').html(parseFloat(data[13]).toFixed({{ $general_setting->decimal }}));
             $('.website-net-profit').show(500);
-            
+
 
             $('.income').hide();
             $('.income').html(parseFloat(data[5]).toFixed({{ $general_setting->decimal }}));
             $('.income').show(500);
-            
+
 
             $('.expense').hide();
             $('.expense').html(parseFloat(data[4]).toFixed({{ $general_setting->decimal }}));
             $('.expense').show(500);
-            
-            $('.summary-profit').hide();
-            $('.summary-profit').html(parseFloat(( data[9] + data[13] + data[17] + data[21])+ data[5] - data[4]).toFixed({{ $general_setting->decimal }}));
-            $('.summary-profit').show(500);
-            
 
-            
+            $('.summary-profit').hide();
+            $('.summary-profit').html(parseFloat((data[9] + data[13] + data[17] + data[21]) + data[5] - data[4]).toFixed(
+                {{ $general_setting->decimal }}));
+            $('.summary-profit').show(500);
+
+
+
         }
     </script>
 @endpush

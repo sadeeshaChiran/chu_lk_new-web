@@ -67,6 +67,9 @@ class SupplierController extends Controller
                 break;
             $due_amount = $purchase_data->grand_total - $purchase_data->paid_amount;
 
+        $is_last_purchase = $key == count($lims_due_purchase_data) - 1;
+
+
 
             $lims_cash_register_data = CashRegister::where([
                 ['user_id', Auth::id()],
@@ -80,8 +83,14 @@ class SupplierController extends Controller
                 $cash_register_id = null;
             $account_data = Account::select('id')->where('is_default', 1)->first();
             if ($total_paid_amount >= $due_amount) {
-                $paid_amount = $due_amount;
-                $payment_status = 2;
+                if ($is_last_purchase) {
+                    $paid_amount = $total_paid_amount;
+                    $payment_status = 1; // Fully paid
+                } else {
+                    $paid_amount = $purchase_data->grand_total - $purchase_data->paid_amount;
+                    $payment_status = 2;
+                }
+
             } else {
                 $paid_amount = $total_paid_amount;
                 $payment_status = 1;
