@@ -481,6 +481,15 @@ class PurchaseController extends Controller
         $product[] = $lims_product_data->id;
         $product[] = $lims_product_data->is_batch;
         $product[] = $lims_product_data->is_imei;
+        $product['online_price'] = $lims_product_data->online_price;
+        $product['retail_price'] = $lims_product_data->retail_price;
+        $product['wholesale_price'] = $lims_product_data->wholesale_price;
+        // $last_purchase_price = ProductPurchase::where('product_id', $lims_product_data->id)->orderBy('id', 'desc')->first();
+        // if ($last_purchase_price) {
+        //     $product['last_purchase_price'] = $last_purchase_price->net_unit_cost;
+        // } else {
+        //     $product['last_purchase_price'] = 0;
+        // }
         return $product;
     }
 

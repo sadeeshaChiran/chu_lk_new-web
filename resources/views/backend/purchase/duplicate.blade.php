@@ -257,6 +257,10 @@
                                                         <input type="hidden" class="subtotal-value" name="subtotal[]" value="{{$product_purchase->total}}" />
                                                         <input type="hidden" class="imei-number" name="imei_number[]"  value="{{$product_purchase->imei_number}}" />
                                                         <input type="hidden" class="original-cost"  value="{{$product_data->cost}}" />
+                                                        <input type="hidden" class="online_price" value="{{$product_data->online_price}}" />
+                                                        <input type="hidden" class="retail_price" value="{{$product_data->retail_price}}" />
+                                                        <input type="hidden" class="wholesale_price" value="{{$product_data->wholesale_price}}" />
+                                
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -392,6 +396,22 @@
                 <div class="modal-body">
                     <form>
                         <div class="row modal-element">
+                            <div class="col-md-4 form-group">
+                                <label>{{ trans('file.Online Price') }}</label>
+                                <input name="online_price" class="form-control" readonly
+                                    value="{{ number_format(0, $general_setting->decimal) }}" />
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>{{ trans('file.Online Price') }}</label>
+                                <input name="retail_price" class="form-control" readonly
+                                    value="{{ number_format(0, $general_setting->decimal) }}" />
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>{{ trans('file.Online Price') }}</label>
+                                <input name="wholesale_price" class="form-control" readonly
+                                    value="{{ number_format(0, $general_setting->decimal) }}" />
+                            </div>
+
                             <div class="col-md-4 form-group">
                                 <label>{{trans('file.Quantity')}}</label>
                                 <input type="number" name="edit_qty" class="form-control" step="any">
@@ -646,6 +666,19 @@ $("table.order-list").on("click", ".edit-product", function() {
     $.each(temp_unit_name, function(key, value) {
         $('select[name="edit_unit"]').append('<option value="' + key + '">' + value + '</option>');
     });
+
+    var row = $('table.order-list tbody tr').eq(rowindex);
+
+    var online_price_value = parseFloat(row.find('.online_price').val()).toFixed(2);
+            $('input[name="online_price"]').val(online_price_value);
+
+    var retail_price_value = parseFloat(row.find('.retail_price').val()).toFixed(2);
+            $('input[name="retail_price"]').val(retail_price_value);
+
+    var wholesale_price_value = parseFloat(row.find('.wholesale_price').val()).toFixed(2);
+            $('input[name="wholesale_price"]').val(wholesale_price_value);
+
+
     $('.selectpicker').selectpicker('refresh');
 });
 
@@ -659,10 +692,21 @@ $('button[name="update_btn"]').on("click", function() {
     var edit_discount = $('input[name="edit_discount"]').val();
     var edit_qty = $('input[name="edit_qty"]').val();
     var edit_unit_cost = $('input[name="edit_unit_cost"]').val();
+    var online_price = parseFloat($('input[name="online_price"]').val()) || 0;
+    var retail_price = parseFloat($('input[name="retail_price"]').val()) || 0;
+    var wholesale_price = parseFloat($('input[name="wholesale_price"]').val()) || 0;
 
     if (parseFloat(edit_discount) > parseFloat(edit_unit_cost)) {
         alert('Invalid Discount Input!');
         return;
+    }
+
+    if (online_price <= edit_unit_cost || retail_price <= edit_unit_cost || wholesale_price <= edit_unit_cost) {
+        var confirmResult = confirm("One or more prices are greater than or equal to the unit cost.\nAre you sure you want to continue?");
+        if (!confirmResult) {
+            // User cancelled
+                    return false;
+        }
     }
 
     if(edit_qty < 1) {
@@ -764,6 +808,9 @@ function productSearch(data) {
                 cols += '<input type="hidden" class="subtotal-value" name="subtotal[]" />';
                 cols += '<input type="hidden" class="imei-number" name="imei_number[]" />';
                 cols += '<input type="hidden" class="original-cost" value="'+data[2]+'" />';
+                cols += '<input type="hidden" class="online_price" value="' + data['online_price'] + '" />';
+                cols += '<input type="hidden" class="retail_price" value="' + data['retail_price'] + '" />';
+                cols += '<input type="hidden" class="wholesale_price" value="' + data['wholesale_price'] + '" />';
 
                 newRow.append(cols);
                 $("table.order-list tbody").prepend(newRow);
