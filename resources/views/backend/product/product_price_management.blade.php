@@ -1,0 +1,401 @@
+@extends('backend.layout.main')
+@section('content')
+    @if (session()->has('create_message'))
+        <div class="alert alert-success alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('create_message') }}</div>
+    @endif
+    @if (session()->has('edit_message'))
+        <div class="alert alert-success alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('edit_message') }}</div>
+    @endif
+    @if (session()->has('import_message'))
+        <div class="alert alert-success alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('import_message') }}</div>
+    @endif
+    @if (session()->has('not_permitted'))
+        <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('not_permitted') }}</div>
+    @endif
+    @if (session()->has('message'))
+        <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
+                data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>{{ session()->get('message') }}</div>
+    @endif
+
+    <section>
+        <div class="container-fluid">
+            @if (in_array('products-add', $all_permission))
+                <a href="{{ route('products.create') }}" class="btn btn-info add-product-btn"><i class="dripicons-plus"></i>
+                    {{ __('file.add_product') }}</a>
+                <a href="#" data-toggle="modal" data-target="#importProduct"
+                    class="btn btn-primary add-product-btn"><i class="dripicons-copy"></i>
+                    {{ __('file.import_product') }}</a>
+            @endif
+            @if (in_array('products-edit', $all_permission) && in_array('ecommerce', explode(',', $general_setting->modules)))
+                <a href="{{ route('product.allProductInStock') }}" class="btn btn-dark add-product-btn"><i
+                        class="dripicons-stack"></i> {{ __('file.All Product In Stock') }}</a>
+                <a href="{{ route('product.showAllProductOnline') }}" class="btn btn-dark add-product-btn"><i
+                        class="dripicons-wifi"></i> {{ __('file.Show All Product Online') }}</a>
+            @endif
+            <div class="card mt-3">
+                <h3 class="text-center mt-3">{{ trans('file.Filter Products') }}</h3>
+                <div class="card-body  ">
+                    {!! Form::open(['route' => 'products.index', 'method' => 'get']) !!}
+                    <div class="row align-items-end">
+
+                        <div class="col-md-3">
+                            <div class="form-group mb-0">
+                                <label class="invisible d-block"><strong>Submit</strong></label>
+                                <button class="btn btn-primary col-md-12" id="filter-btn"
+                                    type="submit">{{ trans('file.submit') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="product-data-table" class="table" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th class="not-exported"></th>
+                        <th>{{ trans('file.name') }}</th>
+                        <th>{{ trans('file.Code') }}</th>
+                        <th>Pos {{ trans('file.Price') }}</th>
+                        <th>{{ trans('file.Wholesale Price') }}</th>
+                        <th>{{ trans('file.Retail Price') }}</th>
+                        <th>{{ trans('file.Online Price') }}</th>
+                        <th>{{ trans('file.Cost') }}</th>
+                        <th>Last Purches {{ trans('file.Cost') }}</th>
+
+                        <th class="not-exported">{{ trans('file.action') }}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </section>
+@endsection
+@push('scripts')
+    <script>
+        $("ul#product").siblings('a').attr('aria-expanded', 'true');
+        $("ul#product").addClass("show");
+        $("ul#product #product-list-menu").addClass("active");
+
+        @if (config('database.connections.saleprosaas_landlord'))
+            if (localStorage.getItem("message")) {
+                alert(localStorage.getItem("message"));
+                localStorage.removeItem("message");
+            }
+
+            numberOfProduct = <?php echo json_encode($numberOfProduct); ?>;
+            $.ajax({
+                type: 'GET',
+                async: false,
+                url: '{{ route('package.fetchData', $general_setting->package_id) }}',
+                success: function(data) {
+                    if (data['number_of_product'] > 0 && data['number_of_product'] <= numberOfProduct) {
+                        $("a.add-product-btn").addClass('d-none');
+                    }
+                }
+            });
+        @endif
+
+        function confirmDelete() {
+            if (confirm("Are you sure want to delete?")) {
+                return true;
+            }
+            return false;
+        }
+
+        var columns = [{
+            "data": "key"
+        }, {
+            "data": "name"
+        }, {
+            "data": "code"
+        }, {
+            "data": "price"
+        }, {
+            "data": "wholesale_price"
+        }, {
+            "data": "retail_price"
+        }, {
+            "data": "online_price"
+        }, {
+            "data": "cost"
+        }, {
+            "data": "last_purches_cost"
+        }];
+        columns.push({
+            "data": "options"
+        });
+
+        var htmltext;
+        var slidertext;
+        var product_id = [];
+        var all_permission = <?php echo json_encode($all_permission); ?>;
+        var role_id = <?php echo json_encode($role_id); ?>;
+        var user_verified = <?php echo json_encode(env('USER_VERIFIED')); ?>;
+        var logoUrl = <?php echo json_encode(url('logo', $general_setting->site_logo)); ?>;
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(document).on('keydown', '.price-input', function() {
+            console.log('Key pressed:', event.key);
+            if (event.key === 'Enter') {
+                const productId = $(this).data('product-id');
+                const field = $(this).data('field'); // e.g., 'price', 'cost', etc.
+                const value = parseFloat($(this).val());
+                console.log('Product ID:', productId, 'Field:', field, 'Value:', value);
+                $.ajax({
+                    url: '/products/price-management/update',
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        product_id: productId,
+                        field: field,
+                        value: value
+                    },
+                    success: function(response) {
+                        console.log('Updated successfully:', response);
+                    },
+                    error: function(xhr) {
+                        alert('Error updating price.');
+                    }
+                });
+            }
+        });
+
+
+        $("#select_all").on("change", function() {
+            if ($(this).is(':checked')) {
+                $("tbody input[type='checkbox']").prop('checked', true);
+            } else {
+                $("tbody input[type='checkbox']").prop('checked', false);
+            }
+        });
+
+        $("#print-btn").on("click", function() {
+            var divToPrint = document.getElementById('product-details');
+            var newWin = window.open('', 'Print-Window');
+            newWin.document.open();
+            newWin.document.write(
+                '<link rel="stylesheet" href="<?php echo asset('vendor/bootstrap/css/bootstrap.min.css'); ?>" type="text/css"><style type="text/css">@media print {.modal-dialog { max-width: 1000px;} }</style><body onload="window.print()">' +
+                divToPrint.innerHTML + '</body>');
+            newWin.document.close();
+            setTimeout(function() {
+                newWin.close();
+            }, 10);
+        });
+
+
+        $(document).ready(function() {
+            var table = $('#product-data-table').DataTable({
+                responsive: true,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    url: "/products/price-management-data",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        all_permission: all_permission,
+                    },
+                    dataType: "json",
+                    type: "post"
+                },
+
+                "columns": columns,
+                'language': {
+                    /*'searchPlaceholder': "{{ trans('file.Type Product Name or Code...') }}",*/
+                    'lengthMenu': '_MENU_ {{ trans('file.records per page') }}',
+                    "info": '<small>{{ trans('file.Showing') }} _START_ - _END_ (_TOTAL_)</small>',
+                    "search": '{{ trans('file.Search') }}',
+                    'paginate': {
+                        'previous': '<i class="dripicons-chevron-left"></i>',
+                        'next': '<i class="dripicons-chevron-right"></i>'
+                    }
+                },
+                order: [
+                    ['2', 'asc']
+                ],
+                'columnDefs': [{
+                        "orderable": false,
+                        'targets': [0, 1, 2, 3]
+                    },
+                    {
+                        'render': function(data, type, row, meta) {
+                            if (type === 'display') {
+                                data =
+                                    '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                            }
+
+                            return data;
+                        },
+                        'checkboxes': {
+                            'selectRow': true,
+                            'selectAllRender': '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'
+                        },
+                        'targets': [0]
+                    }
+                ],
+                'select': {
+                    style: 'multi',
+                    selector: 'td:first-child'
+                },
+                'lengthMenu': [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                dom: '<"row"lfB>rtip',
+                buttons: [{
+                        extend: 'pdf',
+                        text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible',
+                            stripHtml: false
+                        },
+                        customize: function(doc) {
+                            for (var i = 1; i < doc.content[1].table.body.length; i++) {
+                                if (doc.content[1].table.body[i][0].text.indexOf('<img src=') !== -
+                                    1) {
+                                    var imagehtml = doc.content[1].table.body[i][0].text;
+                                    var regex = /<img.*?src=['"](.*?)['"]/;
+                                    var src = regex.exec(imagehtml)[1];
+                                    var tempImage = new Image();
+                                    tempImage.src = src;
+                                    var canvas = document.createElement("canvas");
+                                    canvas.width = tempImage.width;
+                                    canvas.height = tempImage.height;
+                                    var ctx = canvas.getContext("2d");
+                                    ctx.drawImage(tempImage, 0, 0);
+                                    var imagedata = canvas.toDataURL("image/png");
+                                    delete doc.content[1].table.body[i][0].text;
+                                    doc.content[1].table.body[i][0].image = imagedata;
+                                    doc.content[1].table.body[i][0].fit = [30, 30];
+                                }
+                            }
+                        },
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i title="export to excel" class="dripicons-document-new"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible',
+                            format: {
+                                body: function(data, row, column, node) {
+                                    if (column === 0 && (data.indexOf('<img src=') !== -1)) {
+                                        var regex = /<img.*?src=['"](.*?)['"]/;
+                                        data = regex.exec(data)[1];
+                                    }
+                                    return data;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible',
+                            format: {
+                                body: function(data, row, column, node) {
+                                    if (column === 0 && (data.indexOf('<img src=') !== -1)) {
+                                        var regex = /<img.*?src=['"](.*?)['"]/;
+                                        data = regex.exec(data)[1];
+                                    }
+                                    return data;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        title: '',
+                        text: '<i title="print" class="fa fa-print"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible',
+                            stripHtml: false
+                        },
+                        repeatingHead: {
+                            logo: logoUrl,
+                            logoPosition: 'left',
+                            logoStyle: '',
+                            title: '<h3>Product List</h3>'
+                        }
+                        /*customize: function ( win ) {
+                            $(win.document.body)
+                                .prepend(
+                                    '<img src="http://datatables.net/media/images/logo-fade.png" style="margin:10px;" />'
+                                );
+                        }*/
+                    },
+                    {
+                        text: '<i title="delete" class="dripicons-cross"></i>',
+                        className: 'buttons-delete',
+                        action: function(e, dt, node, config) {
+                            if (user_verified == '1') {
+                                product_id.length = 0;
+                                $(':checkbox:checked').each(function(i) {
+                                    if (i) {
+                                        var product_data = $(this).closest('tr').data(
+                                            'product');
+                                        if (product_data)
+                                            product_id[i - 1] = product_data[16];
+                                    }
+                                });
+                                if (product_id.length && confirmDelete()) {
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: 'products/deletebyselection',
+                                        data: {
+                                            productIdArray: product_id
+                                        },
+                                        success: function(data) {
+
+                                            alert(data.message);
+                                            //dt.rows({ page: 'current', selected: true }).deselect();
+                                            dt.rows({
+                                                page: 'current',
+                                                selected: true
+                                            }).remove().draw(false);
+                                        }
+                                    });
+                                } else if (!product_id.length)
+                                    alert('No product is selected!');
+                            } else
+                                alert('This feature is disable for demo!');
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        text: '<i title="column visibility" class="fa fa-eye"></i>',
+                        columns: ':gt(0)'
+                    },
+                ],
+            });
+
+        });
+
+        if (all_permission.indexOf("products-delete") == -1)
+            $('.buttons-delete').addClass('d-none');
+
+        $('select').selectpicker();
+    </script>
+@endpush

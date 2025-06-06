@@ -102,7 +102,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-
+                                        
                                         <tr>
                                             <td>{{ trans('file.Purchase') }}</td>
                                             <td class="text-center">
@@ -2352,6 +2352,41 @@
                                                         </div>
                                                     </div>
                                                 </span>
+
+                                                <span>
+                                                    <div aria-checked="false" aria-disabled="false">
+                                                        <div class="checkbox">
+                                                            @if (in_array('price-management', $all_permission))
+                                                                <input type="checkbox" value="1"
+                                                                    id="price-management" name="price-management" checked>
+                                                            @else
+                                                                <input type="checkbox" value="1"
+                                                                    id="price-management" name="price-management">
+                                                            @endif
+                                                            <label for="price-management"
+                                                                class="padding05">Price Management
+                                                                &nbsp;&nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </span>
+
+                                                <span>
+                                                    <div aria-checked="false" aria-disabled="false">
+                                                        <div class="checkbox">
+                                                            @if (in_array('product-status-update', $all_permission))
+                                                                <input type="checkbox" value="1"
+                                                                    id="product-status-update" name="product-status-update" checked>
+                                                            @else
+                                                                <input type="checkbox" value="1"
+                                                                    id="product-status-update" name="product-status-update">
+                                                            @endif
+                                                            <label for="product-status-update"
+                                                                class="padding05">Price Status Update
+                                                                &nbsp;&nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </span>
+
 
 
                                                 

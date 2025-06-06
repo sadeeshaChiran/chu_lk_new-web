@@ -12,6 +12,9 @@
             $stock_count_active = $role_has_permissions_list->where('name', 'stock_count')->first();
             
             $adjustment_active = $role_has_permissions_list->where('name', 'adjustment')->first();
+
+            $price_management_active = $role_has_permissions_list->where('name', 'price-management')->first();
+
             ?>
             @if (
                 $category_permission_active ||
@@ -52,6 +55,11 @@
                         @if ($stock_count_active)
                             <li id="stock-count-menu"><a
                                     href="{{ route('stock-count.index') }}">{{ trans('file.Stock Count') }}</a></li>
+                        @endif
+
+                        @if($price_management_active)
+                            <li id="price-management-menu"><a
+                                    href="{{ route('product.priceManagement') }}">Price Management</a></li>
                         @endif
                     </ul>
                 </li>

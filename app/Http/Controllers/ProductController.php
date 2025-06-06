@@ -69,7 +69,9 @@ class ProductController extends Controller
             return view('backend.product.index', compact('warehouse_id', 'all_permission', 'role_id', 'numberOfProduct', 'custom_fields', 'field_name', 'lims_warehouse_list'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
-    }
+    
+    
+        }
 
     public function productData(Request $request)
     {
@@ -1933,6 +1935,220 @@ class ProductController extends Controller
             $this->cacheForget('product_list');
             $this->cacheForget('product_list_with_variant');
             return redirect('products')->with('message', 'Product deleted successfully');
+        }
+    }
+
+    // prodct price management
+    public function priceManagement()
+    {
+        $role = Role::find(Auth::user()->role_id);
+        if ($role->hasPermissionTo('price-management')) {
+
+            $permissions = Role::findByName($role->name)->permissions;
+
+            foreach ($permissions as $permission)
+                $all_permission[] = $permission->name;
+            if (empty($all_permission))
+                $all_permission[] = 'dummy text';
+            $role_id = $role->id;
+            $numberOfProduct = DB::table('products')->where('is_active', true)->count();
+            $custom_fields = CustomField::where([
+                ['belongs_to', 'product'],
+                ['is_table', true]
+            ])->pluck('name');
+            $field_name = [];
+            foreach ($custom_fields as $fieldName) {
+                $field_name[] = str_replace(" ", "_", strtolower($fieldName));
+            }
+            return view('backend.product.product_price_management', compact( 'all_permission', 'role_id', 'numberOfProduct', 'custom_fields', 'field_name'));
+        } else
+            return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
+    
+    }
+
+    public function priceManagementData(Request $request)
+    {
+        $columns = array(
+            0 => 'id',
+            1 => 'name',
+            2 => 'code',
+            3 => 'price',
+            4 => 'wholesale_price',
+            5 => 'retail_price',
+            6 => 'online_price',
+            7 => 'cost',
+            8 => 'last_purchase_price',
+        );
+
+        $totalData = DB::table('products')->where('is_active', true)->count();
+        $totalFiltered = $totalData;
+
+        if ($request->input('length') != -1)
+            $limit = $request->input('length');
+        else
+            $limit = $totalData;
+        $start = $request->input('start');
+        $order = 'products.' . $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+        //fetching custom fields data
+        $custom_fields = CustomField::where([
+            ['belongs_to', 'product'],
+            ['is_table', true]
+        ])->pluck('name');
+        $field_names = [];
+        foreach ($custom_fields as $fieldName) {
+            $field_names[] = str_replace(" ", "_", strtolower($fieldName));
+        }
+        if (empty($request->input('search.value'))) {
+            $products = Product::with('category', 'brand', 'unit')->offset($start)
+                ->where('is_active', true)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+        } else {
+            $search = $request->input('search.value');
+            $q = Product::select('products.*')
+                ->with('category', 'brand', 'unit')
+                ->join('categories', 'products.category_id', '=', 'categories.id')
+                ->leftjoin('product_purchases', 'product_purchases.product_id', '=', 'products.id')
+                ->leftjoin('brands', 'products.brand_id', '=', 'brands.id')
+                ->leftjoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+                ->where([
+                    ['products.name', 'LIKE', "%{$search}%"],
+                    ['products.is_active', true]
+                ])
+                ->orWhere([
+                    ['products.code', 'LIKE', "%{$search}%"],
+                    ['products.is_active', true]
+                ])
+                ->orWhere([
+                    ['product_variants.item_code', 'LIKE', "%{$search}%"],
+                    ['products.is_active', true]
+                ]);
+            //searching with custom field
+            foreach ($field_names as $key => $field_name) {
+                $q = $q->orwhere('products.' . $field_name, 'LIKE', "%{$search}%");
+            }
+
+            $q = $q->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir);
+
+            $products = $q->groupBy('products.id')->get();
+            $totalFiltered = $q->groupBy('products.id')->count();
+            /*$totalFiltered = Product::
+                            join('categories', 'products.category_id', '=', 'categories.id')
+                            ->leftjoin('brands', 'products.brand_id', '=', 'brands.id')
+                            ->where([
+                                ['products.name','LIKE',"%{$search}%"],
+                                ['products.is_active', true]
+                            ])
+                            ->orWhere([
+                                ['products.code', 'LIKE', "%{$search}%"],
+                                ['products.is_active', true]
+                            ])
+                            ->orWhere([
+                                ['categories.name', 'LIKE', "%{$search}%"],
+                                ['categories.is_active', true],
+                                ['products.is_active', true]
+                            ])
+                            ->orWhere([
+                                ['brands.title', 'LIKE', "%{$search}%"],
+                                ['brands.is_active', true],
+                                ['products.is_active', true]
+                            ])
+                            ->count();*/
+        }
+        $data = array();
+        if (!empty($products)) {
+            foreach ($products as $key => $product) {
+                $nestedData['id'] = $product->id;
+                $nestedData['key'] = $key;
+                $nestedData['name'] = $product->name;
+                $nestedData['code'] = $product->code;
+                   
+                $last_purchase_price = ProductPurchase::where('product_id', $product->id)->orderBy('id', 'desc')->first();
+                $nestedData['price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="price" value="' . $product->price . '">';
+                $nestedData['wholesale_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="wholesale_price" value="' . $product->wholesale_price . '">';
+                $nestedData['retail_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="retail_price" value="' . $product->retail_price . '">';
+                $nestedData['online_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="online_price" value="' . $product->online_price . '">';
+                $nestedData['cost'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="cost" value="' . $product->cost . '">';
+                $nestedData['last_purches_cost'] = $last_purchase_price->net_unit_cost ?? 'N/A';
+
+                
+                //fetching custom fields data
+                foreach ($field_names as $field_name) {
+                    $nestedData[$field_name] = $product->$field_name;
+                }
+
+                $nestedData['last_purches_cost'] = $last_purchase_price->net_unit_cost ?? 'N/A';
+                $nestedData['options'] = '<div class="btn-group">';
+
+
+                if (in_array( "products-delete", $request['all_permission']))
+                    $nestedData['options'] .= \Form::open(["route" => ["products.destroy", $product->id], "method" => "DELETE"]) . '
+                            
+                              <button type="submit" class="btn btn-primary col ml-1" onclick="return confirmDelete()"><i class="fa fa-trash"></i> ' . trans("file.delete") . '</button>
+                            ' . \Form::close() . '
+                    </div>';
+                // data for product details by one click
+               
+                
+                $nestedData['product'] = array(
+                    ' "' . $product->name . '"',
+                    ' "' . $product->code . '"',
+                    ' "' . $product->cost . '"',
+                    ' "' . $product->price . '"',
+                    ' "' . $product->wholesale_price . '"',
+                    ' "' . $product->retail_price . '"',
+                    ' "' . $product->online_price . '"',
+                    ' "' . $product->id . '"',
+                    ' "' . $nestedData['last_purches_cost'] . '"'
+                );
+
+                //$nestedData['imagedata'] = DNS1D::getBarcodePNG($product->code, $product->barcode_symbology);
+                $data[] = $nestedData;
+            }
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+    
+        echo json_encode($json_data);
+    }
+
+    public function priceManagementUpdate(Request $request)
+    {
+       
+
+        if (!env('USER_VERIFIED')) {
+            return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
+        } else {
+            $this->validate($request, [
+                'code' => [
+                    'max:255',
+                    Rule::unique('products')->ignore($request->product_id)->where(function ($query) {
+                        return $query->where('is_active', 1);
+                    }),
+                ]
+            ]);
+
+            $field = $request->field ?? '';
+            if($field){
+                $lims_product_data = Product::findOrFail($request->product_id);
+                $lims_product_data->$field = $request->value;
+                $lims_product_data->save();
+
+            }
+
+
+           
+            $this->cacheForget('product_list');
+            $this->cacheForget('product_list_with_variant');
+            \Session::flash('edit_message', 'Product updated successfully');
         }
     }
 }

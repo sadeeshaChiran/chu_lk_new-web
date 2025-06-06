@@ -205,6 +205,12 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::get('products/all-product-in-stock', 'allProductInStock')->name('product.allProductInStock');
         Route::get('products/show-all-product-online', 'showAllProductOnline')->name('product.showAllProductOnline');
         Route::get('check-batch-availability/{product_id}/{batch_no}/{warehouse_id}', 'checkBatchAvailability');
+        Route::get('products/price-management', 'priceManagement')->name('product.priceManagement');
+        Route::post('products/price-management-data', 'priceManagementData')->name('product.priceManagementData');
+        Route::post('products/price-management/update', 'priceManagementUpdate')->name('product.priceManagementUpdate');
+
+        
+
      });
 
 
@@ -454,6 +460,8 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::post('qty_adjustment/deletebyselection', 'deleteBySelection');
     });
     Route::resource('qty_adjustment', AdjustmentController::class);
+
+    
 
 
     Route::controller(ReturnController::class)->group(function () {

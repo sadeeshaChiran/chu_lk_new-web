@@ -1233,6 +1233,30 @@ class RoleController extends Controller
                 $role->revokePermissionTo('complete-transfer');
         }
 
+        if ($request->has('price-management')) {
+            $permission = Permission::firstOrCreate(['name' => 'price-management']);
+            if (!$role->hasPermissionTo('price-management')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'price-management')->first();
+            if ($permission)
+                $role->revokePermissionTo('price-management');
+        }
+
+
+        if ($request->has('product-status-update')) {
+            $permission = Permission::firstOrCreate(['name' => 'product-status-update']);
+            if (!$role->hasPermissionTo('product-status-update')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'product-status-update')->first();
+            if ($permission)
+                $role->revokePermissionTo('product-status-update');
+        }
+
+
 
         cache()->forget('permissions');
 
