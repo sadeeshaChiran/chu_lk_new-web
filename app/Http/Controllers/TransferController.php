@@ -216,16 +216,16 @@ class TransferController extends Controller
                             <li>
                               <button type="submit" class="btn btn-link" onclick="return confirmDelete()"><i class="dripicons-trash"></i> '.trans("file.delete").'</button>
                             </li>'.\Form::close().'
-                        </ul>
-                    </div>';
+                        ';
                 if(in_array("complete-transfer", $request['all_permission']) && $transfer->status == 3)
                     $nestedData['options'] .= \Form::open(["route" => ["transfer.complete", $transfer->id], "method" => "GET"] ).'
                             <li>
                               <button type="submit" class="btn btn-link" onclick="return confirmComplete()"><i class="dripicons-thumbs-up"></i> '. "Complete".'</button>
                             </li>'.\Form::close().'
-                        </ul>
-                    </div>';
+                        ';
                     // data for transfer details by one click
+                $nestedData['options'] .=  '</ul>
+                    </div>';
 
                 $nestedData['transfer'] = array( '[ "'.date(config('date_format'), strtotime($transfer->created_at->toDateString())).'"', ' "'.$transfer->reference_no.'"', ' "'.$status.'"', ' "'.$transfer->id.'"', ' "'.$transfer->fromWarehouse->name.'"', ' "'.$transfer->fromWarehouse->phone.'"', ' "'.preg_replace('/\s+/S', " ", $transfer->fromWarehouse->address).'"', ' "'.$transfer->toWarehouse->name.'"', ' "'.$transfer->toWarehouse->phone.'"', ' "'.preg_replace('/\s+/S', " ", $transfer->toWarehouse->address).'"', ' "'.$transfer->total_tax.'"', ' "'.$transfer->total_cost.'"', ' "'.$transfer->shipping_cost.'"', ' "'.$transfer->grand_total.'"', ' "'.preg_replace('/[\n\r]/', "<br>", $transfer->note).'"', ' "'.$transfer->user->name.'"', ' "'.$transfer->user->email.'"]'
                 );
