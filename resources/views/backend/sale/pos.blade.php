@@ -6,7 +6,7 @@
             font-family: 'Inter', sans-serif
         }
 
-        .btn{
+        .btn {
             border-radius: 8px;
         }
 
@@ -16,21 +16,20 @@
             height: 30px !important
         }
 
-        .totals{
-            background-color:#f5f6f7;
+        .totals {
+            background-color: #f5f6f7;
             border-top: 2px solid #2a2b3c
-
         }
 
-        .dark-mode .totals{
-            background-color:#2a2b3c;
+        .dark-mode .totals {
+            background-color: #2a2b3c;
             border-top: 2px solid #f5f6f7
         }
 
         .totals .col-sm-4 {
-            border-bottom: px ;
+            border-bottom: px;
         }
-        
+
         .minus,
         .plus {
             padding: .35rem .75rem
@@ -661,6 +660,7 @@
 
                 <div class="col-md-7 pos-form">
                     {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
+                    @csrf
                     @php
                         if ($lims_pos_setting_data) {
                             $keybord_active = $lims_pos_setting_data->keybord_active;
@@ -999,7 +999,7 @@
                                                             class="fa fa-edit"></i></strong><br><span>{{ $product_data->code }}</span>
                                                     | In Stock: <span
                                                         class="in-stock">{{ $product_data->in_stock }}</span> <strong
-                                                        class="product-price d-md-none">{{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal ) }}</strong>
+                                                        class="product-price d-md-none">{{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal) }}</strong>
 
                                                     @if ($product_batch_data)
                                                         <br><input
@@ -1016,7 +1016,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="col-sm-2 product-price d-none d-md-block">
-                                                    {{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal ) }}
+                                                    {{ number_format((float) ($product_sale->total / $product_sale->qty), $general_setting->decimal) }}
                                                 </td>
                                                 <td class="col-sm-3">
                                                     <div class="input-group"><span class="input-group-btn"><button
@@ -1033,7 +1033,7 @@
                                                                     class="dripicons-plus"></span></button></span></div>
                                                 </td>
                                                 <td class="col-sm-2 sub-total">
-                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal ) }}
+                                                    {{ number_format((float) $product_sale->total, $general_setting->decimal) }}
                                                 </td>
                                                 <input type="hidden" class="product-code" name="product_code[]"
                                                     value="{{ $product_data->code }}" />
@@ -1085,32 +1085,32 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_discount"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_tax"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_tax }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_tax }} @else {{ number_format(0, $general_setting->decimal) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="total_price"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->total_discount }} @else {{ number_format(0, $general_setting->decimal) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="item" value="{{ $lims_sale_data->item ?? 0 }}" />
                                     <input type="hidden" name="order_tax"
-                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->order_tax }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ $lims_sale_data->order_tax }} @else {{ number_format(0, $general_setting->decimal) }} @endif" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <input type="hidden" name="grand_total"
-                                        value="@if (isset($lims_sale_data)) {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal ) }} @else {{ number_format(0, $general_setting->decimal ) }} @endif" />
+                                        value="@if (isset($lims_sale_data)) {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal) }} @else {{ number_format(0, $general_setting->decimal) }} @endif" />
                                     <input type="hidden" name="used_points" />
                                     <input type="hidden" name="sale_status" value="1" />
                                     @if (isset($lims_sale_data) && $lims_sale_data->coupon_id)
@@ -1131,8 +1131,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 totals "
-                            style="padding-bottom: 7px;padding-top: 7px;">
+                        <div class="col-12 totals " style="padding-bottom: 7px;padding-top: 7px;">
                             <div class="row">
                                 <div class="col-sm-4 col-6">
                                     <strong class="totals-title">{{ trans('file.Items') }}</strong><strong
@@ -1143,9 +1142,9 @@
                                     <strong class="totals-title">{{ trans('file.Total') }}</strong><strong
                                         id="subtotal">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal ) }}
+                                            {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal ) }}
+                                            {{ number_format(0, $general_setting->decimal) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1156,9 +1155,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="discount">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->order_discount, $general_setting->decimal ) }}
+                                            {{ number_format((float) $lims_sale_data->order_discount, $general_setting->decimal) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal ) }}
+                                            {{ number_format(0, $general_setting->decimal) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1169,9 +1168,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="coupon-text">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->coupon_discount, $general_setting->decimal ) }}
+                                            {{ number_format((float) $lims_sale_data->coupon_discount, $general_setting->decimal) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal ) }}
+                                            {{ number_format(0, $general_setting->decimal) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1181,9 +1180,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="tax">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->order_tax, $general_setting->decimal ) }}
+                                            {{ number_format((float) $lims_sale_data->order_tax, $general_setting->decimal) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal ) }}
+                                            {{ number_format(0, $general_setting->decimal) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1194,9 +1193,9 @@
                                                 class="dripicons-document-edit"></i></button></strong><strong
                                         id="shipping-cost">
                                         @if (isset($lims_sale_data))
-                                            {{ number_format((float) $lims_sale_data->shipping_cost, $general_setting->decimal ) }}
+                                            {{ number_format((float) $lims_sale_data->shipping_cost, $general_setting->decimal) }}
                                         @else
-                                            {{ number_format(0, $general_setting->decimal ) }}
+                                            {{ number_format(0, $general_setting->decimal) }}
                                         @endif
                                     </strong>
                                 </div>
@@ -1206,9 +1205,9 @@
                     <div class="payment-amount d-none d-md-block">
                         <h2>{{ trans('file.grand total') }} <span id="grand-total">
                                 @if (isset($lims_sale_data))
-                                    {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal ) }}
+                                    {{ number_format((float) $lims_sale_data->grand_total, $general_setting->decimal) }}
                                 @else
-                                    {{ number_format(0, $general_setting->decimal ) }}
+                                    {{ number_format(0, $general_setting->decimal) }}
                                 @endif
                             </span></h2>
                     </div>
@@ -1343,7 +1342,7 @@
                                                 </button>
                                             </div>
 
-                                            
+
                                         </div>
                                         <div class="col-md-2 p-2 bg-info text-light pt-4 pb-4">
                                             <div class="mt-4">
@@ -1360,7 +1359,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                  
+
                                 </div>
                             </div>
                         </div>
@@ -1395,7 +1394,8 @@
                                                 id="order-discount" onkeyup='saveValue(this);'>
                                         </div>
                                     </div>
-                                    <button type="button" name="order_discount_btn" class="btn btn-primary col-md-12 p-2"
+                                    <button type="button" name="order_discount_btn"
+                                        class="btn btn-primary col-md-12 p-2"
                                         data-dismiss="modal">{{ trans('file.submit') }}</button>
                                 </div>
                             </div>
@@ -1595,15 +1595,13 @@
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} *</label>
                                         <input type="text" name="phone_number" required class="form-control"
-                                              minlength="10"
-                                            maxlength="10"
+                                            minlength="10" maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     </div>
 
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} - 2</label>
-                                        <input type="text" name="phone_number_2" class="form-control"
-                                              minlength="10"
+                                        <input type="text" name="phone_number_2" class="form-control" minlength="10"
                                             maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                     </div>
@@ -1787,7 +1785,7 @@
                                                             <td id="cash_payment_received" class="text-right"></td>
                                                         </tr>
                                                     @endif
-                                                    @if (in_array('cash',  $options))
+                                                    @if (in_array('cash', $options))
                                                         <tr class="bg-light">
                                                             <td> - {{ trans('file.Cash Payment') }} Paid:</td>
                                                             <td id="cash_payment_paid" class="text-right"></td>
@@ -1797,10 +1795,11 @@
                                                     @if (in_array('card', $options))
                                                         <tr>
                                                             <td> + {{ trans('file.Credit Card Payment') }} Received:</td>
-                                                            <td id="credit_card_payment_received" class="text-right"></td>
+                                                            <td id="credit_card_payment_received" class="text-right">
+                                                            </td>
                                                         </tr>
                                                     @endif
-                                                    
+
                                                     @if (in_array('card', $options))
                                                         <tr class="bg-light">
                                                             <td> - {{ trans('file.Credit Card Payment') }} Paid:</td>
@@ -1814,12 +1813,12 @@
                                                             <td id="bank_payment_received" class="text-right"></td>
                                                         </tr>
                                                     @endif
-                                    
-                                                    <tr class="bg-light"> 
+
+                                                    <tr class="bg-light">
                                                         <td> - {{ trans('Bank Payment') }} Paid:</td>
                                                         <td id="bank_payment_paid" class="text-right"></td>
-                                                     </tr>
-                                                   
+                                                    </tr>
+
 
                                                     @if (in_array('cheque', $options))
                                                         <tr>
@@ -1875,15 +1874,13 @@
                                                 <input type="hidden" name="cash_register_id">
                                                 <div class="row">
 
-                                                    <input type="number" step="any"
-                                                        id="next_day_opening_balance"
+                                                    <input type="number" step="any" id="next_day_opening_balance"
                                                         name="next_day_opening_balance"
                                                         class="form-control col-md-12 p-2 " step="any"
                                                         placeholder="Next Day Opening Balance" required>
                                                     <input type="number" step="any" name="closing_balance"
-                                                        id="closing_balance"
-                                                        class="form-control col-md-12 p-2 mt-2" step="any"
-                                                        placeholder="Closing Balance" required>
+                                                        id="closing_balance" class="form-control col-md-12 p-2 mt-2"
+                                                        step="any" placeholder="Closing Balance" required>
 
 
                                                     <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
@@ -1938,7 +1935,7 @@
                                                         <td> + {{ trans('file.Cash Payment') }} Received:</td>
                                                         <td id="cash_payment_received" class="text-right"></td>
                                                     </tr>
-                                                    <tr class="bg-light"> 
+                                                    <tr class="bg-light">
                                                         <td> - {{ trans('file.Cash Payment') }} Paid:</td>
                                                         <td id="cash_payment_paid" class="text-right"></td>
                                                     </tr>
@@ -1946,7 +1943,7 @@
                                                         <td> + {{ trans('file.Credit Card Payment') }} Received:</td>
                                                         <td id="credit_card_payment_received" class="text-right"></td>
                                                     </tr>
-                                                    <tr class="bg-light"> 
+                                                    <tr class="bg-light">
                                                         <td> - {{ trans('file.Credit Card Payment') }} Paid:</td>
                                                         <td id="credit_card_payment_paid" class="text-right"></td>
                                                     </tr>
@@ -1979,7 +1976,7 @@
                                                             <td class="paypal_payment text-right"></td>
                                                         </tr>
                                                     @endif
-                                                    
+
                                                     <tr>
                                                         <td>{{ trans('file.Total Expense') }}:</td>
                                                         <td class="total_expense text-right"></td>
@@ -2260,11 +2257,11 @@
         $(document).ready(function() {
 
             function calculateShortage() {
-                
+
                 let totalCash = parseFloat($('#register-details-modal #total_cash').text()) || 0;
                 const closing = parseFloat($('#closing_balance').val()) || 0;
                 const opening = parseFloat($('#next_day_opening_balance').val()) || 0;
-                const shortage =   (closing + opening) - (totalCash) ;
+                const shortage = (closing + opening) - (totalCash);
                 $('#shortage_balance').text(shortage.toFixed(2));
             }
             // $('select[name="customer_id"]').on('change', function() {
@@ -2580,15 +2577,20 @@
                 success: function(data) {
                     $('#register-details-modal #cash_in_hand').text(data['cash_in_hand']);
                     $('#register-details-modal #total_sale_amount').text(data['total_sale_amount']);
-                    $('#register-details-modal #total_payment_received').text(data['total_payment_received']);
-                    $('#register-details-modal #cash_payment_received').text(data['cash_payment_received']);
-                    $('#register-details-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
-                    $('#register-details-modal #bank_payment_received').text(data['bank_payment_received']);
+                    $('#register-details-modal #total_payment_received').text(data[
+                        'total_payment_received']);
+                    $('#register-details-modal #cash_payment_received').text(data[
+                        'cash_payment_received']);
+                    $('#register-details-modal #credit_card_payment_received').text(data[
+                        'credit_card_payment_received']);
+                    $('#register-details-modal #bank_payment_received').text(data[
+                        'bank_payment_received']);
 
-                    
+
                     $('#register-details-modal #total_payment_paid').text(data['total_payment_paid']);
                     $('#register-details-modal #cash_payment_paid').text(data['cash_payment_paid']);
-                    $('#register-details-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#register-details-modal #credit_card_payment_paid').text(data[
+                        'credit_card_payment_paid']);
                     $('#register-details-modal #bank_payment_paid').text(data['bank_payment_paid']);
 
                     $('#register-details-modal #cheque_payment').text(data['cheque_payment']);
@@ -2616,13 +2618,15 @@
 
                     $('#today-sale-modal #total_payment_received').text(data['total_payment_received']);
                     $('#today-sale-modal #cash_payment_received').text(data['cash_payment_received']);
-                    $('#today-sale-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
+                    $('#today-sale-modal #credit_card_payment_received').text(data[
+                        'credit_card_payment_received']);
                     $('#today-sale-modal #bank_payment_received').text(data['bank_payment_received']);
 
-                    
+
                     $('#today-sale-modal #total_payment_paid').text(data['total_payment_paid']);
                     $('#today-sale-modal #cash_payment_paid').text(data['cash_payment_paid']);
-                    $('#today-sale-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#today-sale-modal #credit_card_payment_paid').text(data[
+                        'credit_card_payment_paid']);
                     $('#today-sale-modal #bank_payment_paid').text(data['bank_payment_paid']);
 
                     $('#today-sale-modal .cheque_payment').text(data['cheque_payment']);
@@ -3426,6 +3430,10 @@
 
         });
 
+        $('.payment-form').on('submit', function() {
+            $(this).find('button[type="submit"]').prop('disabled', true);
+        });
+
 
         $(document).on("keydown", ".paying_amount", function(event) {
             if (event.which === 13) { // Check if Enter key is pressed
@@ -3759,6 +3767,9 @@
             updateChange();
             var id = $(this).val();
             $(this).closest('.col-md-3').find('input[name="paid_by_id[]"]').val(id);
+            // $(this).parent().parent().siblings('.credit-card').remove();
+$(this).closest('.new-adding-row').siblings('.remove-element').remove();
+
             var appendElement = '';
             $(".payment-form").off("submit");
             // $(this).parent().parent().siblings('.cash-received-container').addClass('d-none');
@@ -3771,7 +3782,7 @@
             }
             //gift
             else if (id == 2) {
-                appendElement = `<div class="form-group col-md-10 gift-card remove-element">
+                appendElement = `<div class="form-group col-md-7 gift-card remove-element">
                                 <label> {{ trans('file.Gift Card') }} *</label>
                                 <input type="hidden" name="gift_card_id">
                                 <select id="gift_card_id_select" name="gift_card_id_select" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Gift Card..."></select>
@@ -3801,7 +3812,8 @@
             //credit
             else if (id == 3) {
                 appendElement = `
-                                <div class="row">
+                 <div class="credit-card remove-element">
+                                <div class="row ">
                                     <div class="col-md-5">
                                         <label>Card Number</label>
                                         <input class="form-control" name="card_number" class="card_name">
@@ -3819,6 +3831,8 @@
                                         </select>
                                     </div>
                                </div>
+                               </div>
+
                             `;
                 $(this).closest('.new-adding-row').after(appendElement);
             }
@@ -4013,7 +4027,7 @@
                 }
             } else
                 $('input[name="paying_amount"]').val(
-                    '{{ number_format(0, $general_setting->decimal ) }}');
+                    '{{ number_format(0, $general_setting->decimal) }}');
             change($('input[name="paying_amount"]').val(), $('input[name="paid_amount"]').val());
         });
 
@@ -4184,9 +4198,9 @@
                     data[16] *
                     currency['exchange_rate'] * customer_group_rate));
             else
-                wholesale_price.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal ) }}');
+                wholesale_price.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal) }}');
             cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
-            product_discount.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal ) }}');
+            product_discount.splice(rowindex, 0, '{{ number_format(0, $general_setting->decimal) }}');
             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
             tax_name.splice(rowindex, 0, data[4]);
             tax_method.splice(rowindex, 0, data[5]);
@@ -4211,13 +4225,13 @@
             localStorageSaleUnitOperationValue.splice(rowindex, 0, data[8]);
             //put some dummy value
             localStorageNetUnitPrice.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal ) }}');
+                '{{ number_format(0, $general_setting->decimal) }}');
             localStorageTaxValue.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal ) }}');
+                '{{ number_format(0, $general_setting->decimal) }}');
             localStorageSubTotalUnit.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal ) }}');
+                '{{ number_format(0, $general_setting->decimal) }}');
             localStorageSubTotal.splice(rowindex, 0,
-                '{{ number_format(0, $general_setting->decimal ) }}');
+                '{{ number_format(0, $general_setting->decimal) }}');
 
             localStorage.setItem("localStorageProductId", localStorageProductId);
             localStorage.setItem("localStorageSaleUnit", localStorageSaleUnit);
@@ -4459,20 +4473,19 @@
                         }
                     }
                     $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(sale_qty);
-                }
-                else if(product_type[pos] == 'combo'){
+                } else if (product_type[pos] == 'combo') {
                     child_id = product_list[pos].split(',');
                     child_qty = qty_list[pos].split(',');
                     //console.log(child_id);
                     $(child_id).each(function(index) {
                         var position = product_id.indexOf(child_id[index]);
-                        if( position == -1 || parseFloat(sale_qty * child_qty[index]) > product_qty[position] ) {
+                        if (position == -1 || parseFloat(sale_qty * child_qty[index]) > product_qty[position]) {
                             alert('Quantity exceeds stock quantity!');
                             if (flag) {
                                 sale_qty = sale_qty.substring(0, sale_qty.length - 1);
-                                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(sale_qty);
-                            }
-                            else {
+                                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(
+                                    sale_qty);
+                            } else {
                                 edit();
                                 flag = true;
                                 return false;
@@ -4609,7 +4622,7 @@
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
 
             if (!order_discount_value)
-                order_discount_value = {{ number_format(0, $general_setting->decimal ) }};
+                order_discount_value = {{ number_format(0, $general_setting->decimal) }};
 
             if (order_discount_type == 'Flat') {
                 if (!currencyChange) {
@@ -4629,7 +4642,7 @@
             else
                 var shipping_cost = parseFloat($('input[name="shipping_cost"]').val() * currency['exchange_rate']);
             if (!shipping_cost)
-                shipping_cost = {{ number_format(0, $general_setting->decimal ) }};
+                shipping_cost = {{ number_format(0, $general_setting->decimal) }};
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);
@@ -4644,7 +4657,7 @@
                 var coupon_discount = parseFloat($('input[name="coupon_discount"]').val() * currency[
                     'exchange_rate']);
             if (!coupon_discount)
-                coupon_discount = {{ number_format(0, $general_setting->decimal ) }};
+                coupon_discount = {{ number_format(0, $general_setting->decimal) }};
             grand_total -= coupon_discount;
 
             $('#item').text(item);
