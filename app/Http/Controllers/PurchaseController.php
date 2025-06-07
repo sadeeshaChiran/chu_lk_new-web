@@ -31,6 +31,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\TenantInfo;
+use Carbon\Carbon;
 
 class PurchaseController extends Controller
 {
@@ -815,8 +816,8 @@ class PurchaseController extends Controller
         $item = 0;
         $grand_total = $data['shipping_cost'];
         $data['user_id'] = Auth::id();
-        Purchase::create($data);
-        $lims_purchase_data = Purchase::latest()->first();
+        $data['due_at'] = Carbon::now();
+        $lims_purchase_data =Purchase::create($data);
 
         foreach ($product_data as $key => $product) {
             if ($product['tax_method'] == 1) {
@@ -860,16 +861,16 @@ class PurchaseController extends Controller
             else
                 $product_purchase->recieved = 0;
             $product_purchase->purchase_unit_id = $unit[$key]['id'];
-            $product_purchase->net_unit_cost = number_format((float)$net_unit_cost, config('decimal') );
+            $product_purchase->net_unit_cost = round((float)$net_unit_cost, config('decimal') );
             $product_purchase->discount = $discount[$key] * $qty[$key];
             $product_purchase->tax_rate = $tax[$key]['rate'];
-            $product_purchase->tax = number_format((float)$product_tax, config('decimal') );
-            $product_purchase->total = number_format((float)$total, config('decimal') );
+            $product_purchase->tax = round((float)$product_tax, config('decimal') );
+            $product_purchase->total = round((float)$total, config('decimal') );
             $product_purchase->save();
             $lims_purchase_data->total_qty += $qty[$key];
             $lims_purchase_data->total_discount += $discount[$key] * $qty[$key];
-            $lims_purchase_data->total_tax += number_format((float)$product_tax, config('decimal') );
-            $lims_purchase_data->total_cost += number_format((float)$total, config('decimal') );
+            $lims_purchase_data->total_tax += round((float)$product_tax, config('decimal') );
+            $lims_purchase_data->total_cost += round((float)$total, config('decimal') );
         }
         $lims_purchase_data->item = $key + 1;
         $lims_purchase_data->order_tax = ($lims_purchase_data->total_cost - $lims_purchase_data->order_discount) * ($data['order_tax_rate'] / 100);

@@ -305,6 +305,24 @@
                             </th>
                         </tr>
                     @endif
+
+
+
+                    @foreach ($lims_payment_data as $payment_data)
+                        <tr style="background-color:#ddd;">
+                            <td style="padding: 5px;width:30%">{{ trans('file.Paid By') }}:
+                                {{ $payment_data->paying_method }}</td>
+                            <td style="padding: 5px;width:40%">{{ trans('file.Amount') }}:
+                                {{ number_format((float) $payment_data->amount, $general_setting->decimal, '.', ',') }}
+                            </td>
+                            <td style="padding: 5px;width:30%; font-weight: bolder;">{{ trans('file.Change') }}:
+                                {{ number_format((float) $payment_data->change, $general_setting->decimal, '.', ',') }}
+                            </td>
+                        </tr>
+                    @endforeach
+
+
+
                     {{-- <tr>
                         <td colspan="2"><strong>Total Retail Price:</strong></td>
                         <td style="text-align:right;"><del><strong>{{ number_format((float) $total_retail_price, $general_setting->decimal, '.', ',') }}</strong></del></td>
@@ -316,7 +334,7 @@
                                 {{ number_format($totalDue, $general_setting->decimal, '.', ',') }}</th>
                         </tr>
                     @endif --}}
-                    <tr style=" border: 1px dotted #ddd; text-align: center;">
+                    <tr style=" border: 1px dotted #ddd; text-align: center ;">
                         <td style="padding: 5px;width:30%">Retail Price: <br />
                             {{ number_format((float) $total_retail_price, $general_setting->decimal, '.', ',') }}
                         </td>
@@ -349,30 +367,20 @@
 
                 <!-- </tfoot> -->
             </table>
-            <table>
-                <tbody>
-
-                    @foreach ($lims_payment_data as $payment_data)
-                        <tr style="background-color:#ddd;">
-                            <td style="padding: 5px;width:30%">{{ trans('file.Paid By') }}:
-                                {{ $payment_data->paying_method }}</td>
-                            <td style="padding: 5px;width:40%">{{ trans('file.Amount') }}:
-                                {{ number_format((float) $payment_data->amount, $general_setting->decimal, '.', ',') }}
-                            </td>
-                            <td style="padding: 5px;width:30%">{{ trans('file.Change') }}:
-                                {{ number_format((float) $payment_data->change, $general_setting->decimal, '.', ',') }}
-                            </td>
-                        </tr>
-                    @endforeach
-
-
-
-                </tbody>
-            </table>
+            
 
             <table>
                 <tbody>
-                    <hr>
+                     <tr>
+                        <td  class="centered" colspan="3">
+                           You saved 
+                            <span style="font-weight: bolder;">Rs.{{ number_format((float) ($total_retail_price - $lims_sale_data->total_price), $general_setting->decimal, '.', ',') }}
+                            </span>
+                        </td>
+                         
+                    </tr>
+                    
+
                     <tr>
                         <td  class="centered" colspan="3">
                             {{ trans('file.Thank you for shopping with us. Please come again') }}</td>

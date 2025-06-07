@@ -208,6 +208,8 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         Route::get('products/price-management', 'priceManagement')->name('product.priceManagement');
         Route::post('products/price-management-data', 'priceManagementData')->name('product.priceManagementData');
         Route::post('products/price-management/update', 'priceManagementUpdate')->name('product.priceManagementUpdate');
+        Route::get('products/disable/{id}', 'productDisable')->name('product.changeStatus');
+
 
         
 

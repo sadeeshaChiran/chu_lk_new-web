@@ -102,7 +102,47 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        
+                                    
+                                         <tr>
+                                            <td>Price Management</td>
+                                            <td class="text-center">
+                                                <div class="icheckbox_square-blue checked" aria-checked="false"
+                                                    aria-disabled="false">
+                                                    <div class="checkbox">
+                                                        @if (in_array('price-management-index', $all_permission))
+                                                            <input type="checkbox" value="1" id="price-management-index"
+                                                                name="price-management-index" checked />
+                                                        @else
+                                                            <input type="checkbox" value="1" id="price-management-index"
+                                                                name="price-management-index" />
+                                                        @endif
+                                                        <label for="price-management-index"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                               -
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="icheckbox_square-blue" aria-checked="false"
+                                                    aria-disabled="false">
+                                                    <div class="checkbox">
+                                                        @if (in_array('price-management-edit', $all_permission))
+                                                            <input type="checkbox" value="1" id="price-management-edit"
+                                                                name="price-management-edit" checked />
+                                                        @else
+                                                            <input type="checkbox" value="1" id="price-management-edit"
+                                                                name="price-management-edit" />
+                                                        @endif
+                                                        <label for="price-management-edit"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                               -
+                                            </td>
+                                        </tr>
+
                                         <tr>
                                             <td>{{ trans('file.Purchase') }}</td>
                                             <td class="text-center">
@@ -2353,22 +2393,7 @@
                                                     </div>
                                                 </span>
 
-                                                <span>
-                                                    <div aria-checked="false" aria-disabled="false">
-                                                        <div class="checkbox">
-                                                            @if (in_array('price-management', $all_permission))
-                                                                <input type="checkbox" value="1"
-                                                                    id="price-management" name="price-management" checked>
-                                                            @else
-                                                                <input type="checkbox" value="1"
-                                                                    id="price-management" name="price-management">
-                                                            @endif
-                                                            <label for="price-management"
-                                                                class="padding05">Price Management
-                                                                &nbsp;&nbsp;</label>
-                                                        </div>
-                                                    </div>
-                                                </span>
+
 
                                                 <span>
                                                     <div aria-checked="false" aria-disabled="false">

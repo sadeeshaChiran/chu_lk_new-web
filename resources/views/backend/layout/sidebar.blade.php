@@ -13,7 +13,7 @@
             
             $adjustment_active = $role_has_permissions_list->where('name', 'adjustment')->first();
 
-            $price_management_active = $role_has_permissions_list->where('name', 'price-management')->first();
+            $price_management_active = $role_has_permissions_list->where('name', 'price-management-index')->first();
 
             ?>
             @if (

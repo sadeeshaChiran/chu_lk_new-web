@@ -1233,15 +1233,27 @@ class RoleController extends Controller
                 $role->revokePermissionTo('complete-transfer');
         }
 
-        if ($request->has('price-management')) {
-            $permission = Permission::firstOrCreate(['name' => 'price-management']);
-            if (!$role->hasPermissionTo('price-management')) {
+        if ($request->has('price-management-index')) {
+            $permission = Permission::firstOrCreate(['name' => 'price-management-index']);
+            if (!$role->hasPermissionTo('price-management-index')) {
                 $role->givePermissionTo($permission);
             }
         } else {
-            $permission = Permission::where('name', 'price-management')->first();
+            $permission = Permission::where('name', 'price-management-index')->first();
             if ($permission)
-                $role->revokePermissionTo('price-management');
+                $role->revokePermissionTo('price-management-index');
+        }
+
+
+        if ($request->has('price-management-edit')) {
+            $permission = Permission::firstOrCreate(['name' => 'price-management-edit']);
+            if (!$role->hasPermissionTo('price-management-edit')) {
+                $role->givePermissionTo($permission);
+            }
+        } else {
+            $permission = Permission::where('name', 'price-management-edit')->first();
+            if ($permission)
+                $role->revokePermissionTo('price-management-edit');
         }
 
 

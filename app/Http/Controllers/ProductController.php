@@ -69,9 +69,7 @@ class ProductController extends Controller
             return view('backend.product.index', compact('warehouse_id', 'all_permission', 'role_id', 'numberOfProduct', 'custom_fields', 'field_name', 'lims_warehouse_list'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
-    
-    
-        }
+    }
 
     public function productData(Request $request)
     {
@@ -562,24 +560,24 @@ class ProductController extends Controller
         if ($product_data->tax_id) {
             $tax_data = DB::table('taxes')->select('rate')->find($product_data->tax_id);
             if ($product_data->tax_method == 1) {
-                $net_unit_cost = number_format($product_data->cost, 2 );
-                $tax = number_format($product_data->cost * $stock * ($tax_data->rate / 100), 2 );
-                $cost = number_format(($product_data->cost * $stock) + $tax, 2 );
+                $net_unit_cost = number_format($product_data->cost, 2);
+                $tax = number_format($product_data->cost * $stock * ($tax_data->rate / 100), 2);
+                $cost = number_format(($product_data->cost * $stock) + $tax, 2);
             } else {
-                $net_unit_cost = number_format((100 / (100 + $tax_data->rate)) * $product_data->cost, 2 );
-                $tax = number_format(($product_data->cost - $net_unit_cost) * $stock, 2 );
-                $cost = number_format($product_data->cost * $stock, 2 );
+                $net_unit_cost = number_format((100 / (100 + $tax_data->rate)) * $product_data->cost, 2);
+                $tax = number_format(($product_data->cost - $net_unit_cost) * $stock, 2);
+                $cost = number_format($product_data->cost * $stock, 2);
             }
             $tax_rate = $tax_data->rate;
             $data['total_tax'] = $tax;
             $data['total_cost'] = $cost;
         } else {
             $data['total_tax'] = 0.00;
-            $data['total_cost'] = number_format($product_data->cost * $stock, 2 );
-            $net_unit_cost = number_format($product_data->cost, 2 );
+            $data['total_cost'] = number_format($product_data->cost * $stock, 2);
+            $net_unit_cost = number_format($product_data->cost, 2);
             $tax_rate = 0.00;
             $tax = 0.00;
-            $cost = number_format($product_data->cost * $stock, 2 );
+            $cost = number_format($product_data->cost * $stock, 2);
         }
 
         $product_warehouse_data = Product_Warehouse::select('id', 'qty')
@@ -1105,10 +1103,10 @@ class ProductController extends Controller
             ->whereDate('transfers.created_at', '>=', $request->input('starting_date'))
             ->whereDate('transfers.created_at', '<=', $request->input('ending_date'));
         if ($warehouse_id) {
-                $q = $q->where(function($query) use ($warehouse_id) {
-                    $query->where('transfers.from_warehouse_id', $warehouse_id)
-                          ->orWhere('transfers.to_warehouse_id', $warehouse_id);
-                });
+            $q = $q->where(function ($query) use ($warehouse_id) {
+                $query->where('transfers.from_warehouse_id', $warehouse_id)
+                    ->orWhere('transfers.to_warehouse_id', $warehouse_id);
+            });
         }
         if (Auth::user()->role_id > 2 && config('staff_access') == 'own')
             $q = $q->where('transfers.user_id', Auth::id());
@@ -1315,7 +1313,7 @@ class ProductController extends Controller
             //dealing with previous images
             if ($request->prev_img) {
                 $storedImages = $lims_product_data->image ? explode(',', $lims_product_data->image) : [];
-                $keptImages = $request->prev_img ?? []; 
+                $keptImages = $request->prev_img ?? [];
                 $imagesToDelete = array_diff($storedImages, $keptImages);
 
                 foreach ($imagesToDelete as $image) {
@@ -1331,8 +1329,8 @@ class ProductController extends Controller
                 $lims_product_data->image = null;
                 $lims_product_data->save();
             }
-            
-           
+
+
 
             if ($request->image) {
                 // Ensure the necessary directories exist using public_path()
@@ -1939,10 +1937,16 @@ class ProductController extends Controller
     }
 
     // prodct price management
-    public function priceManagement()
+    public function priceManagement(Request $request)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('price-management')) {
+        if ($role->hasPermissionTo('price-management-index')) {
+
+
+            if ($request->input('price_comparison'))
+                $price_comparison = $request->input('price_comparison');
+            else
+                $price_comparison = 0;
 
             $permissions = Role::findByName($role->name)->permissions;
 
@@ -1951,7 +1955,7 @@ class ProductController extends Controller
             if (empty($all_permission))
                 $all_permission[] = 'dummy text';
             $role_id = $role->id;
-            $numberOfProduct = DB::table('products')->where('is_active', true)->count();
+            $numberOfProduct = DB::table('products')->count();
             $custom_fields = CustomField::where([
                 ['belongs_to', 'product'],
                 ['is_table', true]
@@ -1960,10 +1964,9 @@ class ProductController extends Controller
             foreach ($custom_fields as $fieldName) {
                 $field_name[] = str_replace(" ", "_", strtolower($fieldName));
             }
-            return view('backend.product.product_price_management', compact( 'all_permission', 'role_id', 'numberOfProduct', 'custom_fields', 'field_name'));
+            return view('backend.product.product_price_management', compact('price_comparison', 'all_permission', 'role_id', 'numberOfProduct', 'custom_fields', 'field_name'));
         } else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
-    
     }
 
     public function priceManagementData(Request $request)
@@ -1980,7 +1983,9 @@ class ProductController extends Controller
             8 => 'last_purchase_price',
         );
 
-        $totalData = DB::table('products')->where('is_active', true)->count();
+        $price_comparison = $request->input('price_comparison');
+
+        $totalData = DB::table('products')->count();
         $totalFiltered = $totalData;
 
         if ($request->input('length') != -1)
@@ -1999,66 +2004,96 @@ class ProductController extends Controller
         foreach ($custom_fields as $fieldName) {
             $field_names[] = str_replace(" ", "_", strtolower($fieldName));
         }
+        $lastPurchaseCosts = DB::table('product_purchases as pp')
+            ->select('pp.product_id', 'pp.net_unit_cost')
+            ->join(DB::raw('(SELECT MAX(id) as max_id FROM product_purchases GROUP BY product_id) as max_pp'), function ($join) {
+                $join->on('pp.id', '=', 'max_pp.max_id');
+            });
         if (empty($request->input('search.value'))) {
-            $products = Product::with('category', 'brand', 'unit')->offset($start)
-                ->where('is_active', true)
-                ->limit($limit)
-                ->orderBy($order, $dir)
-                ->get();
+            $q = Product::select('products.*')
+                ->with('category', 'brand', 'unit')
+                ->leftJoinSub($lastPurchaseCosts, 'pp_max', 'pp_max.product_id', '=', 'products.id');
         } else {
             $search = $request->input('search.value');
             $q = Product::select('products.*')
                 ->with('category', 'brand', 'unit')
+                ->leftJoinSub($lastPurchaseCosts, 'pp_max', 'pp_max.product_id', '=', 'products.id')
+
                 ->join('categories', 'products.category_id', '=', 'categories.id')
                 ->leftjoin('product_purchases', 'product_purchases.product_id', '=', 'products.id')
                 ->leftjoin('brands', 'products.brand_id', '=', 'brands.id')
                 ->leftjoin('product_variants', 'products.id', '=', 'product_variants.product_id')
                 ->where([
                     ['products.name', 'LIKE', "%{$search}%"],
-                    ['products.is_active', true]
                 ])
                 ->orWhere([
                     ['products.code', 'LIKE', "%{$search}%"],
-                    ['products.is_active', true]
                 ])
                 ->orWhere([
                     ['product_variants.item_code', 'LIKE', "%{$search}%"],
-                    ['products.is_active', true]
                 ]);
             //searching with custom field
             foreach ($field_names as $key => $field_name) {
                 $q = $q->orwhere('products.' . $field_name, 'LIKE', "%{$search}%");
             }
-
-            $q = $q->offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir);
-
-            $products = $q->groupBy('products.id')->get();
-            $totalFiltered = $q->groupBy('products.id')->count();
-            /*$totalFiltered = Product::
-                            join('categories', 'products.category_id', '=', 'categories.id')
-                            ->leftjoin('brands', 'products.brand_id', '=', 'brands.id')
-                            ->where([
-                                ['products.name','LIKE',"%{$search}%"],
-                                ['products.is_active', true]
-                            ])
-                            ->orWhere([
-                                ['products.code', 'LIKE', "%{$search}%"],
-                                ['products.is_active', true]
-                            ])
-                            ->orWhere([
-                                ['categories.name', 'LIKE', "%{$search}%"],
-                                ['categories.is_active', true],
-                                ['products.is_active', true]
-                            ])
-                            ->orWhere([
-                                ['brands.title', 'LIKE', "%{$search}%"],
-                                ['brands.is_active', true],
-                                ['products.is_active', true]
-                            ])
-                            ->count();*/
         }
+
+
+        $comparisonId = $request->input('price_comparison');
+
+        if ($comparisonId !== null && $comparisonId !== '0') {
+            switch ($comparisonId) {
+                case 1:
+                    $q->whereColumn('products.price',           '<', 'products.cost');
+                    break;
+                case 2:
+                    $q->whereColumn('products.wholesale_price', '<', 'products.cost');
+                    break;
+                case 3:
+                    $q->whereColumn('products.retail_price',    '<', 'products.cost');
+                    break;
+                case 4:
+                    $q->whereColumn('products.online_price',    '<', 'products.cost');
+                    break;
+                case 6:
+                    $q->whereColumn('pp_max.net_unit_cost', '<', 'products.cost');
+                    break;
+                case 7:
+                    $q->whereRaw('products.price < pp_max.net_unit_cost');
+                    break;
+                case 8:
+                    $q->whereRaw('products.wholesale_price < pp_max.net_unit_cost');
+                    break;
+                case 9:
+                    $q->whereRaw('products.retail_price < pp_max.net_unit_cost');
+                    break;
+                case 10:
+                    $q->whereRaw('products.online_price < pp_max.net_unit_cost');
+                    break;
+                case 11:
+                    $q->where(function ($x) {
+                        $x->whereColumn('products.price',           '<', 'products.cost')
+                            ->orWhereColumn('products.wholesale_price', '<', 'products.cost')
+                            ->orWhereColumn('products.retail_price',   '<', 'products.cost')
+                            ->orWhereColumn('products.online_price',   '<', 'products.cost');
+                    });
+                    break;
+            }
+        }
+
+
+
+        $q = $q->offset($start)
+            ->limit($limit)
+            ->orderBy($order, $dir);
+    
+
+        $products = $q->get();
+        $totalFiltered = $q->count();
+
+
+
+
         $data = array();
         if (!empty($products)) {
             foreach ($products as $key => $product) {
@@ -2066,16 +2101,81 @@ class ProductController extends Controller
                 $nestedData['key'] = $key;
                 $nestedData['name'] = $product->name;
                 $nestedData['code'] = $product->code;
-                   
+
                 $last_purchase_price = ProductPurchase::where('product_id', $product->id)->orderBy('id', 'desc')->first();
-                $nestedData['price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="price" value="' . $product->price . '">';
-                $nestedData['wholesale_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="wholesale_price" value="' . $product->wholesale_price . '">';
-                $nestedData['retail_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="retail_price" value="' . $product->retail_price . '">';
-                $nestedData['online_price'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="online_price" value="' . $product->online_price . '">';
-                $nestedData['cost'] = '<input type="number" class="price-input" data-product-id="' . $product->id . '" data-field="cost" value="' . $product->cost . '">';
-                $nestedData['last_purches_cost'] = $last_purchase_price->net_unit_cost ?? 'N/A';
+
+                if (in_array("price-management-edit", $request['all_permission'])) {
+                    $nestedData['price'] = '
+                        <div>
+                            <input type="number" class="price-input form-control" data-product-id="' . $product->id . '" data-field="price" value="' . $product->price . '" data-cost="' . $product->cost . '" >
+                            <small class="text-muted difference-text" id="diff-price-' . $product->id . '">
+                                Diff: ' . ( $product->price - $product->cost) . '
+                            </small>
+                        </div>';
+
+                    $nestedData['retail_price'] = '
+                        <div>
+                            <input type="number" class="price-input form-control" data-product-id="' . $product->id . '" data-field="retail_price" value="' . $product->retail_price . '" data-cost="' . $product->cost . '">
+                            <small class="text-muted difference-text" id="diff-retail_price-' . $product->id . '">
+                                Diff: ' . ( $product->retail_price - $product->cost) . '
+                            </small>
+                        </div>';
+
+                    $nestedData['wholesale_price'] = '
+                        <div>
+                            <input type="number" class="price-input form-control" data-product-id="' . $product->id . '" data-field="wholesale_price" value="' . $product->wholesale_price . '" data-cost="' . $product->cost . '">
+                            <small class="text-muted difference-text" id="diff-wholesale_price-' . $product->id . '">
+                                Diff: ' . ( $product->wholesale_price - $product->cost) . '
+                            </small>
+                        </div>';
+
+                    $nestedData['online_price'] = '
+                        <div>
+                            <input type="number" class="price-input form-control" data-product-id="' . $product->id . '" data-field="online_price" value="' . $product->online_price . '" data-cost="' . $product->cost . '">
+                            <small class="text-muted difference-text" id="diff-online_price-' . $product->id . '">
+                                Diff: ' . ( $product->online_price - $product->cost) . '
+                            </small>
+                        </div>';
+
+                    $nestedData['cost'] = '
+                        <input type="number" class="price-input form-control" data-product-id="' . $product->id . '" data-field="cost" value="' . $product->cost . '">';
+                } else {
+                    $nestedData['price'] = '
+                        <div>
+                            ' . $product->price . '
+                            <br/>
+                            <small class="text-muted">Diff: ' . ( $product->price - $product->cost) . '</small>
+                        </div>';
+
+                    $nestedData['retail_price'] = '
+                        <div>
+                            ' . $product->retail_price . '
+                            <br/>
+                            <small class="text-muted">Diff: ' . ( $product->retail_price - $product->cost) . '</small>
+                        </div>';
+
+                    $nestedData['wholesale_price'] = '
+                        <div>
+                            ' . $product->wholesale_price . '
+                            <br/>
+                            <small class="text-muted">Diff: ' . ( $product->wholesale_price - $product->cost) . '</small>
+                        </div>';
+
+                    $nestedData['online_price'] = '
+                        <div>
+                            ' . $product->online_price . '
+                            <br/>
+                            <small class="text-muted">Diff: ' . ( $product->online_price - $product->cost) . '</small>
+                        </div>';
+
+                    $nestedData['cost'] = $product->cost;
+                }
+
 
                 
+                $nestedData['last_purches_cost'] = $last_purchase_price->net_unit_cost ?? 'N/A';
+
+
                 //fetching custom fields data
                 foreach ($field_names as $field_name) {
                     $nestedData[$field_name] = $product->$field_name;
@@ -2085,15 +2185,23 @@ class ProductController extends Controller
                 $nestedData['options'] = '<div class="btn-group">';
 
 
-                if (in_array( "products-delete", $request['all_permission']))
-                    $nestedData['options'] .= \Form::open(["route" => ["products.destroy", $product->id], "method" => "DELETE"]) . '
+                if (in_array("product-status-update", $request['all_permission']))
+                    if ($product->is_active) {
+                        $nestedData['options'] .= \Form::open(["route" => ["product.changeStatus", $product->id], "method" => "GET"]) . '
                             
-                              <button type="submit" class="btn btn-primary col ml-1" onclick="return confirmDelete()"><i class="fa fa-trash"></i> ' . trans("file.delete") . '</button>
+                              <button type="submit" class="btn btn-danger col ml-1" "><i class="fa fa-ban"></i> ' . trans("file.Disable") . '</button>
                             ' . \Form::close() . '
                     </div>';
+                    } else {
+                        $nestedData['options'] .=   \Form::open(["route" => ["product.changeStatus", $product->id], "method" => "GET"]) . '
+                                
+                                <button type="submit" class="btn btn-primary col ml-1" "><i class="fa fa-undo"></i> Undo </button>
+                                ' . \Form::close() . '
+                        </div>';
+                    }
                 // data for product details by one click
-               
-                
+
+
                 $nestedData['product'] = array(
                     ' "' . $product->name . '"',
                     ' "' . $product->code . '"',
@@ -2116,39 +2224,38 @@ class ProductController extends Controller
             "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
-    
+
         echo json_encode($json_data);
     }
 
     public function priceManagementUpdate(Request $request)
     {
-       
 
-        if (!env('USER_VERIFIED')) {
-            return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
-        } else {
-            $this->validate($request, [
-                'code' => [
-                    'max:255',
-                    Rule::unique('products')->ignore($request->product_id)->where(function ($query) {
-                        return $query->where('is_active', 1);
-                    }),
-                ]
-            ]);
-
-            $field = $request->field ?? '';
-            if($field){
+        try {
+            $field = $request->field;
+            if ($field) {
                 $lims_product_data = Product::findOrFail($request->product_id);
                 $lims_product_data->$field = $request->value;
                 $lims_product_data->save();
-
             }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('not_permitted', 'Invalid data format!');
+        }
+    }
 
 
-           
+    public function productDisable($id)
+    {
+        if (!env('USER_VERIFIED')) {
+            return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
+        } else {
+            $lims_product_data = Product::findOrFail($id);
+            $lims_product_data->is_active = !$lims_product_data->is_active;
+
+            $lims_product_data->save();
             $this->cacheForget('product_list');
             $this->cacheForget('product_list_with_variant');
-            \Session::flash('edit_message', 'Product updated successfully');
+            return redirect()->back()->with('edit_message', 'Product ' . ($lims_product_data->is_active ? 'enabled' : 'disabled') . ' successfully');
         }
     }
 }

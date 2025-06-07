@@ -26,27 +26,36 @@
                     aria-hidden="true">&times;</span></button>{{ session()->get('message') }}</div>
     @endif
 
+    <div id="alert-container"></div>
+
     <section>
         <div class="container-fluid">
-            @if (in_array('products-add', $all_permission))
-                <a href="{{ route('products.create') }}" class="btn btn-info add-product-btn"><i class="dripicons-plus"></i>
-                    {{ __('file.add_product') }}</a>
-                <a href="#" data-toggle="modal" data-target="#importProduct"
-                    class="btn btn-primary add-product-btn"><i class="dripicons-copy"></i>
-                    {{ __('file.import_product') }}</a>
-            @endif
-            @if (in_array('products-edit', $all_permission) && in_array('ecommerce', explode(',', $general_setting->modules)))
-                <a href="{{ route('product.allProductInStock') }}" class="btn btn-dark add-product-btn"><i
-                        class="dripicons-stack"></i> {{ __('file.All Product In Stock') }}</a>
-                <a href="{{ route('product.showAllProductOnline') }}" class="btn btn-dark add-product-btn"><i
-                        class="dripicons-wifi"></i> {{ __('file.Show All Product Online') }}</a>
-            @endif
+
             <div class="card mt-3">
                 <h3 class="text-center mt-3">{{ trans('file.Filter Products') }}</h3>
                 <div class="card-body  ">
-                    {!! Form::open(['route' => 'products.index', 'method' => 'get']) !!}
+                    {!! Form::open(['route' => 'product.priceManagement', 'method' => 'get']) !!}
                     <div class="row align-items-end">
-
+                        <div class="col-md-7 offset-1 @if (\Auth::user()->role_id > 8) d-none @endif">
+                            <div class="form-group mb-0">
+                                <label><strong>Price Comparison</strong></label>
+                                <select id="price_comparison" name="price_comparison" class="selectpicker form-control"
+                                    data-live-search="true" data-live-search-style="begins">
+                                    <option value="0">All</option>
+                                    <option value="1">POS Price Less than Cost</option>
+                                    <option value="2">Wholesale Price Less than Cost</option>
+                                    <option value="3">Retail Price Less than Cost</option>
+                                    <option value="4">Online Price Less than Cost</option>
+                                    <option value="6">Last Purchase Cost Less than Cost</option>
+                                    <option value="7">POS Price Less than Last Purchase Cost</option>
+                                    <option value="8">Wholesale Price Less than Last Purchase Cost</option>
+                                    <option value="9">Retail Price Less than Last Purchase Cost</option>
+                                    <option value="10">Online Price Less than Last Purchase Cost</option>
+                                    <option value="11">All Prices Less than Cost</option>
+                                    <option value="12">All Prices Less than Last Purchase Cost</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-md-3">
                             <div class="form-group mb-0">
                                 <label class="invisible d-block"><strong>Submit</strong></label>
@@ -84,7 +93,7 @@
     <script>
         $("ul#product").siblings('a').attr('aria-expanded', 'true');
         $("ul#product").addClass("show");
-        $("ul#product #product-list-menu").addClass("active");
+        $("ul#product #price-management-menu").addClass("active");
 
         @if (config('database.connections.saleprosaas_landlord'))
             if (localStorage.getItem("message")) {
@@ -142,20 +151,48 @@
         var role_id = <?php echo json_encode($role_id); ?>;
         var user_verified = <?php echo json_encode(env('USER_VERIFIED')); ?>;
         var logoUrl = <?php echo json_encode(url('logo', $general_setting->site_logo)); ?>;
+        var price_comparison = <?php echo json_encode($price_comparison); ?>;
 
+        
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
-        $(document).on('keydown', '.price-input', function() {
+        $("#price_comparison").val(price_comparison);
+
+        $(document).on('keydown', '.price-input', function(event) {
             console.log('Key pressed:', event.key);
             if (event.key === 'Enter') {
                 const productId = $(this).data('product-id');
-                const field = $(this).data('field'); // e.g., 'price', 'cost', etc.
+                const field = $(this).data('field');
                 const value = parseFloat($(this).val());
-                console.log('Product ID:', productId, 'Field:', field, 'Value:', value);
+
+                const $input = $(this);
+                const cost = parseFloat($input.data('cost'));
+                const price = parseFloat($input.val());
+                let diff = 0;
+                if (!isNaN(cost) && !isNaN(price)) {
+                    diff = (price - cost).toFixed(2);
+                }
+
+                const $diffText = $(`#diff-${field}-${productId}`);
+                $diffText.text(`Diff: ${diff}`);
+
+                // Optional: color styling
+                $diffText.removeClass('text-danger text-success');
+
+                console.log('Diff:', diff);
+                if (diff < 0) {
+                    $diffText.removeClass('text-primary');
+                    $diffText.addClass('text-danger');
+                } else {
+                    $diffText.removeClass('text-danger');
+                    $diffText.addClass('text-primary');
+                }
+
+
                 $.ajax({
                     url: '/products/price-management/update',
                     type: 'POST',
@@ -166,14 +203,37 @@
                         value: value
                     },
                     success: function(response) {
-                        console.log('Updated successfully:', response);
+                        $('#alert-container').html(`
+                    <div class="alert alert-success alert-dismissible text-center fade show" role="alert">
+                        Price updated successfully.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `);
+
+                        // Optional: Auto-dismiss alert after 3 seconds
+                        setTimeout(function() {
+                            $('.alert').fadeOut('slow');
+                        }, 3000);
                     },
                     error: function(xhr) {
-                        alert('Error updating price.');
+                        $('#alert-container').html(`
+                    <div class="alert alert-danger alert-dismissible text-center fade show" role="alert">
+                        Error updating price.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `);
+                        setTimeout(function() {
+                            $('.alert').fadeOut('slow');
+                        }, 3000);
                     }
                 });
             }
         });
+
 
 
         $("#select_all").on("change", function() {
@@ -212,6 +272,7 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         all_permission: all_permission,
+                        price_comparison: price_comparison,
                     },
                     dataType: "json",
                     type: "post"

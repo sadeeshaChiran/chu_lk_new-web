@@ -81,7 +81,7 @@
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d') }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.Today') }}</button>
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d', strtotime('-1 day')) }}"
-                            data-end_date="{{ date('Y-m-d', strtotime('-1 day')) }}">{{ trans('file.Yesterday') }}</button>
+                            data-end_date="{{ date('Y-m-d', strtotime('-1 day')) }}">{{ trans('Yesterday') }}</button>
 
                         <button class="btn btn-default date-btn"
                             data-start_date="{{ date('Y-m-d', strtotime(' -7 day')) }}"
@@ -89,6 +89,13 @@
                         <button class="btn btn-default date-btn active"
                             data-start_date="{{ date('Y') . '-' . date('m') . '-' . '01' }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.This Month') }}</button>
+
+
+                        <button class="btn btn-default date-btn"
+                            data-start_date="{{ date('Y-m-01', strtotime('first day of last month')) }}"
+                            data-end_date="{{ date('Y-m-t', strtotime('last day of last month')) }}">
+                            {{ trans('Last Month') }}
+                        </button>
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y') . '-01' . '-01' }}"
                             data-end_date="{{ date('Y') . '-12' . '-31' }}">{{ trans('file.This Year') }}</button>
 

@@ -15,7 +15,7 @@ class CashRegisterController extends Controller
 	public function index()
 	{
 		if (Auth::user()->role_id <= 2) {
-			$lims_cash_register_all = CashRegister::with('user', 'warehouse')->get();
+			$lims_cash_register_all = CashRegister::with('user', 'warehouse')->orderBy('created_at', 'desc')->get();
 
 			foreach ($lims_cash_register_all as $register) {
 
