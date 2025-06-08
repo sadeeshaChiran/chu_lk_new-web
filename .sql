@@ -28,3 +28,8 @@ ALTER TABLE `payments` ADD `document` VARCHAR(255) NULL AFTER `payment_note`;
 
 --2025/06/30
 ALTER TABLE `adjustments` ADD `created_by` INT NULL AFTER `note`, ADD `updated_by` INT NULL AFTER `created_by`;
+
+
+--2025/07/09
+ALTER TABLE `cash_registers` CHANGE `closing_balance` `closing_cash_balance` DOUBLE NOT NULL DEFAULT '0';
+ALTER TABLE `cash_registers` ADD `closing_credit_card_balance` DOUBLE NOT NULL DEFAULT '0' AFTER `closing_cash_balance`, ADD `closing_deposit_balance` DOUBLE NOT NULL DEFAULT '0' AFTER `closing_credit_card_balance`;

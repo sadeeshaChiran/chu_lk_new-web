@@ -111,7 +111,10 @@ class CashRegisterController extends Controller
 		$cash_register_data = CashRegister::find($id);
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
-		$data['closing_balance'] = $cash_register_data->closing_balance;
+		$data['closing_cash_balance'] = $cash_register_data->closing_cash_balance;
+		$data['closing_credit_card_balance'] = $cash_register_data->closing_credit_card_balance;
+		$data['closing_deposit_balance'] = $cash_register_data->closing_deposit_balance;
+
 		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
 
 		$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
@@ -196,7 +199,9 @@ class CashRegisterController extends Controller
 		
 
 		$data['cash_in_hand'] = $cash_register_data->cash_in_hand;
-		$data['closing_balance'] = $cash_register_data->closing_balance;
+		$data['closing_cash_balance'] = $cash_register_data->closing_cash_balance;
+		$data['closing_credit_card_balance'] = $cash_register_data->closing_credit_card_balance;
+		$data['closing_deposit_balance'] = $cash_register_data->closing_deposit_balance;
 		$data['next_day_opening_balance'] = $cash_register_data->next_day_opening_balance;
 
 		$data['total_sale_amount'] = Sale::where('cash_register_id', $cash_register_data->id)
@@ -295,7 +300,10 @@ class CashRegisterController extends Controller
 	public function close(Request $request)
 	{
 		$cash_register_data = CashRegister::find($request->cash_register_id);
-		$cash_register_data->closing_balance = $request->closing_balance;
+		$cash_register_data->closing_cash_balance = $request->closing_cash_balance;
+		$cash_register_data->closing_credit_card_balance = $request->closing_credit_card_balance;
+		$cash_register_data->closing_deposit_balance = $request->closing_deposit_balance;
+
 		$cash_register_data->next_day_opening_balance = $request->next_day_opening_balance;
 		$cash_register_data->note = $request->note;
 		$cash_register_data->status = 0;

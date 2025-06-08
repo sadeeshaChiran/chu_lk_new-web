@@ -1860,8 +1860,18 @@
                                                         <td id="total_cash" class="text-right"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><strong>Shortage Balance:</strong></td>
-                                                        <td id="shortage_balance"
+                                                        <td><strong>Cash Shortage Balance:</strong></td>
+                                                        <td id="cash_shortage_balance"
+                                                            class="text-right font-weight-bold text-danger"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Credit Card Shortage Balance:</strong></td>
+                                                        <td id="credit_card_shortage_balance"
+                                                            class="text-right font-weight-bold text-danger"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Deposit Shortage Balance:</strong></td>
+                                                        <td id="deposit_shortage_balance"
                                                             class="text-right font-weight-bold text-danger"></td>
                                                     </tr>
 
@@ -1878,9 +1888,15 @@
                                                         name="next_day_opening_balance"
                                                         class="form-control col-md-12 p-2 " step="any"
                                                         placeholder="Next Day Opening Balance" required>
-                                                    <input type="number" step="any" name="closing_balance"
-                                                        id="closing_balance" class="form-control col-md-12 p-2 mt-2"
-                                                        step="any" placeholder="Closing Balance" required>
+                                                    <input type="number" step="any" name="closing_cash_balance"
+                                                        id="closing_cash_balance" class="form-control col-md-12 p-2 mt-2"
+                                                        step="any" placeholder="Closing Cash Balance" required>
+                                                    <input type="number" step="any" name="closing_credit_card_balance"
+                                                        id="closing_credit_card_balance" class="form-control col-md-12 p-2 mt-2"
+                                                        step="any" placeholder="Closing Credit Card Balance" required>
+                                                    <input type="number" step="any" name="closing_deposit_balance"
+                                                        id="closing_deposit_balance" class="form-control col-md-12 p-2 mt-2"
+                                                        step="any" placeholder="Closing Deposit Balance" required>
 
 
                                                     <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
@@ -1965,7 +1981,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>{{ trans('file.Deposit Payment') }}:</td>
-                                                        <td class="deposit_payment text-right"></td>
+                                                        <td id="deposit_payment" class="deposit_payment text-right"></td>
                                                     </tr>
                                                     @if (in_array('paypal', $options) &&
                                                             strlen(env('PAYPAL_LIVE_API_USERNAME')) > 0 &&
@@ -2256,17 +2272,36 @@
         // adding shortage balance in enter nextdaybalance
         $(document).ready(function() {
 
-            function calculateShortage() {
-
+            function calculateCashShortage() {
                 let totalCash = parseFloat($('#register-details-modal #total_cash').text()) || 0;
-                const closing = parseFloat($('#closing_balance').val()) || 0;
+                const closing = parseFloat($('#closing_cash_balance').val()) || 0;
                 const opening = parseFloat($('#next_day_opening_balance').val()) || 0;
                 const shortage = (closing + opening) - (totalCash);
-                $('#shortage_balance').text(shortage.toFixed(2));
+                $('#cash_shortage_balance').text(shortage.toFixed(2));
             }
+
+            function calculateCreditCardShortage() {
+                let totalCreditCard = parseFloat($('#register-details-modal #credit_card_payment_received').text()) || 0;
+                const closing = parseFloat($('#closing_credit_card_balance').val()) || 0;
+                const shortage = closing  - totalCreditCard;
+                $('#credit_card_shortage_balance').text(shortage.toFixed(2));
+            }
+
+            function calculateDepositShortage() {
+                let totalCreditCard = parseFloat($('#register-details-modal #deposit_payment').text()) || 0;
+                const closing = parseFloat($('#closing_deposit_balance').val()) || 0;
+                const shortage = closing  - totalCreditCard;
+                $('#deposit_shortage_balance').text(shortage.toFixed(2));
+            }
+            
             // $('select[name="customer_id"]').on('change', function() {
 
-            $('#next_day_opening_balance , #closing_balance').on('input', calculateShortage);
+            $('#next_day_opening_balance , #closing_cash_balance').on('input', calculateCashShortage);
+
+            $('#closing_credit_card_balance').on('input', calculateCreditCardShortage)
+
+            $('#closing_deposit_balance').on('input', calculateDepositShortage)
+
         });
         // ==
 

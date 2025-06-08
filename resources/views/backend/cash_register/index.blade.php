@@ -23,8 +23,12 @@
                         <th>{{ trans('file.Opened at') }}</th>
                         <th>{{ trans('file.Closed at') }}</th>
                         <th>Note</th>
-                        <th>Shortage Balance</th>
+                        <th>Cash Shortage Balance</th>
                         <th>Cash Hand Over Amount</th>
+                        <th>Credit Card Shortage Balance</th>
+                        <th>Credit Card Closing Amount</th>
+                        <th>Deposit Shortage Balance</th>
+                        <th>Deposit Closing Amount</th>
                         <th>Next Day Opening Balance</th>
                         <th>Today Opening Balance</th>
                         <th>Total Expense</th>
@@ -39,10 +43,10 @@
                         <th>Cheque Payment</th>
                         <th>Paypal Payment</th>
                         <th>Total Sale Return</th>
-                        
-                        
-                       
-                        
+
+
+
+
 
 
                     </tr>
@@ -51,7 +55,7 @@
                     @foreach ($lims_cash_register_all as $key => $cash_register)
                         <tr data-id="{{ $cash_register->id }}">
                             <td>{{ $key }}</td>
-                             <td>
+                            <td>
                                 <div class="btn-group">
                                     <button type="button" data-id="{{ $cash_register->id }}"
                                         class="register-details-btn btn btn-sm btn-info" data-toggle="modal"
@@ -73,12 +77,13 @@
                             <td>{{ $cash_register->warehouse->name }}</td>
 
 
-                            <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->created_at)) }}</td>
+                            <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->created_at)) }}
+                            </td>
                             @if ($cash_register->status)
                                 <td>-</td>
                             @else
-                                <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->updated_at)) }}</td>
-                                
+                                <td>{{ date($general_setting->date_format . ' h:i:s', strtotime($cash_register->updated_at)) }}
+                                </td>
                             @endif
 
 
@@ -87,8 +92,14 @@
                             @else
                                 <td>N/A</td>
                             @endif
-                            <td>{{ $cash_register->closing_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}</td>
-                            <td>{{ $cash_register->closing_balance }}</td>
+                            <td>{{ $cash_register->closing_cash_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}
+                            </td>
+                            <td>{{ $cash_register->closing_cash_balance }}</td>
+                            <td>{{ $cash_register->closing_credit_card_balance - $cash_register->credit_card_payment }}
+                            </td>
+                            <td>{{ $cash_register->closing_credit_card_balance }}</td>
+                            <td>{{ $cash_register->closing_deposit_balance - $cash_register->deposit_payment }}</td>
+                            <td>{{ $cash_register->closing_deposit_balance }}</td>
                             <td>{{ $cash_register->next_day_opening_balance }}</td>
                             <td>{{ $cash_register->cash_in_hand }}</td>
                             <td>{{ $cash_register->total_expense }}</td>
@@ -102,11 +113,11 @@
                             <td>{{ $cash_register->cheque_payment }}</td>
                             <td>{{ $cash_register->paypal_payment }}</td>
                             <td>{{ $cash_register->total_sale_return }}</td>
-                          
 
-                           
-                            
-                           
+
+
+
+
                         </tr>
                     @endforeach
                 </tbody>
@@ -212,7 +223,7 @@
                                 </table>
                             </div>
                             <div class="col-md-12" id="closing-section">
-                                
+
                                 <form action="{{ route('cashRegister.close') }}" class="col-md-12" method="POST">
                                     @csrf
                                     <input type="hidden" name="cash_register_id">
@@ -221,9 +232,16 @@
                                         <input type="number" step="any" name="next_day_opening_balance"
                                             class="form-control col-md-12 p-2 " step="any"
                                             placeholder="Next Day Opening Balance" required>
-                                        <input type="number" step="any" name="closing_balance"
-                                            class="form-control col-md-12 p-2 mt-2" step="any"
-                                            placeholder="Closing Balance" required>
+                                        <input type="number" step="any" name="closing_cash_balance"
+                                            id="closing_cash_balance" class="form-control col-md-12 p-2 mt-2"
+                                            step="any" placeholder="Closing Cash Balance" required>
+                                        <input type="number" step="any" name="closing_credit_card_balance"
+                                            id="closing_credit_card_balance" class="form-control col-md-12 p-2 mt-2"
+                                            step="any" placeholder="Closing Credit Card Balance" required>
+                                        <input type="number" step="any" name="closing_deposit_balance"
+                                            id="closing_deposit_balance" class="form-control col-md-12 p-2 mt-2"
+                                            step="any" placeholder="Closing Deposit Balance" required>
+
 
 
                                         <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
@@ -242,14 +260,12 @@
 @endsection
 
 @push('scripts')
-
     <script type="text/javascript">
-
         // this is for datatable datetime sorting
         $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
 
 
-        
+
         function confirmClose() {
             if (confirm("Are you sure want to close?")) {
                 return true;
@@ -270,15 +286,20 @@
 
                     $('#register-details-modal #cash_in_hand').text(data['cash_in_hand']);
                     $('#register-details-modal #total_sale_amount').text(data['total_sale_amount']);
-                    $('#register-details-modal #total_payment_received').text(data['total_payment_received']);
-                    $('#register-details-modal #cash_payment_received').text(data['cash_payment_received']);
-                    $('#register-details-modal #credit_card_payment_received').text(data['credit_card_payment_received']);
-                    $('#register-details-modal #bank_payment_received').text(data['bank_payment_received']);
+                    $('#register-details-modal #total_payment_received').text(data[
+                        'total_payment_received']);
+                    $('#register-details-modal #cash_payment_received').text(data[
+                        'cash_payment_received']);
+                    $('#register-details-modal #credit_card_payment_received').text(data[
+                        'credit_card_payment_received']);
+                    $('#register-details-modal #bank_payment_received').text(data[
+                        'bank_payment_received']);
 
-                    
+
                     $('#register-details-modal #total_payment_paid').text(data['total_payment_paid']);
                     $('#register-details-modal #cash_payment_paid').text(data['cash_payment_paid']);
-                    $('#register-details-modal #credit_card_payment_paid').text(data['credit_card_payment_paid']);
+                    $('#register-details-modal #credit_card_payment_paid').text(data[
+                        'credit_card_payment_paid']);
                     $('#register-details-modal #bank_payment_paid').text(data['bank_payment_paid']);
 
                     $('#register-details-modal #cheque_payment').text(data['cheque_payment']);
@@ -323,7 +344,7 @@
                     'targets': [0]
                 }
             ],
-            
+
             'select': {
                 style: 'multi',
                 selector: 'td:first-child'
