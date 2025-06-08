@@ -335,17 +335,14 @@
                         </tr>
                     @endif --}}
                     <tr style=" border: 1px dotted #ddd; text-align: center ;">
-                        <td style="padding: 5px;width:30%">Retail Price: <br />
+                        <td style="padding: 5px;width:50%" >Retail Price: <br />
                             {{ number_format((float) $total_retail_price, $general_setting->decimal, '.', ',') }}
                         </td>
-                        <td style="padding: 5px;width:40%">Amount: <br />
+                        <td style="padding: 5px;width:50%" colspan="2">Our Amount: <br />
                             {{ number_format((float) $lims_sale_data->total_price, $general_setting->decimal, '.', ',') }}
                         </td>
-                        <td style="padding: 5px;width:30%; font-weight: bolder;">Saveing: <br />
-                            {{ number_format((float) ($total_retail_price - $lims_sale_data->total_price), $general_setting->decimal, '.', ',') }}
-                        </td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         @if ($general_setting->currency_position == 'prefix')
                             <th class="centered" colspan="3">{{ trans('file.In Words') }}:
                                 <span>{{ $currency_code }}</span>
@@ -357,7 +354,7 @@
                                 <span>{{ $currency_code }}</span>
                             </th>
                         @endif
-                    </tr>
+                    </tr> --}}
 
 
                     </tr>
@@ -372,9 +369,9 @@
             <table>
                 <tbody>
                      <tr>
-                        <td  class="centered" colspan="3">
+                        <td  class="centered" colspan="3" style="font-size: 14.5px"> 
                            You saved 
-                            <span style="font-weight: bolder;">Rs.{{ number_format((float) ($total_retail_price - $lims_sale_data->total_price), $general_setting->decimal, '.', ',') }}
+                            <span style="font-size: 15px;  font-weight: bolder;">Rs.{{ number_format((float) ($total_retail_price - $lims_sale_data->total_price), $general_setting->decimal, '.', ',') }}
                             </span>
                         </td>
                          
@@ -386,12 +383,12 @@
                             {{ trans('file.Thank you for shopping with us. Please come again') }}</td>
                     </tr>
                     
-                    <tr>
+                    {{-- <tr>
                         <td class="centered" colspan="3">
                             <?php echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS1D::getBarcodePNG($lims_sale_data->reference_no, 'C128') . '" width="300" alt="barcode"   />'; ?>
 
                         </td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
 

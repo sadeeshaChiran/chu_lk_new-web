@@ -542,7 +542,7 @@ class SaleController extends Controller
                 if ($sale->sale_status !== 4)
                     $nestedData['options'] .=
                         '<li>
-                        <a href="return-sale/create?reference_no=' . $nestedData['reference_no'] . '" class="add-payment btn btn-link"><i class="dripicons-return"></i> ' . trans('file.Add Return') . '</a>
+                        <a href="/return-sale/create?reference_no=' . $nestedData['reference_no'] . '" class="add-payment btn btn-link"><i class="dripicons-return"></i> ' . trans('file.Add Return') . '</a>
                     </li>';
 
                 $nestedData['options'] .=
