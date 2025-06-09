@@ -212,13 +212,17 @@
     var lims_productcodeSearch = $('#lims_productcodeSearch');
     var key = 1;
     lims_productcodeSearch.autocomplete({
+
         source: function(request, response) {
-            var matcher = new RegExp(".?" + $.ui.autocomplete.escapeRegex(request.term), "i");
-            response($.grep(lims_product_code, function(item) {
-                console.log(matcher.test(item));
-                return matcher.test(item);
-            }));
-        },
+                var terms = request.term.toLowerCase().split(/\s+/);
+                response($.grep(lims_product_code, function(item) {
+                    var itemText = item.toLowerCase();
+                    return terms.every(function(term) {
+                        return itemText.includes(term);
+                    });
+                }));
+            },
+
         select: function(event, ui) {
             var data = ui.item.value;
             $.ajax({

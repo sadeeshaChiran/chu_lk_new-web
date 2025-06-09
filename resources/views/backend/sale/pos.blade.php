@@ -3134,9 +3134,12 @@
 
         lims_productcodeSearch.autocomplete({
             source: function(request, response) {
-                var matcher = new RegExp(".?" + $.ui.autocomplete.escapeRegex(request.term), "i");
+                var terms = request.term.toLowerCase().split(/\s+/);
                 response($.grep(lims_product_array, function(item) {
-                    return matcher.test(item);
+                    var itemText = item.toLowerCase();
+                    return terms.every(function(term) {
+                return itemText.includes(term);
+        });
                 }));
             },
             response: function(event, ui) {

@@ -586,12 +586,15 @@ var lims_product_code = [
     var lims_productcodeSearch = $('#lims_productcodeSearch');
 
     lims_productcodeSearch.autocomplete({
-    source: function(request, response) {
-        var matcher = new RegExp(".?" + $.ui.autocomplete.escapeRegex(request.term), "i");
-        response($.grep(lims_product_code, function(item) {
-            return matcher.test(item);
-        }));
-    },
+                source: function(request, response) {
+                var terms = request.term.toLowerCase().split(/\s+/);
+                response($.grep(lims_product_code, function(item) {
+                    var itemText = item.toLowerCase();
+                    return terms.every(function(term) {
+                        return itemText.includes(term);
+                    });
+                }));
+            },
     response: function(event, ui) {
         if (ui.content.length == 1) {
             var data = ui.content[0].value;

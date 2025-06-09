@@ -87,6 +87,7 @@
     $('.selectpicker').selectpicker('refresh');
 
     $(".daterangepicker-field").daterangepicker({
+            timeZone: 'Asia/Colombo',
       callback: function(startDate, endDate, period){
         var start_date = startDate.format('YYYY-MM-DD');
         var end_date = endDate.format('YYYY-MM-DD');

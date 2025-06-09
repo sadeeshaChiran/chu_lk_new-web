@@ -17,6 +17,7 @@
 <script src='js/daterangepicker.min.js'></script>
 <script type="text/javascript">
 $(".daterangepicker-field").daterangepicker({
+            timeZone: 'Asia/Colombo',
   forceUpdate: true,
   callback: function(startDate, endDate, period){
   	var start_date = startDate.format('L');

@@ -144,6 +144,7 @@
     $("ul#quotation #quotation-list-menu").addClass("active");
 
     $(".daterangepicker-field").daterangepicker({
+            timeZone: 'Asia/Colombo',
       callback: function(startDate, endDate, period){
         var starting_date = startDate.format('YYYY-MM-DD');
         var ending_date = endDate.format('YYYY-MM-DD');

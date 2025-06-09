@@ -762,15 +762,16 @@
         $("#payment-method").val(payment_method);
 
         // console.log(payment_method);
-
         $(".daterangepicker-field").daterangepicker({
-            autoUpdateInput: false,
-        ranges: {
-            'Today': [moment().startOf('day'), moment().startOf('day')],
-            'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').startOf('day')],
-            'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
-            'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
-        },
+            timeZone: 'Asia/Colombo',
+            autoUpdateInput: true,
+            ranges: {
+                'Today': [moment().startOf('day'), moment().endOf('day')],
+                'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf(
+                    'day')],
+                'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
+                'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
+            },
             locale: {
                 format: 'YYYY-MM-DD'
             },

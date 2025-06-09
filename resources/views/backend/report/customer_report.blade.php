@@ -208,6 +208,7 @@
     $('.selectpicker').selectpicker('refresh');
 
     $(".daterangepicker-field").daterangepicker({
+            timeZone: 'Asia/Colombo',
         parentElement: '.daterangepicker-container',
         @if( Config::get('app.locale') == 'ar' || $general_setting->is_rtl)
         orientation: 'left',
