@@ -95,7 +95,7 @@
                             <td>{{ $cash_register->closing_cash_balance + $cash_register->next_day_opening_balance - $cash_register->total_cash }}
                             </td>
                             <td>{{ $cash_register->closing_cash_balance }}</td>
-                            <td>{{ $cash_register->closing_credit_card_balance - $cash_register->credit_card_payment }}
+                            <td>{{ $cash_register->closing_credit_card_balance - (($cash_register->credit_card_payment / 100) * 103) }}
                             </td>
                             <td>{{ $cash_register->closing_credit_card_balance }}</td>
                             <td>{{ $cash_register->closing_deposit_balance - $cash_register->deposit_payment }}</td>

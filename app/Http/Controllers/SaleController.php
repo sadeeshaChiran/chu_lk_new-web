@@ -243,19 +243,19 @@ class SaleController extends Controller
         // Get input dates from request
         $starting_date_input = $request->input('starting_date');
         $ending_date_input = $request->input('ending_date');
-        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8)  {
+        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8) {
             $default_ending_date = Carbon::today();
             $default_starting_date = $default_ending_date->copy()->subDays(30);
             $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
 
             if ($starting_date->lt($default_starting_date)) {
-                $starting_date = Carbon::today()->subDays(30); 
+                $starting_date = Carbon::today()->subDays(30);
                 $ending_date = Carbon::today();
             }
         } else {
             // If no dates provided, use default last 30 days
-             $starting_date = Carbon::parse($starting_date_input);
+            $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
         }
 
@@ -323,13 +323,14 @@ class SaleController extends Controller
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
-            $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
-                ->join('billers', 'sales.biller_id', '=', 'billers.id')
-                ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-                ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+            $q = Sale::with('biller', 'customer', 'warehouse', 'user')
+                // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
+
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user')
@@ -391,20 +392,38 @@ class SaleController extends Controller
                     ]);
                 }
             } else {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
-                    ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                    ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                }
+                $q = $q->where(function ($query) use ($search) {
+                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                        ->orWhereHas('customer', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', "%{$search}%")
+                                ->orWhere('phone_number', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('biller', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('productSales', function ($q) use ($search) {
+                            $q->where('imei_number', 'LIKE', "%{$search}%");
+                        });
+                });
             }
-            $sales = $q->groupBy('sales.id')->get();
-            $totalFiltered = $q->groupBy('sales.id')->count();
+
+            if ($warehouse_id)
+                $q = $q->where('warehouse_id', $warehouse_id);
+            if ($sale_status)
+                $q = $q->where('sale_status', $sale_status);
+            if ($payment_status)
+                $q = $q->where('payment_status', $payment_status);
+            if ($sale_type)
+                $q = $q->where('sale_type', $sale_type);
+            if ($payment_method)
+                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
+
+
+            $sales = $q->get();
+            // dd($sales->count(), $q->count(), $q->toSql());
+            // $totalFiltered = $q->groupBy('sales.id')->count();
         }
+
         $data = array();
         if (!empty($sales)) {
             foreach ($sales as $key => $sale) {
@@ -651,19 +670,19 @@ class SaleController extends Controller
         // Get input dates from request
         $starting_date_input = $request->input('starting_date');
         $ending_date_input = $request->input('ending_date');
-        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8)  {
+        if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8) {
             $default_ending_date = Carbon::today();
             $default_starting_date = $default_ending_date->copy()->subDays(30);
             $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
 
             if ($starting_date->lt($default_starting_date)) {
-                $starting_date = Carbon::today()->subDays(30); 
+                $starting_date = Carbon::today()->subDays(30);
                 $ending_date = Carbon::today();
             }
         } else {
             // If no dates provided, use default last 30 days
-             $starting_date = Carbon::parse($starting_date_input);
+            $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
         }
 
@@ -735,11 +754,9 @@ class SaleController extends Controller
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
-            $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
-                ->join('billers', 'sales.biller_id', '=', 'billers.id')
-                ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-                ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
-                ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+           $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
@@ -812,21 +829,39 @@ class SaleController extends Controller
                     ]);
                 }
             } else {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
-                    ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                    ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
-                    ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                }
+                 $q = $q->where(function ($query) use ($search) {
+                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                        ->orWhereHas('customer', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', "%{$search}%")
+                                ->orWhere('phone_number', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('biller', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', "%{$search}%");
+                        })
+                         ->orWhereHas('packingSlip', function ($q) use ($search) {
+                            $q->where('waybill_id', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('productSales', function ($q) use ($search) {
+                            $q->where('imei_number', 'LIKE', "%{$search}%");
+                        });
+                });
             }
+            if ($warehouse_id)
+                $q = $q->where('warehouse_id', $warehouse_id);
+            if ($sale_status)
+                $q = $q->where('sale_status', $sale_status);
+            if ($payment_status)
+                $q = $q->where('payment_status', $payment_status);
+            if ($sale_type)
+                $q = $q->where('sale_type', $sale_type);
+            if (!$sale_type)
+                $q = $q->whereIn('sale_type', ['online', 'website', 'wholesale']);
+            if ($payment_method)
+                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
 
-            $sales = $q->groupBy('sales.id')->get();
-            $totalFiltered = $q->groupBy('sales.id')->count();
+            // $sales = $q->groupBy('sales.id')->get();
+            // $totalFiltered = $q->groupBy('sales.id')->count();
+            $sales = $q->get();
         }
 
 

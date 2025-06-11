@@ -2283,7 +2283,7 @@
             function calculateCreditCardShortage() {
                 let totalCreditCard = parseFloat($('#register-details-modal #credit_card_payment_received').text()) || 0;
                 const closing = parseFloat($('#closing_credit_card_balance').val()) || 0;
-                const shortage = closing  - totalCreditCard;
+                const shortage = closing  - ((totalCreditCard / 100) * 103);
                 $('#credit_card_shortage_balance').text(shortage.toFixed(2));
             }
 
