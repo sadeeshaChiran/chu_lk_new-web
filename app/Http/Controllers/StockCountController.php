@@ -89,6 +89,27 @@ class StockCountController extends Controller
         if($ext != 'csv')
             return redirect()->back()->with('not_permitted', 'Please upload a CSV file');
 
+
+        // open and read
+        $filePath = $request->final_file->getRealPath();
+        $file_handle = fopen($filePath, 'r');
+        $i = 0;
+        //validate the file
+        while (!feof($file_handle)) {
+            $current_line = fgetcsv($file_handle);
+            if ($current_line && $i > 0) {
+                $product_data[] = Product::where([
+                    ['code', $current_line[1]],
+                    ['is_active', true]
+                ])->first();
+                if (!$product_data[$i - 1])
+                    return redirect()->back()->with('error', 'Product with this code ' . ' "'. $current_line[0] . '" '. '(' .$current_line[1] .')' . 'does not exist!');
+
+            }
+            $i++;
+        }
+        // ==============
+
         $data = $request->all();
         $document = $request->final_file;
         $documentName = date('Ymd').'-'.date('his'). ".csv";
