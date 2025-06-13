@@ -135,7 +135,6 @@ class PackingSlipController extends Controller
 
     public function createWaybillId($data)
     {
-  
         $sale_id = $data['sale_id'];
         $amount = $data['amount'];
         $weight = $data['weight'];
@@ -155,12 +154,22 @@ class PackingSlipController extends Controller
             $recipient_contact_2 = '';
         }
 
+        $productList = '';
+        if (!empty($data['products']) && is_array($data['products'])) {
+            $productNames = array_map(function ($product) {
+                return is_array($product) ? $product['name'] : ($product->name ?? (string) $product);
+            }, $data['products']);
+
+            $productList = implode(', ', $productNames);
+        }
+        $description = 'Products: ' . $productList;
+
         $response = Http::asForm()->post('https://www.fdedomestic.com/api/parcel/new_api_v1.php', [
             'api_key' => 'c5d1493dbc629f6eb6e2',
             'client_id' => '2993',
             'order_id' => $sale_id,
             'parcel_weight' => (float) $weight,
-            'parcel_description' => $data['description'],
+            'parcel_description' => $description,
             'recipient_name' => $recipient_name,
             'recipient_contact_1' => $recipient_contact_1,
             'recipient_contact_2' => $recipient_contact_2,
@@ -217,8 +226,8 @@ class PackingSlipController extends Controller
                 // Error: Return the status code and message
                 return redirect()->back()->with('error', $this->getErrorMessage($waybillId_response['status']) . ' in waybillId');
             }
-        }else {
-            if($data['waybill_id']) {
+        } else {
+            if ($data['waybill_id']) {
                 $waybill_id = $data['waybill_id'];
             }
         }
@@ -431,7 +440,7 @@ class PackingSlipController extends Controller
         $packing_slip_product_data = PackingSlipProduct::where('packing_slip_id', $id)->get();
         $delivery_details = Delivery::with('courier')->find($packing_slip->delivery_id);
 
-        return view('backend.packing_slip.invoice', compact('sale', 'packing_slip_product_data','delivery_details','packing_slip'));
+        return view('backend.packing_slip.invoice', compact('sale', 'packing_slip_product_data', 'delivery_details', 'packing_slip'));
     }
 
     public function delete($id)

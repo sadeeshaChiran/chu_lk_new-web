@@ -2036,6 +2036,9 @@ class ProductController extends Controller
             foreach ($field_names as $key => $field_name) {
                 $q = $q->orwhere('products.' . $field_name, 'LIKE', "%{$search}%");
             }
+
+
+
         }
 
 
@@ -2081,18 +2084,12 @@ class ProductController extends Controller
             }
         }
 
-
-
         $q = $q->offset($start)
             ->limit($limit)
             ->orderBy($order, $dir);
     
-
-        $products = $q->get();
-        $totalFiltered = $q->count();
-
-
-
+        $products = $q->groupBy('products.id')->get();
+        $totalFiltered = $q->groupBy('products.id')->count();
 
         $data = array();
         if (!empty($products)) {
