@@ -736,7 +736,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function() {
         });
     });
 
-    Route::get('/phpinfo', fn () => phpinfo());
+    // Route::get('/phpinfo', fn () => phpinfo());
     Route::resource('currency', CurrencyController::class);
 
     Route::resource('custom-fields', CustomFieldController::class);
