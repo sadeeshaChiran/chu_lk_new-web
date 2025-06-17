@@ -421,12 +421,17 @@ class SaleController extends Controller
 
 
 
-            $totalFiltered = $q->count();
+            // $totalFiltered = $q->count();
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
-            $sales = $q->get();
+            // $totalData  = $q->count(); 
+            // $sales = $q->get();
+
+            $sales = $q->groupBy('sales.id')->get();
+            $totalFiltered = $q->groupBy('sales.id')->count();
+
+
             // dd($sales->count(), $q->count(), $q->toSql());
             // $totalFiltered = $q->groupBy('sales.id')->count();
         }
@@ -868,12 +873,16 @@ class SaleController extends Controller
 
             // $sales = $q->groupBy('sales.id')->get();
             // $totalFiltered = $q->groupBy('sales.id')->count();
-            $totalFiltered = $q->count();
+
+
+            // $totalFiltered = $q->count();
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
             // $totalData  = $q->count(); 
-            $sales = $q->get();
+            // $sales = $q->get();
+            $sales = $q->groupBy('sales.id')->get();
+            $totalFiltered = $q->groupBy('sales.id')->count();
         }
 
 
