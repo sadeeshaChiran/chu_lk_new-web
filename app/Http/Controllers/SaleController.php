@@ -319,18 +319,19 @@ class SaleController extends Controller
                 $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
             
             
-            $totalFiltered = $q->count();
-            $q = $q->offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
+            // $totalFiltered = $q->count();
+            // $q = $q->offset($start)
+            //     ->limit($limit)
+            //     ->orderBy($order, $dir);
+            // $totalData  = $q->count(); 
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
             $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-                // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
-                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir);
 
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
@@ -764,9 +765,9 @@ class SaleController extends Controller
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
-           $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
-                // ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-                // ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+           $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
