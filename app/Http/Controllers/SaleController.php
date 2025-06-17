@@ -872,7 +872,7 @@ class SaleController extends Controller
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
+            // $totalData  = $q->count(); 
             $sales = $q->get();
         }
 
