@@ -2705,7 +2705,6 @@
             $('select[name=warehouse_id]').val(warehouse_id);
             $('select[name=biller_id]').val(biller_id);
             $('.selectpicker').selectpicker('refresh');
-            console.log(warehouse_id + '|' + biller_id);
             isCashRegisterAvailable(warehouse_id);
         } else {
             if (getSavedValue("warehouse_id")) {
@@ -3806,7 +3805,7 @@
             var id = $(this).val();
             $(this).closest('.col-md-3').find('input[name="paid_by_id[]"]').val(id);
             // $(this).parent().parent().siblings('.credit-card').remove();
-$(this).closest('.new-adding-row').siblings('.remove-element').remove();
+            $(this).closest('.new-adding-row').siblings('.remove-element').remove();
 
             var appendElement = '';
             $(".payment-form").off("submit");
@@ -4743,90 +4742,96 @@ $(this).closest('.new-adding-row').siblings('.remove-element').remove();
             return false;
         }
 
+        let formSubmitting = false;
+
         $(document).on('submit', '.payment-form', function(e) {
-            $("table.order-list tbody .qty").each(function(index) {
-                if ($(this).val() == '') {
+            e.preventDefault();
+
+            if (formSubmitting) return; // prevent duplicate
+            formSubmitting = true;
+
+            // Validation
+            let hasEmptyQty = false;
+            $("table.order-list tbody .qty").each(function() {
+                if ($(this).val() === '') {
                     alert('One of products has no quantity!');
-                    e.preventDefault();
+                    hasEmptyQty = true;
                 }
             });
-            var rownumber = $('table.order-list tbody tr:last').index();
-            if (rownumber < 0) {
-                alert("Please insert product to order table!")
-                e.preventDefault();
-            } else {
-                if ($('input[name="sale_status"]').val() == 1) {
-                    $("#submit-btn").prop('disabled', true).html(
-                        '<span class="spinner-border text-light" role="status"></span>');
-                }
-                $('input[name="paid_by_id"]').val($('select[name="paid_by_id_select"]').val());
-                $('select[name="paid_by_id_select[]"]').each(function(index) {
-                    $('input[name="paid_by_id[]"]').eq(index).val($(this).val());
-                });
-                $('input[name="order_tax_rate"]').val($('select[name="order_tax_rate_select"]').val());
 
-                e.preventDefault(); // Prevents the default form submission behavior
-
-                $.ajax({
-                    url: $('.payment-form').attr('action'), // The form's action URL
-                    type: $('.payment-form').attr('method'), // The form's method (GET or POST)
-                    data: $('.payment-form').serialize(), // Serialize the form data
-                    success: function(response) {
-                        if ($('input[name="sale_status"]').val() == 1) {
-
-                            getProduct($("#warehouse_id").val());
-
-                            let link = "{{ url('sales/gen_invoice/') }}" + '/' + response;
-
-                            $('#pos-layout').css('display', 'none');
-                            var head = $('head').html();
-                            $('head').html('');
-
-                            $('#print-layout').load(link, function() {
-                                setTimeout(function() {
-                                    window.print();
-                                }, 50);
-                            });
-
-                            $("#submit-btn").prop('disabled', false).html(
-                                "{{ trans('file.submit') }}");
-                            $('#add-payment').modal('hide');
-                            cancel($('table.order-list tbody tr:last').index());
-
-                            setTimeout(function() {
-                                window.onafterprint = (event) => {
-                                    if (isMobile == false) {
-                                        $('#pos-layout').css('display', 'block');
-                                        $('#print-layout').html('');
-                                        $('head').html(head);
-                                        location.reload();
-                                    }
-                                };
-                            }, 100);
-
-                            $.get('{{ url('/sales/recent-sale') }}/', function(data) {
-                                populateRecentSale(data);
-                            });
-                        } else if ($('input[name="sale_status"]').val() == 3) {
-                            $('#pos-layout').prepend(
-                                '<div class="alert alert-success alert-dismissible text-center"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ trans('file.Sale successfully added to draft') }}</div>'
-                            );
-                            $('input[name="sale_status"]').val(1);
-                            cancel($('table.order-list tbody tr:last').index());
-                            $.get('{{ url('/sales/recent-draft') }}/', function(data) {
-                                populateRecentDraft(data);
-                            });
-                        } else {
-                            localStorage.clear();
-                            location.href = response;
-                        }
-
-                    },
-                    error: function(xhr) {
-                        console.log('Form submission failed.');
-                    }
-                });
+            const rownumber = $('table.order-list tbody tr:last').index();
+            if (hasEmptyQty || rownumber < 0) {
+                alert("Please insert product to order table!");
+                formSubmitting = false;
+                return;
             }
+
+            // Prepare form
+            if ($('input[name="sale_status"]').val() == 1) {
+                $("#submit-btn").prop('disabled', true).html('<span class="spinner-border text-light" role="status"></span>');
+            }
+            $('input[name="paid_by_id"]').val($('select[name="paid_by_id_select"]').val());
+            $('select[name="paid_by_id_select[]"]').each(function(index) {
+                $('input[name="paid_by_id[]"]').eq(index).val($(this).val());
+            });
+            $('input[name="order_tax_rate"]').val($('select[name="order_tax_rate_select"]').val());
+
+            // Submit AJAX
+            $.ajax({
+                url: $('.payment-form').attr('action'),
+                type: $('.payment-form').attr('method'),
+                data: $('.payment-form').serialize(),
+                success: function(response) {
+                    formSubmitting = false;
+
+                    if ($('input[name="sale_status"]').val() == 1) {
+                        getProduct($("#warehouse_id").val());
+                        let link = "{{ url('sales/gen_invoice/') }}" + '/' + response;
+                        $('#pos-layout').hide();
+                        let head = $('head').html();
+                        $('head').html('');
+                        $('#print-layout').load(link, function () {
+                            setTimeout(() => window.print(), 50);
+                        });
+
+                        $("#submit-btn").prop('disabled', false).html("{{ trans('file.submit') }}");
+                        $('#add-payment').modal('hide');
+                        cancel(rownumber);
+
+                        setTimeout(function() {
+                            window.onafterprint = () => {
+                                if (!isMobile) {
+                                    $('#pos-layout').show();
+                                    $('#print-layout').html('');
+                                    $('head').html(head);
+                                    location.reload();
+                                }
+                            };
+                        }, 100);
+
+                        $.get('{{ url('/sales/recent-sale') }}/', populateRecentSale);
+                    } else if ($('input[name="sale_status"]').val() == 3) {
+                        $('#pos-layout').prepend(
+                            '<div class="alert alert-success alert-dismissible text-center">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span></button>' +
+                            '{{ trans("file.Sale successfully added to draft") }}</div>'
+                        );
+                        $('input[name="sale_status"]').val(1);
+                        cancel(rownumber);
+                        $.get('{{ url('/sales/recent-draft') }}/', populateRecentDraft);
+                    } else {
+                        localStorage.clear();
+                        location.href = response;
+                    }
+                },
+                error: function() {
+                    alert("Something went wrong. Please try again.");
+                    formSubmitting = false;
+                    $("#submit-btn").prop('disabled', false).html("{{ trans('file.submit') }}");
+                }
+            });
         });
+
     </script>
 @endpush

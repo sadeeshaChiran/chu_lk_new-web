@@ -738,7 +738,7 @@
             timeZone: 'Asia/Colombo',
 
             autoUpdateInput: false,
-         ranges: {
+            ranges: {
                 'Today': [moment().startOf('day'), moment().endOf('day')],
                 'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf(
                     'day')],
@@ -823,7 +823,7 @@
         $(document).on("change", ".is-packing", function(e) {
             rowindex = $(this).closest('tr').index();
             var total_price = $('table.product-list tbody tr:nth-child(' + (rowindex + 1) + ') .total-price')
-        .text();
+                .text();
             var amount = $("#packing-slip-modal input[name=amount]").val();
             if ($(this).is(":checked")) {
                 $("#packing-slip-modal input[name=amount]").val(parseFloat(amount) + parseFloat(total_price));
@@ -844,7 +844,7 @@
             a.document.write('<body>');
             a.document.write(
                 '<style>body{line-height: 1.15;-webkit-text-size-adjust: 100%;}.d-print-none{display:none}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.row{width:100%;margin-right: -15px;margin-left: -15px;}.col-md-12{width:100%;display:block;padding: 5px 15px;}.col-md-6{width: 50%;float:left;padding: 5px 15px;}table{width:100%;margin-top:30px;}th{text-aligh:left}td{padding:10px}table,th,td{border: 1px solid black; border-collapse: collapse;}</style><style>@media print {.modal-dialog { max-width: 1000px;} }</style>'
-                );
+            );
             a.document.write(divContents);
             a.document.write('</body></html>');
             a.document.close();
@@ -1162,218 +1162,148 @@
         }
 
         let user_role_id = {{ Auth::user()->role_id }};
-        $('#sale-table').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                url: "/sales/pos-data",
-                data: {
-                    all_permission: all_permission,
-                    starting_date: starting_date,
-                    ending_date: ending_date,
-                    warehouse_id: warehouse_id,
-                    sale_status: sale_status,
-                    sale_type: 'pos',
-                    payment_status: payment_status,
-                    payment_method: payment_method,
+        if (!$.fn.DataTable.isDataTable('#sale-table')) {
+            let saleTable = $('#sale-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/sales/pos-data",
+                    type: "POST",
+                    data: function(d) {
+                        return $.extend({}, d, {
+                            all_permission,
+                            starting_date,
+                            ending_date,
+                            warehouse_id,
+                            sale_status,
+                            sale_type: 'pos',
+                            payment_status,
+                            payment_method,
+                        });
+                    },
+                    dataType: "json"
                 },
-                dataType: "json",
-                type: "post"
-            },
-            /*rowId: function(data) {
-                  return 'row_'+data['id'];
-            },*/
-            "createdRow": function(row, data, dataIndex) {
-                $(row).addClass('sale-link');
-                $(row).attr('data-sale', data['sale']);
-            },
-            "columns": columns,
-            'language': {
-
-                'lengthMenu': '_MENU_ {{ trans('file.records per page') }}',
-                "info": '<small>{{ trans('file.Showing') }} _START_ - _END_ (_TOTAL_)</small>',
-                "search": '{{ trans('file.Search') }}',
-                'paginate': {
-                    'previous': '<i class="dripicons-chevron-left"></i>',
-                    'next': '<i class="dripicons-chevron-right"></i>'
-                }
-            },
-            order: [
-                ['1', 'desc']
-            ],
-            'columnDefs': [{
-                    "orderable": false,
-                    'targets': [0, 3, 4, 5, 6, 7, 10, 11, 12]
+                createdRow: function(row, data) {
+                    $(row).addClass('sale-link').attr('data-sale', data.sale);
                 },
-                {
-                    'render': function(data, type, row, meta) {
-                        if (type === 'display') {
-                            data =
-                                '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                columns: columns, // define your column array
+                language: {
+                    lengthMenu: '_MENU_ {{ trans('file.records per page') }}',
+                    info: '<small>{{ trans('file.Showing') }} _START_ - _END_ (_TOTAL_)</small>',
+                    search: '{{ trans('file.Search') }}',
+                    paginate: {
+                        previous: '<i class="dripicons-chevron-left"></i>',
+                        next: '<i class="dripicons-chevron-right"></i>'
+                    }
+                },
+                order: [
+                    [1, 'desc']
+                ],
+                columnDefs: [{
+                        orderable: false,
+                        targets: [0, 3, 4, 5, 6, 7, 10, 11, 12]
+                    },
+                    {
+                        render: function(data, type) {
+                            if (type === 'display') {
+                                return '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                            }
+                            return data;
+                        },
+                        checkboxes: {
+                            selectRow: true,
+                            selectAllRender: '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'
+                        },
+                        targets: [0]
+                    }
+                ],
+                select: {
+                    style: 'multi',
+                    selector: 'td:first-child'
+                },
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                dom: '<"row"lfB>rtip',
+                rowId: 'ObjectID',
+                buttons: (user_role_id <= 8) ? [{
+                        extend: 'pdf',
+                        text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible'
+                        },
+                        footer: true
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i title="export to excel" class="dripicons-document-new"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible'
+                        },
+                        footer: true
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible'
+                        },
+                        footer: true
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i title="print" class="fa fa-print"></i>',
+                        exportOptions: {
+                            columns: ':visible:not(.not-exported)',
+                            rows: ':visible'
+                        },
+                        footer: true
+                    },
+                    {
+                        text: '<i title="delete" class="dripicons-cross"></i>',
+                        className: 'buttons-delete',
+                        action: function(e, dt) {
+                            if (user_verified === '1') {
+                                let sale_id = [];
+                                $(':checkbox:checked').each(function(i) {
+                                    if (i) {
+                                        const sale = $(this).closest('tr').data('sale');
+                                        if (sale) sale_id[i - 1] = sale[13];
+                                    }
+                                });
+                                if (sale_id.length && confirm("Are you sure want to delete?")) {
+                                    $.post("/sales/deletebyselection", {
+                                        saleIdArray: sale_id
+                                    }, function(data) {
+                                        alert(data);
+                                        dt.rows({
+                                            page: 'current',
+                                            selected: true
+                                        }).remove().draw(false);
+                                    });
+                                } else if (!sale_id.length) {
+                                    alert('Nothing is selected!');
+                                }
+                            } else {
+                                alert('This feature is disabled for demo!');
+                            }
                         }
-
-                        return data;
                     },
-                    'checkboxes': {
-                        'selectRow': true,
-                        'selectAllRender': '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'
-                    },
-                    'targets': [0]
+                    {
+                        extend: 'colvis',
+                        text: '<i title="column visibility" class="fa fa-eye"></i>',
+                        columns: ':gt(0)'
+                    }
+                ] : [],
+                drawCallback: function() {
+                    datatable_sum(this.api(), false);
                 }
-            ],
-            'select': {
-                style: 'multi',
-                selector: 'td:first-child'
-            },
-            'lengthMenu': [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            dom: '<"row"lfB>rtip',
-            rowId: 'ObjectID',
-            buttons: (user_role_id <= 8) ? [{
-                    extend: 'pdf',
-                    text: '<i title="export to pdf" class="fa fa-file-pdf-o"></i>',
-                    exportOptions: {
-                        columns: ':visible:Not(.not-exported)',
-                        rows: ':visible'
-                    },
-                    action: function(e, dt, button, config) {
-                        datatable_sum(dt, true);
-                        $.fn.dataTable.ext.buttons.pdfHtml5.action.call(this, e, dt, button, config);
-                        datatable_sum(dt, false);
-                    },
-                    footer: true
-                },
-                {
-                    extend: 'excel',
-                    text: '<i title="export to excel" class="dripicons-document-new"></i>',
-                    exportOptions: {
-                        columns: ':visible:Not(.not-exported)',
-                        rows: ':visible'
-                    },
-                    action: function(e, dt, button, config) {
-                        datatable_sum(dt, true);
-                        $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
-                        datatable_sum(dt, false);
-                    },
-                    footer: true
-                },
-                {
-                    extend: 'csv',
-                    text: '<i title="export to csv" class="fa fa-file-text-o"></i>',
-                    exportOptions: {
-                        columns: ':visible:Not(.not-exported)',
-                        rows: ':visible'
-                    },
-                    action: function(e, dt, button, config) {
-                        datatable_sum(dt, true);
-                        $.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);
-                        datatable_sum(dt, false);
-                    },
-                    footer: true
-                },
-                {
-                    extend: 'print',
-                    text: '<i title="print" class="fa fa-print"></i>',
-                    exportOptions: {
-                        columns: ':visible:Not(.not-exported)',
-                        rows: ':visible'
-                    },
-                    action: function(e, dt, button, config) {
-                        datatable_sum(dt, true);
-                        $.fn.dataTable.ext.buttons.print.action.call(this, e, dt, button, config);
-                        datatable_sum(dt, false);
-                    },
-                    footer: true
-                },
-                {
-                    text: '<i title="delete" class="dripicons-cross"></i>',
-                    className: 'buttons-delete',
-                    action: function(e, dt, node, config) {
-                        if (user_verified == '1') {
-                            sale_id.length = 0;
-                            $(':checkbox:checked').each(function(i) {
-                                if (i) {
-                                    var sale = $(this).closest('tr').data('sale');
-                                    if (sale)
-                                        sale_id[i - 1] = sale[13];
-                                }
-                            });
-                            if (sale_id.length && confirm("Are you sure want to delete?")) {
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '/sales/deletebyselection',
-                                    data: {
-                                        saleIdArray: sale_id
-                                    },
-                                    success: function(data) {
-                                        alert(data);
-                                        //dt.rows({ page: 'current', selected: true }).deselect();
-                                        dt.rows({
-                                            page: 'current',
-                                            selected: true
-                                        }).remove().draw(false);
-                                    }
-                                });
-                            } else if (!sale_id.length)
-                                alert('Nothing is selected!');
-                        } else
-                            alert('This feature is disable for demo!');
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    text: '<i title="column visibility" class="fa fa-eye"></i>',
-                    columns: ':gt(0)'
-                },
-            ]: [
-                {
-                    text: '<i title="delete" class="dripicons-cross"></i>',
-                    className: 'buttons-delete',
-                    action: function(e, dt, node, config) {
-                        if (user_verified == '1') {
-                            sale_id.length = 0;
-                            $(':checkbox:checked').each(function(i) {
-                                if (i) {
-                                    var sale = $(this).closest('tr').data('sale');
-                                    if (sale)
-                                        sale_id[i - 1] = sale[13];
-                                }
-                            });
-                            if (sale_id.length && confirm("Are you sure want to delete?")) {
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '/sales/deletebyselection',
-                                    data: {
-                                        saleIdArray: sale_id
-                                    },
-                                    success: function(data) {
-                                        alert(data);
-                                        //dt.rows({ page: 'current', selected: true }).deselect();
-                                        dt.rows({
-                                            page: 'current',
-                                            selected: true
-                                        }).remove().draw(false);
-                                    }
-                                });
-                            } else if (!sale_id.length)
-                                alert('Nothing is selected!');
-                        } else
-                            alert('This feature is disable for demo!');
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    text: '<i title="column visibility" class="fa fa-eye"></i>',
-                    columns: ':gt(0)'
-                },
-            ],
-            drawCallback: function() {
-                var api = this.api();
-                datatable_sum(api, false);
-            }
-        });
+            });
+        }
 
         function datatable_sum(dt_selector, is_calling_first) {
             if (dt_selector.rows('.selected').any() && is_calling_first) {
@@ -1541,7 +1471,7 @@
                     {{ $general_setting->decimal }}));
                 e.preventDefault();
             } else if ($('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]')
-                .val())) {
+                    .val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $('input[name="edit_amount"]').val('');
                 $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(
