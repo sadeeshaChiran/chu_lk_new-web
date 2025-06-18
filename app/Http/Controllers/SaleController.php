@@ -330,8 +330,8 @@ class SaleController extends Controller
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
             ->join('billers', 'sales.biller_id', '=', 'billers.id')
             ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-            ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
-            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
+            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+            ->whereDate('sales.created_at', '<=', $ending_date->toDateString());            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
             //     // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
             //     ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
             //     ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
@@ -410,16 +410,30 @@ class SaleController extends Controller
                 //             $q->where('imei_number', 'LIKE', "%{$search}%");
                 //         });
                 // });
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
-                    ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                    ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                    ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                }
+
+
+                // $q = $q->select('sales.*')
+                //     ->with('biller', 'customer', 'warehouse', 'user')
+                //     ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                //     ->orwhere('customers.name', 'LIKE', "%{$search}%")
+                //     ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
+                //     ->orwhere('billers.name', 'LIKE', "%{$search}%")
+                //     ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                // foreach ($field_names as $key => $field_name) {
+                //     $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                // }
+
+                 $q = $q->where(function ($query) use ($search, $field_names, $request) {
+                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                        ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                        ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                        ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                        ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+            
+                    foreach ($field_names as $field_name) {
+                        $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                    }
+                });
             }
 
             if ($warehouse_id)
@@ -651,8 +665,8 @@ class SaleController extends Controller
                     ' "' . $sale->paid_amount . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"',
-                    ' "' . $sale->user->name . '"',
-                    ' "' . $sale->user->email . '"',
+                    // ' "' . $sale->user->name . '"',
+                    // ' "' . $sale->user->email . '"',
                     ' "' . $sale->warehouse->name . '"',
                     ' "' . $coupon_code . '"',
                     ' "' . $sale->coupon_discount . '"',
@@ -777,12 +791,18 @@ class SaleController extends Controller
             $totalData  = $q->count(); 
             $sales = $q->get();
         } else {
+            // $search = $request->input('search.value');
+            // $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
+            // ->join('billers', 'sales.biller_id', '=', 'billers.id')
+            // ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+            // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
             $search = $request->input('search.value');
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
             ->join('billers', 'sales.biller_id', '=', 'billers.id')
             ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-            ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
-            
+            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+            ->whereDate('sales.created_at', '<=', $ending_date->toDateString());            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
+         
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
@@ -869,16 +889,28 @@ class SaleController extends Controller
                 //         });
                 // });
 
-                $q = $q->select('sales.*')
-                ->with('biller', 'customer', 'warehouse', 'user')
-                ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                }
+                // $q = $q->select('sales.*')
+                // ->with('biller', 'customer', 'warehouse', 'user')
+                // ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                // ->orwhere('customers.name', 'LIKE', "%{$search}%")
+                // ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
+                // ->orwhere('billers.name', 'LIKE', "%{$search}%")
+                // ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                // foreach ($field_names as $key => $field_name) {
+                //     $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                // }
+
+                $q = $q->where(function ($query) use ($search, $field_names, $request) {
+                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                        ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                        ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                        ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                        ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+            
+                    foreach ($field_names as $field_name) {
+                        $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                    }
+                });
             }
             if ($warehouse_id)
                 $q = $q->where('warehouse_id', $warehouse_id);
@@ -893,6 +925,7 @@ class SaleController extends Controller
             if ($payment_method)
                 $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
 
+            
             // $sales = $q->groupBy('sales.id')->get();
             // $totalFiltered = $q->groupBy('sales.id')->count();
             $totalFiltered = $q->count();
@@ -1158,8 +1191,8 @@ class SaleController extends Controller
                     ' "' . $sale->paid_amount . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"',
-                    ' "' . $sale->user->name . '"',
-                    ' "' . $sale->user->email . '"',
+                    // ' "' . $sale->user->name . '"',
+                    // ' "' . $sale->user->email . '"',
                     ' "' . $sale->warehouse->name . '"',
                     ' "' . $coupon_code . '"',
                     ' "' . $sale->coupon_discount . '"',
