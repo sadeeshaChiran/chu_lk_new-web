@@ -434,6 +434,9 @@ class SaleController extends Controller
                         $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
                     }
                 });
+
+                $q = $q->select('sales.*')->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
+
             }
 
             if ($warehouse_id)
@@ -665,8 +668,8 @@ class SaleController extends Controller
                     ' "' . $sale->paid_amount . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"',
-                    // ' "' . $sale->user->name . '"',
-                    // ' "' . $sale->user->email . '"',
+                    ' "' . $sale->user->name . '"',
+                    ' "' . $sale->user->email . '"',
                     ' "' . $sale->warehouse->name . '"',
                     ' "' . $coupon_code . '"',
                     ' "' . $sale->coupon_discount . '"',
@@ -800,6 +803,7 @@ class SaleController extends Controller
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
             ->join('billers', 'sales.biller_id', '=', 'billers.id')
             ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+            ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
             ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
             ->whereDate('sales.created_at', '<=', $ending_date->toDateString());            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
          
@@ -905,12 +909,19 @@ class SaleController extends Controller
                         ->orWhere('customers.name', 'LIKE', "%{$search}%")
                         ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                         ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                        ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                         ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
             
                     foreach ($field_names as $field_name) {
                         $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
                     }
                 });
+        
+            foreach ($field_names as $key => $field_name) {
+                $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+            }
+                $q = $q->select('sales.*')->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
+
             }
             if ($warehouse_id)
                 $q = $q->where('warehouse_id', $warehouse_id);
@@ -940,8 +951,6 @@ class SaleController extends Controller
         $data = array();
         if (!empty($sales)) {
             foreach ($sales as $key => $sale) {
-
-
                 $nestedData['id'] = $sale->id;
                 $nestedData['key'] = $key;
                 $nestedData['date'] = date(config('date_format') . ' h:i:s', strtotime($sale->created_at));
@@ -1191,8 +1200,8 @@ class SaleController extends Controller
                     ' "' . $sale->paid_amount . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->sale_note) . '"',
                     ' "' . preg_replace('/[\n\r]/', "<br>", $sale->staff_note) . '"',
-                    // ' "' . $sale->user->name . '"',
-                    // ' "' . $sale->user->email . '"',
+                    ' "' . $sale->user->name . '"',
+                    ' "' . $sale->user->email . '"',
                     ' "' . $sale->warehouse->name . '"',
                     ' "' . $coupon_code . '"',
                     ' "' . $sale->coupon_discount . '"',
