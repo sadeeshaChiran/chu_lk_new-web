@@ -327,10 +327,14 @@ class SaleController extends Controller
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
-            $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-                // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
-                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+            $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
+            ->join('billers', 'sales.biller_id', '=', 'billers.id')
+            ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+            ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
+            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
+            //     // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+            //     ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+            //     ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
 
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
@@ -393,19 +397,29 @@ class SaleController extends Controller
                     ]);
                 }
             } else {
-                $q = $q->where(function ($query) use ($search) {
-                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
-                        ->orWhereHas('customer', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', "%{$search}%")
-                                ->orWhere('phone_number', 'LIKE', "%{$search}%");
-                        })
-                        ->orWhereHas('biller', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', "%{$search}%");
-                        })
-                        ->orWhereHas('productSales', function ($q) use ($search) {
-                            $q->where('imei_number', 'LIKE', "%{$search}%");
-                        });
-                });
+                // $q = $q->where(function ($query) use ($search) {
+                //     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                //         ->orWhereHas('customer', function ($q) use ($search) {
+                //             $q->where('name', 'LIKE', "%{$search}%")
+                //                 ->orWhere('phone_number', 'LIKE', "%{$search}%");
+                //         })
+                //         ->orWhereHas('biller', function ($q) use ($search) {
+                //             $q->where('name', 'LIKE', "%{$search}%");
+                //         })
+                //         ->orWhereHas('productSales', function ($q) use ($search) {
+                //             $q->where('imei_number', 'LIKE', "%{$search}%");
+                //         });
+                // });
+                $q = $q->select('sales.*')
+                    ->with('biller', 'customer', 'warehouse', 'user')
+                    ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                    ->orwhere('customers.name', 'LIKE', "%{$search}%")
+                    ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
+                    ->orwhere('billers.name', 'LIKE', "%{$search}%")
+                    ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                foreach ($field_names as $key => $field_name) {
+                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                }
             }
 
             if ($warehouse_id)
@@ -764,9 +778,11 @@ class SaleController extends Controller
             $sales = $q->get();
         } else {
             $search = $request->input('search.value');
-           $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
-                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+            $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
+            ->join('billers', 'sales.biller_id', '=', 'billers.id')
+            ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+            ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
+            
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->select('sales.*')
                     ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
@@ -836,22 +852,33 @@ class SaleController extends Controller
                     ]);
                 }
             } else {
-                 $q = $q->where(function ($query) use ($search) {
-                    $query->where('sales.reference_no', 'LIKE', "%{$search}%")
-                        ->orWhereHas('customer', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', "%{$search}%")
-                                ->orWhere('phone_number', 'LIKE', "%{$search}%");
-                        })
-                        ->orWhereHas('biller', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', "%{$search}%");
-                        })
-                         ->orWhereHas('packingSlip', function ($q) use ($search) {
-                            $q->where('waybill_id', 'LIKE', "%{$search}%");
-                        })
-                        ->orWhereHas('productSales', function ($q) use ($search) {
-                            $q->where('imei_number', 'LIKE', "%{$search}%");
-                        });
-                });
+                //  $q = $q->where(function ($query) use ($search) {
+                //     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
+                //         ->orWhereHas('customer', function ($q) use ($search) {
+                //             $q->where('name', 'LIKE', "%{$search}%")
+                //                 ->orWhere('phone_number', 'LIKE', "%{$search}%");
+                //         })
+                //         ->orWhereHas('biller', function ($q) use ($search) {
+                //             $q->where('name', 'LIKE', "%{$search}%");
+                //         })
+                //          ->orWhereHas('packingSlip', function ($q) use ($search) {
+                //             $q->where('waybill_id', 'LIKE', "%{$search}%");
+                //         })
+                //         ->orWhereHas('productSales', function ($q) use ($search) {
+                //             $q->where('imei_number', 'LIKE', "%{$search}%");
+                //         });
+                // });
+
+                $q = $q->select('sales.*')
+                ->with('biller', 'customer', 'warehouse', 'user')
+                ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
+                ->orwhere('customers.name', 'LIKE', "%{$search}%")
+                ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
+                ->orwhere('billers.name', 'LIKE', "%{$search}%")
+                ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                foreach ($field_names as $key => $field_name) {
+                    $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                }
             }
             if ($warehouse_id)
                 $q = $q->where('warehouse_id', $warehouse_id);
