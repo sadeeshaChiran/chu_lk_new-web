@@ -301,166 +301,117 @@ class SaleController extends Controller
         }
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-                ->whereDate('sales.created_at', '>=', value: $starting_date->toDateString())
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-            if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
+        
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->where('sales.user_id', Auth::id());
-            elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
-                $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
+            } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
+                $q = $q->where('sales.warehouse_id', Auth::user()->warehouse_id);
+            }
+        
             if ($warehouse_id)
-                $q = $q->where('warehouse_id', $warehouse_id);
+                $q = $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status)
-                $q = $q->where('sale_status', $sale_status);
+                $q = $q->where('sales.sale_status', $sale_status);
             if ($payment_status)
-                $q = $q->where('payment_status', $payment_status);
+                $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
-                $q = $q->where('sale_type', $sale_type);
-            if ($payment_method)
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
-            
-            
+                $q = $q->where('sales.sale_type', $sale_type);
+            if ($payment_method) {
+                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                       ->where('payments.paying_method', $payment_method);
+            }
+        
+            $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
+        
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
             $sales = $q->get();
+            $totalData = $sales->count();
+        
         } else {
             $search = $request->input('search.value');
+        
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
-            ->join('billers', 'sales.biller_id', '=', 'billers.id')
-            ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-            ->whereDate('sales.created_at', '<=', $ending_date->toDateString());            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-            //     // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
-            //     ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-            //     ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+        
+            $q = $q->select('sales.*')
+                ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
+        
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
-                    ->where('sales.user_id', Auth::id())
-                    ->orwhere([
-                        ['sales.reference_no', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['customers.name', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['customers.phone_number', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['billers.name', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['product_sales.imei_number', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ]);
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere([
-                        ['sales.user_id', Auth::id()],
-                        ['sales.' . $field_name, 'LIKE', "%{$search}%"]
-                    ]);
-                }
+                $q = $q->where(function ($query) use ($search, $field_names) {
+                    $query->where('sales.user_id', Auth::id())
+                        ->where(function ($q) use ($search, $field_names) {
+                            $q->where('sales.reference_no', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                                ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+        
+                            foreach ($field_names as $field_name) {
+                                $q->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
+                            }
+                        });
+                });
             } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user')
-                    ->where('sales.user_id', Auth::id())
-                    ->orwhere([
-                        ['sales.reference_no', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['customers.name', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['customers.phone_number', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['billers.name', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['product_sales.imei_number', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ]);
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere([
-                        ['sales.user_id', Auth::id()],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ]);
-                }
+                $q = $q->where(function ($query) use ($search, $field_names) {
+                    $query->where('sales.warehouse_id', Auth::user()->warehouse_id)
+                        ->where(function ($q) use ($search, $field_names) {
+                            $q->where('sales.reference_no', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                                ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+        
+                            foreach ($field_names as $field_name) {
+                                $q->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
+                            }
+                        });
+                });
             } else {
-                // $q = $q->where(function ($query) use ($search) {
-                //     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
-                //         ->orWhereHas('customer', function ($q) use ($search) {
-                //             $q->where('name', 'LIKE', "%{$search}%")
-                //                 ->orWhere('phone_number', 'LIKE', "%{$search}%");
-                //         })
-                //         ->orWhereHas('biller', function ($q) use ($search) {
-                //             $q->where('name', 'LIKE', "%{$search}%");
-                //         })
-                //         ->orWhereHas('productSales', function ($q) use ($search) {
-                //             $q->where('imei_number', 'LIKE', "%{$search}%");
-                //         });
-                // });
-
-
-                // $q = $q->select('sales.*')
-                //     ->with('biller', 'customer', 'warehouse', 'user')
-                //     ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                //     ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                //     ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                //     ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                //     ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                // foreach ($field_names as $key => $field_name) {
-                //     $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                // }
-
-                 $q = $q->where(function ($query) use ($search, $field_names, $request) {
+                $q = $q->where(function ($query) use ($search, $field_names) {
                     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
                         ->orWhere('customers.name', 'LIKE', "%{$search}%")
                         ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                         ->orWhere('billers.name', 'LIKE', "%{$search}%")
                         ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-            
+        
                     foreach ($field_names as $field_name) {
-                        $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                        $query->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
                     }
                 });
-
-                $q = $q->select('sales.*')->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
-
             }
-
+        
             if ($warehouse_id)
-                $q = $q->where('warehouse_id', $warehouse_id);
+                $q = $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status)
-                $q = $q->where('sale_status', $sale_status);
+                $q = $q->where('sales.sale_status', $sale_status);
             if ($payment_status)
-                $q = $q->where('payment_status', $payment_status);
+                $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
-                $q = $q->where('sale_type', $sale_type);
-            if ($payment_method)
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
-
-
-
+                $q = $q->where('sales.sale_type', $sale_type);
+            if ($payment_method) {
+                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                       ->where('payments.paying_method', $payment_method);
+            }
+        
+            $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
+        
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
             $sales = $q->get();
-            // dd($sales->count(), $q->count(), $q->toSql());
-            // $totalFiltered = $q->groupBy('sales.id')->count();
+            $totalData = $sales->count();
         }
+        
+
 
         $data = array();
         if (!empty($sales)) {
@@ -766,187 +717,125 @@ class SaleController extends Controller
         foreach ($custom_fields as $fieldName) {
             $field_names[] = str_replace(" ", "_", strtolower($fieldName));
         }
+        
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                 ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-            if (Auth::user()->role_id > 8 && config('staff_access') == 'own')
-                $q = $q->where('sales.user_id', Auth::id());
-            elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse')
-                $q = $q->where('warehouse_id', Auth::user()->warehouse_id);
-            if ($warehouse_id)
-                $q = $q->where('warehouse_id', $warehouse_id);
-            if ($sale_status)
-                $q = $q->where('sale_status', $sale_status);
-            if ($payment_status)
-                $q = $q->where('payment_status', $payment_status);
-            if ($sale_type)
-                $q = $q->where('sale_type', $sale_type);
-            if (!$sale_type)
-                $q = $q->whereIn('sale_type', ['online', 'website', 'wholesale']);
-            if ($payment_method)
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
-            
+        
+            if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
+                $q->where('sales.user_id', Auth::id());
+            } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
+                $q->where('sales.warehouse_id', Auth::user()->warehouse_id);
+            }
+        
+            if ($warehouse_id) $q->where('sales.warehouse_id', $warehouse_id);
+            if ($sale_status) $q->where('sales.sale_status', $sale_status);
+            if ($payment_status) $q->where('sales.payment_status', $payment_status);
+            if ($sale_type) {
+                $q->where('sales.sale_type', $sale_type);
+            } else {
+                $q->whereIn('sales.sale_type', ['online', 'website', 'wholesale']);
+            }
+        
+            if ($payment_method) {
+                $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                    ->where('payments.paying_method', $payment_method)
+                    ->select('sales.*');
+            }
+        
+            $q->groupBy('sales.id');
+        
             $totalFiltered = $q->count();
+        
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
             $sales = $q->get();
+            $totalData = $sales->count();
+        
         } else {
-            // $search = $request->input('search.value');
-            // $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
-            // ->join('billers', 'sales.biller_id', '=', 'billers.id')
-            // ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-            // ->whereDate('sales.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))));
             $search = $request->input('search.value');
+        
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
-            ->join('billers', 'sales.biller_id', '=', 'billers.id')
-            ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-            ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
-            ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-            ->whereDate('sales.created_at', '<=', $ending_date->toDateString());            // $q = Sale::with('biller', 'customer', 'warehouse', 'user')
-         
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
+                ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
+                ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
+                ->select('sales.*')
+                ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
+        
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
-                    ->where('sales.user_id', Auth::id())
-                    ->orwhere([
-                        ['sales.reference_no', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['customers.name', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['customers.phone_number', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['billers.name', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['packing_slips.waybill_id', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['product_sales.imei_number', 'LIKE', "%{$search}%"],
-                        ['sales.user_id', Auth::id()]
-                    ]);
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere([
-                        ['sales.user_id', Auth::id()],
-                        ['sales.' . $field_name, 'LIKE', "%{$search}%"]
-                    ]);
-                }
+                $q->where(function ($query) use ($search, $field_names) {
+                    $query->where('sales.user_id', Auth::id())
+                        ->where(function ($q) use ($search, $field_names) {
+                            $q->where('sales.reference_no', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                                ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
+                                ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                            foreach ($field_names as $field_name) {
+                                $q->orWhere("sales.$field_name", 'LIKE', "%{$search}%");
+                            }
+                        });
+                });
             } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
-                $q = $q->select('sales.*')
-                    ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
-                    ->where('sales.user_id', Auth::id())
-                    ->orwhere([
-                        ['sales.reference_no', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['customers.name', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['customers.phone_number', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['billers.name', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['packing_slips.waybill_id', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ])
-                    ->orwhere([
-                        ['product_sales.imei_number', 'LIKE', "%{$search}%"],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ]);
-                foreach ($field_names as $key => $field_name) {
-                    $q = $q->orwhere([
-                        ['sales.user_id', Auth::id()],
-                        ['sales.warehouse_id', Auth::user()->warehouse_id]
-                    ]);
-                }
+                $q->where(function ($query) use ($search, $field_names) {
+                    $query->where('sales.warehouse_id', Auth::user()->warehouse_id)
+                        ->where(function ($q) use ($search, $field_names) {
+                            $q->where('sales.reference_no', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
+                                ->orWhere('billers.name', 'LIKE', "%{$search}%")
+                                ->orWhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
+                                ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
+                            foreach ($field_names as $field_name) {
+                                $q->orWhere("sales.$field_name", 'LIKE', "%{$search}%");
+                            }
+                        });
+                });
             } else {
-                //  $q = $q->where(function ($query) use ($search) {
-                //     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
-                //         ->orWhereHas('customer', function ($q) use ($search) {
-                //             $q->where('name', 'LIKE', "%{$search}%")
-                //                 ->orWhere('phone_number', 'LIKE', "%{$search}%");
-                //         })
-                //         ->orWhereHas('biller', function ($q) use ($search) {
-                //             $q->where('name', 'LIKE', "%{$search}%");
-                //         })
-                //          ->orWhereHas('packingSlip', function ($q) use ($search) {
-                //             $q->where('waybill_id', 'LIKE', "%{$search}%");
-                //         })
-                //         ->orWhereHas('productSales', function ($q) use ($search) {
-                //             $q->where('imei_number', 'LIKE', "%{$search}%");
-                //         });
-                // });
-
-                // $q = $q->select('sales.*')
-                // ->with('biller', 'customer', 'warehouse', 'user')
-                // ->orwhere('sales.reference_no', 'LIKE', "%{$search}%")
-                // ->orwhere('customers.name', 'LIKE', "%{$search}%")
-                // ->orwhere('customers.phone_number', 'LIKE', "%{$search}%")
-                // ->orwhere('billers.name', 'LIKE', "%{$search}%")
-                // ->orwhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-                // foreach ($field_names as $key => $field_name) {
-                //     $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
-                // }
-
-                $q = $q->where(function ($query) use ($search, $field_names, $request) {
+                $q->where(function ($query) use ($search, $field_names) {
                     $query->where('sales.reference_no', 'LIKE', "%{$search}%")
                         ->orWhere('customers.name', 'LIKE', "%{$search}%")
                         ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                         ->orWhere('billers.name', 'LIKE', "%{$search}%")
-                        ->orwhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
+                        ->orWhere('packing_slips.waybill_id', 'LIKE', "%{$search}%")
                         ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-            
                     foreach ($field_names as $field_name) {
-                        $query->orWhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+                        $query->orWhere("sales.$field_name", 'LIKE', "%{$search}%");
                     }
                 });
+            }
         
-            foreach ($field_names as $key => $field_name) {
-                $q = $q->orwhere('sales.' . $field_name, 'LIKE', "%{$search}%");
+            if ($warehouse_id) $q->where('sales.warehouse_id', $warehouse_id);
+            if ($sale_status) $q->where('sales.sale_status', $sale_status);
+            if ($payment_status) $q->where('sales.payment_status', $payment_status);
+            if ($sale_type) {
+                $q->where('sales.sale_type', $sale_type);
+            } else {
+                $q->whereIn('sales.sale_type', ['online', 'website', 'wholesale']);
             }
-                $q = $q->select('sales.*')->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
-
+        
+            if ($payment_method) {
+                $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                    ->where('payments.paying_method', $payment_method)
+                    ->select('sales.*');
             }
-            if ($warehouse_id)
-                $q = $q->where('warehouse_id', $warehouse_id);
-            if ($sale_status)
-                $q = $q->where('sale_status', $sale_status);
-            if ($payment_status)
-                $q = $q->where('payment_status', $payment_status);
-            if ($sale_type)
-                $q = $q->where('sale_type', $sale_type);
-            if (!$sale_type)
-                $q = $q->whereIn('sale_type', ['online', 'website', 'wholesale']);
-            if ($payment_method)
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')->select('sales.id', 'sales.*')->where('paying_method', $payment_method);
-
-            
-            // $sales = $q->groupBy('sales.id')->get();
-            // $totalFiltered = $q->groupBy('sales.id')->count();
+        
+            $q->groupBy('sales.id');
+        
             $totalFiltered = $q->count();
+        
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
-            $totalData  = $q->count(); 
             $sales = $q->get();
+            $totalData = $sales->count();
         }
-
+        
 
         $data = array();
         if (!empty($sales)) {
