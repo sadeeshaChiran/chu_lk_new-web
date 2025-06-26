@@ -855,38 +855,38 @@ class TransferController extends Controller
         $mailData['to_phone'] = $toWareHouse->phone;
         $mailData['to_email'] = $toWareHouse->email;
         $mailData['to_address'] = $toWareHouse->address;
-        if($mail_setting && ($mailData['from_email'] || $mailData['to_email'])) {
-            $this->setMailInfo($mail_setting);
-            $productTransferData = $this->getProductTransferData($lims_transfer_data->id);
-            $mailData['products'] = $productTransferData['products'];
-            $mailData['qty'] = $productTransferData['qty'];
-            $mailData['unit'] = $productTransferData['unit'];
-            $mailData['tax'] = $productTransferData['tax'];
-            $mailData['tax_rate'] = $productTransferData['tax_rate'];
-            $mailData['total'] = $productTransferData['total'];
-            $mailData['batch_no'] = $productTransferData['batch_no'];
+        // if($mail_setting && ($mailData['from_email'] || $mailData['to_email'])) {
+        //     $this->setMailInfo($mail_setting);
+        //     $productTransferData = $this->getProductTransferData($lims_transfer_data->id);
+        //     $mailData['products'] = $productTransferData['products'];
+        //     $mailData['qty'] = $productTransferData['qty'];
+        //     $mailData['unit'] = $productTransferData['unit'];
+        //     $mailData['tax'] = $productTransferData['tax'];
+        //     $mailData['tax_rate'] = $productTransferData['tax_rate'];
+        //     $mailData['total'] = $productTransferData['total'];
+        //     $mailData['batch_no'] = $productTransferData['batch_no'];
 
-            try{
-                if($mailData['to_email'])
-                    Mail::to($mailData['to_email'])
-                    ->send(new TransferDetails($mailData));
-                else
-                    $message .= '.To warehouse email not found.';
+        //     try{
+        //         if($mailData['to_email'])
+        //             Mail::to($mailData['to_email'])
+        //             ->send(new TransferDetails($mailData));
+        //         else
+        //             $message .= '.To warehouse email not found.';
 
-                if($mailData['from_email'])
-                    Mail::to($mailData['from_email'])
-                    ->send(new TransferDetails($mailData));
-                else
-                    $message .= '.From warehouse email not found.';
+        //         if($mailData['from_email'])
+        //             Mail::to($mailData['from_email'])
+        //             ->send(new TransferDetails($mailData));
+        //         else
+        //             $message .= '.From warehouse email not found.';
 
-                $lims_transfer_data->update(['is_sent'=> true]);
-            }
-            catch(\Exception $e) {
-                return $e;
-                $lims_transfer_data->update(['is_sent'=> false]);
-                $message .= '. Please Setup Your Mail Credentials to send Email.';
-            }
-        }
+        //         $lims_transfer_data->update(['is_sent'=> true]);
+        //     }
+        //     catch(\Exception $e) {
+        //         return $e;
+        //         $lims_transfer_data->update(['is_sent'=> false]);
+        //         $message .= '. Please Setup Your Mail Credentials to send Email.';
+        //     }
+        // }
         return redirect('transfers')->with('message', $message);
     }
 
