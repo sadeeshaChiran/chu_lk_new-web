@@ -371,7 +371,7 @@
                                 @endif
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label>{{ trans('file.Payment Receiver') }}</label>
                             <input type="text" name="payment_receiver" class="form-control">
                         </div>
@@ -486,7 +486,7 @@
                                 @endif
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label>{{ trans('file.Payment Receiver') }}</label>
                             <input type="text" name="payment_receiver" class="form-control">
                         </div>
@@ -893,9 +893,10 @@
             rowindex = $(this).closest('tr').index();
             deposit = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.deposit').val();
             var sale_id = $(this).data('id').toString();
-            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(12)')
+            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(21)')
                 .text();
             balance = parseFloat(balance.replace(/,/g, ''));
+            console.log(balance);
             $('input[name="paying_amount"]').val(balance);
             $('#add-payment input[name="balance"]').val(balance);
             $('input[name="amount"]').val(balance);

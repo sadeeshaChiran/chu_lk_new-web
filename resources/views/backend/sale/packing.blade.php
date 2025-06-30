@@ -607,6 +607,7 @@
             select: function(event, ui) {
                 var data = ui.item.value;
                 $(".ui-helper-hidden-accessible").css('display', 'none');
+                ui.item.value = '';
                 productSearch(data);
             }
         });

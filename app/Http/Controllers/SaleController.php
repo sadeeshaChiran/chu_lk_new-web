@@ -283,6 +283,7 @@ class SaleController extends Controller
         $totalData = $q->count();
         $totalFiltered = $totalData;
 
+   
         if ($request->input('length') != -1)
             $limit = $request->input('length');
         else
@@ -323,7 +324,7 @@ class SaleController extends Controller
                        ->where('payments.paying_method', $payment_method);
             }
         
-            $q = $q->groupBy('sales.id');
+            // $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
         
             $q = $q->offset($start)
@@ -401,7 +402,7 @@ class SaleController extends Controller
                        ->where('payments.paying_method', $payment_method);
             }
         
-            $q = $q->groupBy('sales.id');
+            // $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
         
             $q = $q->offset($start)
@@ -631,6 +632,7 @@ class SaleController extends Controller
                 $data[] = $nestedData;
             }
         }
+        
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
@@ -744,7 +746,7 @@ class SaleController extends Controller
                     ->select('sales.*');
             }
         
-            $q->groupBy('sales.id');
+            // $q->groupBy('sales.id');
         
             $totalFiltered = $q->count();
         
@@ -825,7 +827,7 @@ class SaleController extends Controller
                     ->select('sales.*');
             }
         
-            $q->groupBy('sales.id');
+            // $q->groupBy('sales.id');
         
             $totalFiltered = $q->count();
         
