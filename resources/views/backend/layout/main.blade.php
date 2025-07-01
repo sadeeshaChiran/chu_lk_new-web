@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="facebook-domain-verification" content="nl5bvf0mx6w5q9g7cs8goj8dhn6ffn" />
   <!-- Bootstrap CSS-->
   <link rel="stylesheet" href="<?php echo asset('vendor/bootstrap/css/bootstrap.min.css') ?>" type="text/css">
   <link rel="preload" href="<?php echo asset('vendor/bootstrap-toggle/css/bootstrap-toggle.min.css') ?>" as="style" onload="this.onload=null;this.rel='stylesheet'">
