@@ -324,9 +324,9 @@ class SaleController extends Controller
                        ->where('payments.paying_method', $payment_method);
             }
         
-            // $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
-        
+            $q = $q->groupBy('sales.id');
+
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
@@ -402,9 +402,9 @@ class SaleController extends Controller
                        ->where('payments.paying_method', $payment_method);
             }
         
-            // $q = $q->groupBy('sales.id');
             $totalFiltered = $q->count();
-        
+            $q = $q->groupBy('sales.id');
+
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
@@ -746,9 +746,10 @@ class SaleController extends Controller
                     ->select('sales.*');
             }
         
-            // $q->groupBy('sales.id');
         
             $totalFiltered = $q->count();
+            $q->groupBy('sales.id');
+
         
             $q = $q->offset($start)
                 ->limit($limit)
@@ -827,10 +828,10 @@ class SaleController extends Controller
                     ->select('sales.*');
             }
         
-            // $q->groupBy('sales.id');
         
             $totalFiltered = $q->count();
-        
+            $q->groupBy('sales.id');
+
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
