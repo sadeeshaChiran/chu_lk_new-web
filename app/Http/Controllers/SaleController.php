@@ -3404,7 +3404,9 @@ class SaleController extends Controller
                 $message = 'Payment created successfully. Please setup your <a href="setting/mail_setting">mail setting</a> to send mail.';
             }
         }
-        return redirect('sales')->with('message', $message);
+        // return redirect('sales')->with('message', $message);
+        return redirect()->back()->with('message', $message);
+
     }
 
     public function getPayment($id)
@@ -3652,7 +3654,7 @@ class SaleController extends Controller
                 $message = 'Payment updated successfully. Please setup your <a href="setting/mail_setting">mail setting</a> to send mail.';
             }
         }
-        return redirect('sales')->with('message', $message);
+        return redirect()->back()->with('message', $message);
     }
 
     public function deletePayment(Request $request)
@@ -3704,7 +3706,7 @@ class SaleController extends Controller
             $lims_customer_data->save();
         }
         $lims_payment_data->delete();
-        return redirect('sales')->with('not_permitted', 'Payment deleted successfully');
+        return redirect()->back()->with('not_permitted', 'Payment deleted successfully');
     }
 
     public function todaySale()

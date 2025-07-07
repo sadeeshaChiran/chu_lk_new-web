@@ -865,7 +865,7 @@
             rowindex = $(this).closest('tr').index();
             deposit = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.deposit').val();
             var sale_id = $(this).data('id').toString();
-            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(12)')
+            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(14)')
                 .text();
             balance = parseFloat(balance.replace(/,/g, ''));
             $('input[name="paying_amount"]').val(balance);
@@ -878,7 +878,7 @@
             rowindex = $(this).closest('tr').index();
             deposit = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.deposit').val();
             var id = $(this).data('id').toString();
-            $.get('sales/getpayment/' + id, function(data) {
+            $.get('/sales/getpayment/' + id, function(data) {
                 $(".payment-list tbody").remove();
                 var newBody = $("<tbody>");
                 payment_date = data[0];
@@ -1035,10 +1035,10 @@
         });
 
         $('input[name="amount"]').on("input", function() {
-            if ($(this).val() > parseFloat($('input[name="paying_amount"]').val())) {
+            if ( parseFloat($(this).val()) > parseFloat($('input[name="paying_amount"]').val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $(this).val('');
-            } else if ($(this).val() > parseFloat($('input[name="balance"]').val())) {
+            } else if (parseFloat($(this).val()) > parseFloat($('input[name="balance"]').val())) {
                 alert('Paying amount cannot be bigger than due amount');
                 $(this).val('');
             }
@@ -1426,7 +1426,7 @@
                 sale[3] + '<br>' + sale[4] + '<br>' + sale[5] + '<br>' + sale[6] + '<br>' + sale[7] + '<br>' + sale[8] +
                 '</div><div class="col-md-6"><div class="float-right"><strong>{{ trans('file.To') }}:</strong><br>' +
                 sale[9] + '<br>' + sale[10] + '<br>' + sale[11] + '<br>' + sale[12] + '</div></div></div>';
-            $.get('sales/product_sale/' + sale[13], function(data) {
+            $.get('/sales/product_sale/' + sale[13], function(data) {
                 $(".product-sale-list tbody").remove();
                 var name_code = data[0];
                 var qty = data[1];
