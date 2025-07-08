@@ -742,8 +742,7 @@ class SaleController extends Controller
         
             if ($payment_method) {
                 $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                    ->where('payments.paying_method', $payment_method)
-                    ->select('sales.*');
+                    ->where('payments.paying_method', $payment_method);
             }
         
         
@@ -763,10 +762,11 @@ class SaleController extends Controller
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->join('billers', 'sales.biller_id', '=', 'billers.id')
                 ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
-                ->join('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
+                ->leftJoin('packing_slips', 'sales.id', '=', 'packing_slips.sale_id')
                 ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
-                ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
-                ->select('sales.*')
+                ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
+        
+            $q = $q->select('sales.*')
                 ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
         
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
@@ -824,8 +824,7 @@ class SaleController extends Controller
         
             if ($payment_method) {
                 $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                    ->where('payments.paying_method', $payment_method)
-                    ->select('sales.*');
+                    ->where('payments.paying_method', $payment_method);
             }
         
         

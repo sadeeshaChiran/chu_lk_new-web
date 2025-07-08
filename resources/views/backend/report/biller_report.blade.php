@@ -742,6 +742,13 @@
 
 $(".daterangepicker-field").daterangepicker({
             timeZone: 'Asia/Colombo',
+            ranges: {
+                'Today': [moment().startOf('day'), moment().endOf('day')],
+                'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf(
+                    'day')],
+                'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
+                'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
+            },
   callback: function(startDate, endDate, period){
     var start_date = startDate.format('YYYY-MM-DD');
     var end_date = endDate.format('YYYY-MM-DD');
