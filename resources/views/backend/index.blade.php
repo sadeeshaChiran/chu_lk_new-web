@@ -959,100 +959,100 @@
         function dashboardFilter(data) {
 
             $('.revenue-data').hide();
-            $('.revenue-data').html(parseFloat(data[0]).toFixed({{ $general_setting->decimal }}));
+            $('.revenue-data').html(parseFloat(data[0]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.revenue-data').show(500);
 
             $('.return-data').hide();
-            $('.return-data').html(parseFloat(data[1]).toFixed({{ $general_setting->decimal }}));
+            $('.return-data').html(parseFloat(data[1]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.return-data').show(500);
 
             $('.profit-data').hide();
-            $('.profit-data').html(parseFloat(data[2]).toFixed({{ $general_setting->decimal }}));
+            $('.profit-data').html(parseFloat(data[2]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.profit-data').show(500);
 
             $('.purchase_return-data').hide();
-            $('.purchase_return-data').html(parseFloat(data[3]).toFixed({{ $general_setting->decimal }}));
+            $('.purchase_return-data').html(parseFloat(data[3]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.purchase_return-data').show(500);
 
 
             $('.pos-revenue').hide();
-            $('.pos-revenue').html(parseFloat(data[19]).toFixed({{ $general_setting->decimal }}));
+            $('.pos-revenue').html(parseFloat(data[19]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.pos-revenue').show(500);
 
             $('.pos-return').hide();
-            $('.pos-return').html(parseFloat(data[20]).toFixed({{ $general_setting->decimal }}));
+            $('.pos-return').html(parseFloat(data[20]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.pos-return').show(500);
 
             $('.pos-product-cost').hide();
-            $('.pos-product-cost').html(parseFloat(data[22]).toFixed({{ $general_setting->decimal }}));
+            $('.pos-product-cost').html(parseFloat(data[22]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.pos-product-cost').show(500);
 
             $('.pos-net-profit').hide();
-            $('.pos-net-profit').html(parseFloat(data[21]).toFixed({{ $general_setting->decimal }}));
+            $('.pos-net-profit').html(parseFloat(data[21]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.pos-net-profit').show(500);
 
 
 
             $('.online-revenue').hide();
-            $('.online-revenue').html(parseFloat(data[7]).toFixed({{ $general_setting->decimal }}));
+            $('.online-revenue').html(parseFloat(data[7]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.online-revenue').show(500);
 
             $('.online-return').hide();
-            $('.online-return').html(parseFloat(data[8]).toFixed({{ $general_setting->decimal }}));
+            $('.online-return').html(parseFloat(data[8]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.online-return').show(500);
 
             $('.online-product-cost').hide();
-            $('.online-product-cost').html(parseFloat(data[10]).toFixed({{ $general_setting->decimal }}));
+            $('.online-product-cost').html(parseFloat(data[10]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.online-product-cost').show(500);
 
             $('.online-net-profit').hide();
-            $('.online-net-profit').html(parseFloat(data[9]).toFixed({{ $general_setting->decimal }}));
+            $('.online-net-profit').html(parseFloat(data[9]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.online-net-profit').show(500);
 
 
 
             $('.wholesale-revenue').hide();
-            $('.wholesale-revenue').html(parseFloat(data[15]).toFixed({{ $general_setting->decimal }}));
+            $('.wholesale-revenue').html(parseFloat(data[15]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.wholesale-revenue').show(500);
 
             $('.wholesale-return').hide();
-            $('.wholesale-return').html(parseFloat(data[16]).toFixed({{ $general_setting->decimal }}));
+            $('.wholesale-return').html(parseFloat(data[16]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.wholesale-return').show(500);
 
             $('.wholesale-product-cost').hide();
-            $('.wholesale-product-cost').html(parseFloat(data[18]).toFixed({{ $general_setting->decimal }}));
+            $('.wholesale-product-cost').html(parseFloat(data[18]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.wholesale-product-cost').show(500);
 
             $('.wholesale-net-profit').hide();
-            $('.wholesale-net-profit').html(parseFloat(data[17]).toFixed({{ $general_setting->decimal }}));
+            $('.wholesale-net-profit').html(parseFloat(data[17]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.wholesale-net-profit').show(500);
 
 
 
             $('.website-revenue').hide();
-            $('.website-revenue').html(parseFloat(data[11]).toFixed({{ $general_setting->decimal }}));
+            $('.website-revenue').html(parseFloat(data[11]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.website-revenue').show(500);
 
             $('.website-return').hide();
-            $('.website-return').html(parseFloat(data[12]).toFixed({{ $general_setting->decimal }}));
+            $('.website-return').html(parseFloat(data[12]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.website-return').show(500);
 
             $('.website-product-cost').hide();
-            $('.website-product-cost').html(parseFloat(data[14]).toFixed({{ $general_setting->decimal }}));
+            $('.website-product-cost').html(parseFloat(data[14]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.website-product-cost').show(500);
 
             $('.website-net-profit').hide();
-            $('.website-net-profit').html(parseFloat(data[13]).toFixed({{ $general_setting->decimal }}));
+            $('.website-net-profit').html(parseFloat(data[13]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.website-net-profit').show(500);
 
 
             $('.income').hide();
-            $('.income').html(parseFloat(data[5]).toFixed({{ $general_setting->decimal }}));
+            $('.income').html(parseFloat(data[5]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.income').show(500);
 
 
             $('.expense').hide();
-            $('.expense').html(parseFloat(data[4]).toFixed({{ $general_setting->decimal }}));
+            $('.expense').html(parseFloat(data[4]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
             $('.expense').show(500);
 
             $('.summary-profit').hide();
