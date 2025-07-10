@@ -319,10 +319,11 @@ class SaleController extends Controller
                 $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
                 $q = $q->where('sales.sale_type', $sale_type);
-            if ($payment_method) {
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                       ->where('payments.paying_method', $payment_method);
-            }
+                if ($payment_method) {
+                    $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                        ->where('payments.paying_method', $payment_method)
+                        ->select('sales.*');
+                }
         
             $totalFiltered = $q->count();
             $q = $q->groupBy('sales.id');
@@ -397,10 +398,11 @@ class SaleController extends Controller
                 $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
                 $q = $q->where('sales.sale_type', $sale_type);
-            if ($payment_method) {
-                $q = $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                       ->where('payments.paying_method', $payment_method);
-            }
+                if ($payment_method) {
+                    $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                        ->where('payments.paying_method', $payment_method)
+                        ->select('sales.*');
+                }
         
             $totalFiltered = $q->count();
             $q = $q->groupBy('sales.id');
