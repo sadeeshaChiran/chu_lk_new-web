@@ -252,7 +252,7 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="online-Return">
+                                    <div class="online-return">
                                         {{ number_format((float) $online_return, $general_setting->decimal) }}</div>
                                 </div>
 
