@@ -22972,11 +22972,11 @@
 
             if (payment_mode == 'payhere') {
                 /* const merchantId = "1221455"; */
-                const merchantId = "231672";
+                const merchantId = "245112";
                 const orderId = "ORDER_" + new Date().getTime();
                 const amount = parseFloat($('#input_total').val());
                 const currency = "LKR";
-                const merchantSecret = "NDI0Njk3Nzg2MDE3MTIxMDMzMzUxNTQ3OTM4MzEyMTUwODY3MTg1Mw==";
+                const merchantSecret = "MTE5NjQ4MjEzMzQ1OTI1Nzg2OTI0MzUzMTgzOTIzNDk2NzY3MDg=";
                 /* const merchantSecret = "Mjc1NzE1MTgwNTE2NjQ1MTg5NjkyNTIzNDk2NTQxMjUxMDEzODE4NA=="; */
 
                 const hash = generateHash(orderId, amount, currency, merchantSecret, merchantId);
@@ -23298,7 +23298,7 @@
                                 }
 
                                 if (to_pay == 0) {
-                                    $('.payment-details').prepend('<h4>Please place order below</h4>');
+                                    $('.payment-details').prepend('<h4>Please  below</h4>');
                                 } else {
                                     $('.payment-details').prepend('<h4>Please pay ' + to_pay + '</h4>');
                                 }

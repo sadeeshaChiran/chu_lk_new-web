@@ -872,7 +872,15 @@ class SaleController extends Controller
                 }
                 $nestedData['product_list'] .= '</ul>';
                 $nestedData['biller'] = $sale->biller->name;
-                $nestedData['customer'] = $sale->customer->name . '<br>' . $sale->customer->phone_number . '<input type="hidden" class="deposit" value="' . ($sale->customer->deposit - $sale->customer->expense) . '" />' . '<input type="hidden" class="points" value="' . $sale->customer->points . '" />';
+
+                if ($sale->sale_type == 'website'){
+                    $phone = $sale->shipping_phone . ($sale->shipping_phone_2 ? ' / ' . $sale->shipping_phone_2 : '');
+                }else{
+                    $phone = $sale->customer->phone_number . ($sale->customer->phone_number_2 ? '/' . $sale->customer->phone_number_2 : '');
+
+                }
+
+                $nestedData['customer'] = $sale->customer->name . '<br>' . $phone . '<input type="hidden" class="deposit" value="' . ($sale->customer->deposit - $sale->customer->expense) . '" />' . '<input type="hidden" class="points" value="' . $sale->customer->points . '" />';
                 // $nestedData['payment_method'] = $nestedData['payment_method'] ? '' 'N/A';
                 $payments = Payment::where('sale_id', $sale->id)->pluck('paying_method')->toArray();
 
@@ -984,9 +992,6 @@ class SaleController extends Controller
 
                 $nestedData['action'] .= '</div>';
 
-
-
-
                 $nestedData['options'] = '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . trans("file.action") . '
                               <span class="caret"></span>
@@ -1067,6 +1072,12 @@ class SaleController extends Controller
                 else
                     $currency_code = 'N/A';
 
+                if ($sale->sale_type == 'website'){
+                    $sale->customer->name = $sale->shipping_name;
+                    $sale->customer->address = $sale->shipping_address;
+                    $sale->customer->city = $sale->shipping_city;
+                }
+                
                 $nestedData['sale'] = array(
                     '[ "' . date(config('date_format'), strtotime($sale->created_at->toDateString())) . '"',
                     ' "' . $sale->reference_no . '"',
@@ -1079,7 +1090,7 @@ class SaleController extends Controller
                     ' "' . $sale->biller->address . '"',
                     ' "' . $sale->biller->city . '"',
                     ' "' . $sale->customer->name . '"',
-                    ' "' . $sale->customer->phone_number . '"',
+                    ' "' . $phone . '"',
                     ' "' . $sale->customer->address . '"',
                     ' "' . $sale->customer->city . '"',
                     ' "' . $sale->id . '"',
@@ -3244,7 +3255,7 @@ class SaleController extends Controller
         // dd($totalDue, $lims_sale_data,$lims_product_sale_data);
         if ($lims_pos_setting_data->invoice_option == 'A4') {
             return view('backend.sale.a4_invoice', compact('lims_sale_data', 'currency_code', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords', 'paid_by_info', 'sale_custom_fields', 'customer_custom_fields', 'product_custom_fields', 'qrText', 'totalDue'));
-        } elseif ($lims_sale_data->sale_type == 'online') {
+        } elseif ($lims_sale_data->sale_type == 'online' || $lims_sale_data->sale_type == 'website') {
             return view('backend.sale.a4_invoice', compact('lims_sale_data', 'currency_code', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords', 'paid_by_info', 'sale_custom_fields', 'customer_custom_fields', 'product_custom_fields', 'qrText', 'totalDue'));
         } elseif ($lims_pos_setting_data->invoice_option == 'thermal' && $lims_pos_setting_data->thermal_invoice_size == '58') {
             return view('backend.sale.invoice58', compact('lims_sale_data', 'currency_code', 'lims_product_sale_data', 'lims_biller_data', 'lims_warehouse_data', 'lims_customer_data', 'lims_payment_data', 'numberInWords', 'sale_custom_fields', 'customer_custom_fields', 'product_custom_fields', 'qrText', 'totalDue'));
