@@ -22987,7 +22987,7 @@
                 let city = $("#city").val() || "";
 
                 const payment = {
-                    sandbox: true,
+                    sandbox: false,
                     merchant_id: merchantId,
                     return_url: "/",
                     cancel_url: "/",
