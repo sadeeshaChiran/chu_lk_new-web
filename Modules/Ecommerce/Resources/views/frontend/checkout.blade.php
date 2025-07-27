@@ -22991,7 +22991,7 @@
                     merchant_id: merchantId,
                     return_url: "/",
                     cancel_url: "/",
-                    notify_url: "https://sea-lion-app-qfh5d.ondigitalocean.app/payment/notify",
+                    notify_url: "https://chu.lk/payment/notify",
                     order_id: orderId,
                     items: `perchesing Product`,
                     amount: amount,
