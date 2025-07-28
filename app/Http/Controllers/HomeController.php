@@ -829,6 +829,20 @@ class HomeController extends Controller
 
     public function dashboardFilter($start_date, $end_date, $warehouse_id)
     {
+
+        $start = \Carbon\Carbon::parse($start_date);
+        $end = \Carbon\Carbon::parse($end_date);
+
+        if (Auth::user()->role_id <= 2) {
+            $diffInMonths = $start->diffInMonths($end);
+
+            if ($diffInMonths > 2) {
+                // Limit $end_date to max 2 months after $start_date
+                $end = $start->copy()->addMonths(2);
+                $end_date = $end->format('Y-m-d');
+            }
+        }
+
         if (Auth::user()->role_id > 2 && cache()->get('general_setting')->staff_access == 'own') {
             config()->set('database.connections.mysql.strict', false);
             DB::reconnect();
@@ -1110,7 +1124,7 @@ class HomeController extends Controller
                     ->where('sale_type', 'pos')
                     ->sum(DB::raw('grand_total - shipping_cost'));
 
-                
+
 
                 $return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
