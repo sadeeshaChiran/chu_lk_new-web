@@ -60,9 +60,9 @@
                         ->where('name', 'revenue_profit_summary')
                         ->first();
                 @endphp
-                @if ($revenue_profit_summary)
+                @if ($revenue_profit_summary || $hasSaleBiller)
                     <div class="filter-toggle btn-group d-inline-block">
-                        @if (\Auth::user()->role_id <= 2)
+                        @if (\Auth::user()->role_id <= 8)
                             <select name="warehouse_id" class="selectpicker" id="warehouse_btn" data-live-search="true"
                                 data-live-search-style="begins">
                                 <option value="0">{{ trans('file.All Warehouse') }}</option>
@@ -74,31 +74,33 @@
 
                         <div class="form-group">
                             <label><strong>{{ trans('file.Date') }}</strong></label>
-                            <input type="text" id="daterange" class="form-control"   value="{{ date((('Y') . '-' . date('m') . '-' . '01')) . ' To ' . date('Y-m-d') }}" />
+                            <input type="text" id="daterange" class="form-control"
+                                value="{{ date('Y' . '-' . date('m') . '-' . '01') . ' To ' . date('Y-m-d') }}" />
                         </div>
 
 
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d') }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.Today') }}</button>
+
                         <button class="btn btn-default date-btn" data-start_date="{{ date('Y-m-d', strtotime('-1 day')) }}"
                             data-end_date="{{ date('Y-m-d', strtotime('-1 day')) }}">{{ trans('Yesterday') }}</button>
-
                         <button class="btn btn-default date-btn"
                             data-start_date="{{ date('Y-m-d', strtotime(' -7 day')) }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.Last 7 Days') }}</button>
                         <button class="btn btn-default date-btn active"
                             data-start_date="{{ date('Y') . '-' . date('m') . '-' . '01' }}"
                             data-end_date="{{ date('Y-m-d') }}">{{ trans('file.This Month') }}</button>
-
-
                         <button class="btn btn-default date-btn"
                             data-start_date="{{ date('Y-m-01', strtotime('first day of last month')) }}"
                             data-end_date="{{ date('Y-m-t', strtotime('last day of last month')) }}">
                             {{ trans('Last Month') }}
                         </button>
-                        <button class="btn btn-default date-btn" data-start_date="{{ date('Y') . '-01' . '-01' }}"
-                            data-end_date="{{ date('Y') . '-12' . '-31' }}">{{ trans('file.This Year') }}</button>
 
+
+                        @if (\Auth::user()->role_id <= 2)
+                            <button class="btn btn-default date-btn" data-start_date="{{ date('Y') . '-01' . '-01' }}"
+                                data-end_date="{{ date('Y') . '-12' . '-31' }}">{{ trans('file.This Year') }}</button>
+                        @endif
 
                     </div>
                 @endif
@@ -459,6 +461,61 @@
                     </div>
                 @endif
 
+                <div id="biller-summary-table" class="col-12">
+                    @if ($hasSaleBiller)
+                        <div class="col-12">
+                            <div class="card shadow mb-4">
+                                <div class="card-header text-center">
+                                    <h4 class="mb-0">Billers Sales Summary</h4>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="table table-bordered table-hover text-center">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Biller</th>
+                                                <th>Sales Count</th>
+                                                <th>Sales Value</th>
+                                                <th>Return Value</th>
+                                                <th>Net Sales</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (['POS', 'Online', 'Wholesale', 'Website'] as $type)
+                                                @php $sales = $saleBillerSummary[$type]; @endphp
+
+                                                @if (count($sales) > 0)
+                                                    <tr class="table-primary">
+                                                        <td colspan="5" class="text-start font-weight-bold">
+                                                            {{ $type }} Sales
+                                                        </td>
+                                                    </tr>
+
+                                                    @foreach ($sales as $sale)
+                                                        <tr>
+                                                            <td>{{ $sale->biller_name }}</td>
+                                                            <td>{{ $sale->sale_count }}</td>
+                                                            <td style="color: #733686;">
+                                                                {{ number_format($sale->sales_value, $general_setting->decimal) }}
+                                                            </td>
+                                                            <td style="color: #ff8952;">
+                                                                {{ number_format($sale->return_value, $general_setting->decimal) }}
+                                                            </td>
+                                                            <td style="color: #297ff9;">
+                                                                {{ number_format($sale->net_sales, $general_setting->decimal) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+
                 @php
                     $cash_flow = $role_has_permissions_list->where('name', 'cash_flow')->first();
                 @endphp
@@ -493,7 +550,8 @@
                                 <canvas id="transactionChart" data-color = "{{ $color }}"
                                     data-color_rgba = "{{ $color_rgba }}" data-revenue={{ $revenue }}
                                     data-purchase={{ $purchase }} data-expense={{ $expense }}
-                                    data-label1="{{ trans('file.Purchase') }}" data-label2="{{ trans('file.revenue') }}"
+                                    data-label1="{{ trans('file.Purchase') }}"
+                                    data-label2="{{ trans('file.revenue') }}"
                                     data-label3="{{ trans('file.Expense') }}" width="100" height="95"> </canvas>
                             </div>
                         </div>
@@ -741,8 +799,6 @@
         });
 
 
-
-
         $(document).ready(function() {
             $.ajax({
                 url: '{{ url('/yearly-best-selling-qty') }}',
@@ -959,100 +1015,166 @@
         function dashboardFilter(data) {
 
             $('.revenue-data').hide();
-            $('.revenue-data').html(parseFloat(data[0]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.revenue-data').html(parseFloat(data[0]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.revenue-data').show(500);
 
             $('.return-data').hide();
-            $('.return-data').html(parseFloat(data[1]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.return-data').html(parseFloat(data[1]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.return-data').show(500);
 
             $('.profit-data').hide();
-            $('.profit-data').html(parseFloat(data[2]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.profit-data').html(parseFloat(data[2]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.profit-data').show(500);
 
             $('.purchase_return-data').hide();
-            $('.purchase_return-data').html(parseFloat(data[3]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.purchase_return-data').html(parseFloat(data[3]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.purchase_return-data').show(500);
 
 
             $('.pos-revenue').hide();
-            $('.pos-revenue').html(parseFloat(data[19]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.pos-revenue').html(parseFloat(data[19]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.pos-revenue').show(500);
 
             $('.pos-return').hide();
-            $('.pos-return').html(parseFloat(data[20]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.pos-return').html(parseFloat(data[20]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.pos-return').show(500);
 
             $('.pos-product-cost').hide();
-            $('.pos-product-cost').html(parseFloat(data[22]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.pos-product-cost').html(parseFloat(data[22]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.pos-product-cost').show(500);
 
             $('.pos-net-profit').hide();
-            $('.pos-net-profit').html(parseFloat(data[21]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.pos-net-profit').html(parseFloat(data[21]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.pos-net-profit').show(500);
 
 
 
             $('.online-revenue').hide();
-            $('.online-revenue').html(parseFloat(data[7]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.online-revenue').html(parseFloat(data[7]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.online-revenue').show(500);
 
             $('.online-return').hide();
-            $('.online-return').html(parseFloat(data[8]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.online-return').html(parseFloat(data[8]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.online-return').show(500);
 
             $('.online-product-cost').hide();
-            $('.online-product-cost').html(parseFloat(data[10]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.online-product-cost').html(parseFloat(data[10]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.online-product-cost').show(500);
 
             $('.online-net-profit').hide();
-            $('.online-net-profit').html(parseFloat(data[9]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.online-net-profit').html(parseFloat(data[9]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.online-net-profit').show(500);
 
 
 
             $('.wholesale-revenue').hide();
-            $('.wholesale-revenue').html(parseFloat(data[15]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.wholesale-revenue').html(parseFloat(data[15]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.wholesale-revenue').show(500);
 
             $('.wholesale-return').hide();
-            $('.wholesale-return').html(parseFloat(data[16]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.wholesale-return').html(parseFloat(data[16]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.wholesale-return').show(500);
 
             $('.wholesale-product-cost').hide();
-            $('.wholesale-product-cost').html(parseFloat(data[18]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.wholesale-product-cost').html(parseFloat(data[18]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.wholesale-product-cost').show(500);
 
             $('.wholesale-net-profit').hide();
-            $('.wholesale-net-profit').html(parseFloat(data[17]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.wholesale-net-profit').html(parseFloat(data[17]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.wholesale-net-profit').show(500);
 
 
 
             $('.website-revenue').hide();
-            $('.website-revenue').html(parseFloat(data[11]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.website-revenue').html(parseFloat(data[11]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.website-revenue').show(500);
 
             $('.website-return').hide();
-            $('.website-return').html(parseFloat(data[12]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.website-return').html(parseFloat(data[12]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.website-return').show(500);
 
             $('.website-product-cost').hide();
-            $('.website-product-cost').html(parseFloat(data[14]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.website-product-cost').html(parseFloat(data[14]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.website-product-cost').show(500);
 
             $('.website-net-profit').hide();
-            $('.website-net-profit').html(parseFloat(data[13]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.website-net-profit').html(parseFloat(data[13]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.website-net-profit').show(500);
 
 
             $('.income').hide();
-            $('.income').html(parseFloat(data[5]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.income').html(parseFloat(data[5]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.income').show(500);
 
 
             $('.expense').hide();
-            $('.expense').html(parseFloat(data[4]).toLocaleString('en-US', { minimumFractionDigits: {{ $general_setting->decimal }}, maximumFractionDigits: {{ $general_setting->decimal }} }));
+            $('.expense').html(parseFloat(data[4]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.expense').show(500);
 
             $('.summary-profit').hide();
@@ -1061,6 +1183,70 @@
             $('.summary-profit').show(500);
 
 
+
+
+            const container = $('#biller-summary-table');
+            container.empty();
+
+            const hasSaleBiller = data[24];
+            const saleBillerSummary = data[23];
+            const decimal = 2; // Or get it dynamically from your config
+
+            let html = '';
+
+            if (hasSaleBiller) {
+                html += `
+                    <div class="col-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header text-center">
+                                <h4 class="mb-0">Billers Sales Summary</h4>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-bordered table-hover text-center">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Biller</th>
+                                            <th>Sales Count</th>
+                                            <th>Sales Value</th>
+                                            <th>Return Value</th>
+                                            <th>Net Sales</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+
+                ['POS', 'Online', 'Wholesale', 'Website'].forEach(type => {
+                    const sales = saleBillerSummary[type];
+                    if (sales.length > 0) {
+                        html += `
+                            <tr class="table-primary">
+                                <td colspan="5" class="text-start font-weight-bold">${type} Sales</td>
+                            </tr>
+                        `;
+                        sales.forEach(sale => {
+                            html += `
+                                <tr>
+                                    <td>${sale.biller_name}</td>
+                                    <td>${sale.sale_count}</td>
+                                    <td style="color: #733686;">${parseFloat(sale.sales_value).toFixed(decimal)}</td>
+                                    <td style="color: #ff8952;">${parseFloat(sale.return_value).toFixed(decimal)}</td>
+                                    <td style="color: #297ff9;">${parseFloat(sale.net_sales).toFixed(decimal)}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                });
+
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.append(html)
 
         }
     </script>

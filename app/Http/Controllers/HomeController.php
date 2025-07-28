@@ -23,6 +23,7 @@ use App\Models\Unit;
 use Cache;
 use DB;
 use Auth;
+use DateTime;
 use Printing;
 use Rawilk\Printing\Contracts\Printer;
 use Spatie\Permission\Models\Role;
@@ -97,8 +98,273 @@ class HomeController extends Controller
 
         $start_date = date("Y") . '-' . date("m") . '-' . '01';
         $end_date = date("Y") . '-' . date("m") . '-' . date('t', mktime(0, 0, 0, date("m"), 1, date("Y")));
+
         $yearly_sale_amount = [];
 
+        if (Auth::user()->role_id <= 2) {
+            // online billers sales
+            $online_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'online')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+            // online billers returns
+            $online_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'online')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // pos billers sales
+            $pos_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'pos')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // pos billers returns
+            $pos_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'pos')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // warehouse billers sales
+            $wholesale_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'wholesale')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // wholesale billers returns
+            $wholesale_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'wholesale')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // website billers sales
+            $website_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'website')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // website billers returns
+            $website_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'website')
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+        } else {
+            // online billers sales
+            $online_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', value: $start_date)
+                ->whereDate('sales.created_at',  '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'online')
+                ->where('sales.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // online billers returns
+            $online_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'online')
+                ->where('returns.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // pos billers sales
+            $pos_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'pos')
+                ->where('sales.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // pos billers returns
+            $pos_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'pos')
+                ->where('returns.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // wholesale billers sales
+            $wholesale_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'wholesale')
+                ->where('sales.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // wholesale billers returns
+            $wholesale_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'wholesale')
+                ->where('returns.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // website billers sales
+            $website_biller_sales = DB::table('sales')
+                ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count')
+                )
+                ->whereDate('sales.created_at', '>=', $start_date)
+                ->whereDate('sales.created_at', '<=', $end_date)
+                ->where('sales.sale_status', 1)
+                ->where('sales.sale_type', 'website')
+                ->where('sales.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+
+            // website billers returns
+            $website_biller_returns = DB::table('returns')
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                ->select(
+                    'billers.id as biller_id',
+                    'billers.name as biller_name',
+                    DB::raw('SUM(returns.grand_total) as return_value'),
+                    DB::raw('COUNT(returns.id) as return_count')
+                )
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->where('sales.sale_type', 'website')
+                ->where('returns.biller_id', Auth::user()->biller_id)
+                ->groupBy('billers.id', 'billers.name')
+                ->get();
+        }
         if (Auth::user()->role_id > 2 && cache()->get('general_setting')->staff_access == 'own') {
             $product_sale_data = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
@@ -124,6 +390,9 @@ class HomeController extends Controller
             $revenue = $revenue - $return + $income;
             // $profit = $revenue + $purchase_return - $product_cost - $expense;
             $profit = $revenue - $product_cost - $expense;
+
+
+
 
 
             // Online sale
@@ -256,6 +525,8 @@ class HomeController extends Controller
             $profit = $revenue - $product_cost - $expense;
 
 
+
+
             // Online sale
             $online_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
@@ -348,7 +619,6 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
             $pos_net_profit = $pos_revenue - $pos_return - $pos_product_cost;
-
         }
 
         //cash flow of last 6 months
@@ -410,7 +680,54 @@ class HomeController extends Controller
             $autoUpdateData = $alertBugEnable = $alertVersionUpgradeEnable = '';
         }
 
-        return view('backend.index', compact('revenue', 'purchase', 'expense', 'income', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'yearly_purchase_amount', 'alertBugEnable', 'alertVersionUpgradeEnable', 'online_net_profit', 'website_net_profit', 'wholesale_net_profit', 'pos_net_profit', 'online_revenue', 'website_revenue', 'wholesale_revenue', 'pos_revenue',  'online_return', 'website_return', 'wholesale_return', 'pos_return', 'online_product_cost', 'website_product_cost', 'wholesale_product_cost', 'pos_product_cost'));
+        $saleBillerSummary = [
+            'POS' => $this->mergeSalesAndReturns($pos_biller_sales, $pos_biller_returns),
+            'Online' =>  $this->mergeSalesAndReturns($online_biller_sales, $online_biller_returns),
+            'Wholesale' =>  $this->mergeSalesAndReturns($wholesale_biller_sales, $wholesale_biller_returns),
+            'Website' =>  $this->mergeSalesAndReturns($website_biller_sales, $website_biller_returns),
+        ];
+
+        // Check if there is any data
+        $hasSaleBiller = collect($saleBillerSummary)->flatten(1)->isNotEmpty();
+
+
+
+        return view('backend.index', compact('saleBillerSummary', 'hasSaleBiller', 'revenue', 'purchase', 'expense', 'income', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'yearly_purchase_amount', 'alertBugEnable', 'alertVersionUpgradeEnable', 'online_net_profit', 'website_net_profit', 'wholesale_net_profit', 'pos_net_profit', 'online_revenue', 'website_revenue', 'wholesale_revenue', 'pos_revenue',  'online_return', 'website_return', 'wholesale_return', 'pos_return', 'online_product_cost', 'website_product_cost', 'wholesale_product_cost', 'pos_product_cost'));
+    }
+
+    function  mergeSalesAndReturns($sales, $returns)
+    {
+        $result = [];
+
+        foreach ($sales as $sale) {
+            $result[$sale->biller_id] = (object)[
+                'biller_id' => $sale->biller_id,
+                'biller_name' => $sale->biller_name,
+                'sale_count' => $sale->sale_count,
+                'sales_value' => $sale->sales_value,
+                'return_value' => 0,
+                'net_sales' => $sale->sales_value
+            ];
+        }
+
+        foreach ($returns as $return) {
+            if (!isset($result[$return->biller_id])) {
+                $result[$return->biller_id] = (object)[
+                    'biller_id' => $return->biller_id,
+                    'biller_name' => $return->biller_name,
+                    'sale_count' => 0,
+                    'sales_value' => 0,
+                    'return_value' => $return->return_value,
+                    'net_sales' => 0 - $return->return_value
+                ];
+            } else {
+                $result[$return->biller_id]->return_value = $return->return_value;
+                $result[$return->biller_id]->net_sales =
+                    $result[$return->biller_id]->sales_value - $return->return_value;
+            }
+        }
+
+        return array_values($result);
     }
 
     public function yearlyBestSellingPrice()
@@ -793,47 +1110,50 @@ class HomeController extends Controller
                     ->where('sale_type', 'pos')
                     ->sum(DB::raw('grand_total - shipping_cost'));
 
+                
 
                 $return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
-                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('returns.warehouse_id', $warehouse_id)
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
+
+
                 $website_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
-                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('returns.warehouse_id', $warehouse_id)
                     ->where('sales.sale_type', 'website')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
                 $pos_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
-                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('returns.warehouse_id', $warehouse_id)
                     ->where('sales.sale_type', 'pos')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
                 $wholesale_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
-                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('returns.warehouse_id', $warehouse_id)
                     ->where('sales.sale_type', 'wholesale')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
                 $online_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
-                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('returns.warehouse_id', $warehouse_id)
                     ->where('sales.sale_type', 'online')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
 
 
                 $purchase_return = ReturnPurchase::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->sum('grand_total');
+                    ->sum('returns.grand_total');
             }
 
             $expense = Expense::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('amount');
@@ -871,6 +1191,571 @@ class HomeController extends Controller
             $data[21] = $pos_net_profit;
             $data[22] = $pos_product_cost;
         }
+
+        if (Auth::user()->role_id <= 2) {
+
+            if ($warehouse_id == 0) {
+                // online billers sales
+                $online_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'online')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+                // online billers returns
+                $online_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'online')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers sales
+                $pos_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'pos')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers returns
+                $pos_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'pos')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // warehouse billers sales
+                $wholesale_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers returns
+                $wholesale_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers sales
+                $website_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'website')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers returns
+                $website_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'website')
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+            } else {
+                // online billers sales
+                $online_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'online')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+                // online billers returns
+                $online_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'online')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers sales
+                $pos_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers returns
+                $pos_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // warehouse billers sales
+                $wholesale_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers returns
+                $wholesale_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers sales
+                $website_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'website')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers returns
+                $website_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'website')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+            }
+        } else {
+
+            if ($warehouse_id == 0) {
+                // online billers sales
+                $online_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', value: $start_date)
+                    ->whereDate('sales.created_at',  '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'online')
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // online billers returns
+                $online_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'online')
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers sales
+                $pos_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers returns
+                $pos_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers sales
+                $wholesale_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers returns
+                $wholesale_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers sales
+                $website_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'website')
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers returns
+                $website_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'website')
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+            } else {
+                // online billers sales
+                $online_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', value: $start_date)
+                    ->whereDate('sales.created_at',  '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'online')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // online billers returns
+                $online_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'online')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers sales
+                $pos_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // pos billers returns
+                $pos_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'pos')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers sales
+                $wholesale_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // wholesale billers returns
+                $wholesale_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers sales
+                $website_biller_sales = DB::table('sales')
+                    ->join('billers', 'sales.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('COUNT(sales.id) as sale_count')
+                    )
+                    ->whereDate('sales.created_at', '>=', $start_date)
+                    ->whereDate('sales.created_at', '<=', $end_date)
+                    ->where('sales.sale_status', 1)
+                    ->where('sales.sale_type', 'website')
+                    ->where('sales.warehouse_id', $warehouse_id)
+                    ->where('sales.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+
+                // website billers returns
+                $website_biller_returns = DB::table('returns')
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->join('billers', 'returns.biller_id', '=', 'billers.id')
+                    ->select(
+                        'billers.id as biller_id',
+                        'billers.name as biller_name',
+                        DB::raw('SUM(returns.grand_total) as return_value'),
+                        DB::raw('COUNT(returns.id) as return_count')
+                    )
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->where('sales.sale_type', 'website')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('returns.biller_id', Auth::user()->biller_id)
+                    ->groupBy('billers.id', 'billers.name')
+                    ->get();
+            }
+        }
+
+        $saleBillerSummary = [
+            'POS' => $this->mergeSalesAndReturns($pos_biller_sales, $pos_biller_returns),
+            'Online' =>  $this->mergeSalesAndReturns($online_biller_sales, $online_biller_returns),
+            'Wholesale' =>  $this->mergeSalesAndReturns($wholesale_biller_sales, $wholesale_biller_returns),
+            'Website' =>  $this->mergeSalesAndReturns($website_biller_sales, $website_biller_returns),
+        ];
+
+        // Check if there is any data
+        $hasSaleBiller = collect($saleBillerSummary)->flatten(1)->isNotEmpty();
+
+        $data[23] = $saleBillerSummary;
+        $data[24] = $hasSaleBiller;
+
+
         return $data;
     }
 
