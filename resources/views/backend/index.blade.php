@@ -368,7 +368,7 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="wholesale-Return">
+                                    <div class="wholesale-return">
                                         {{ number_format((float) $wholesale_return, $general_setting->decimal) }}</div>
                                 </div>
 

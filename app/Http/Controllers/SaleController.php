@@ -283,7 +283,7 @@ class SaleController extends Controller
         $totalData = $q->count();
         $totalFiltered = $totalData;
 
-   
+
         if ($request->input('length') != -1)
             $limit = $request->input('length');
         else
@@ -304,13 +304,13 @@ class SaleController extends Controller
             $q = Sale::with('biller', 'customer', 'warehouse', 'user')
                 ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-        
+
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->where('sales.user_id', Auth::id());
             } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
                 $q = $q->where('sales.warehouse_id', Auth::user()->warehouse_id);
             }
-        
+
             if ($warehouse_id)
                 $q = $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status)
@@ -319,12 +319,12 @@ class SaleController extends Controller
                 $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
                 $q = $q->where('sales.sale_type', $sale_type);
-                if ($payment_method) {
-                    $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                        ->where('payments.paying_method', $payment_method)
-                        ->select('sales.*');
-                }
-        
+            if ($payment_method) {
+                $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                    ->where('payments.paying_method', $payment_method)
+                    ->select('sales.*');
+            }
+
             $totalFiltered = $q->count();
             $q = $q->groupBy('sales.id');
 
@@ -333,19 +333,18 @@ class SaleController extends Controller
                 ->orderBy($order, $dir);
             $sales = $q->get();
             $totalData = $sales->count();
-        
         } else {
             $search = $request->input('search.value');
-        
+
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->join('billers', 'sales.biller_id', '=', 'billers.id')
                 ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-        
+
             $q = $q->select('sales.*')
                 ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
-        
+
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q = $q->where(function ($query) use ($search, $field_names) {
                     $query->where('sales.user_id', Auth::id())
@@ -355,7 +354,7 @@ class SaleController extends Controller
                                 ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                                 ->orWhere('billers.name', 'LIKE', "%{$search}%")
                                 ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-        
+
                             foreach ($field_names as $field_name) {
                                 $q->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
                             }
@@ -370,7 +369,7 @@ class SaleController extends Controller
                                 ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                                 ->orWhere('billers.name', 'LIKE', "%{$search}%")
                                 ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-        
+
                             foreach ($field_names as $field_name) {
                                 $q->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
                             }
@@ -383,13 +382,13 @@ class SaleController extends Controller
                         ->orWhere('customers.phone_number', 'LIKE', "%{$search}%")
                         ->orWhere('billers.name', 'LIKE', "%{$search}%")
                         ->orWhere('product_sales.imei_number', 'LIKE', "%{$search}%");
-        
+
                     foreach ($field_names as $field_name) {
                         $query->orWhere("sales.{$field_name}", 'LIKE', "%{$search}%");
                     }
                 });
             }
-        
+
             if ($warehouse_id)
                 $q = $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status)
@@ -398,12 +397,12 @@ class SaleController extends Controller
                 $q = $q->where('sales.payment_status', $payment_status);
             if ($sale_type)
                 $q = $q->where('sales.sale_type', $sale_type);
-                if ($payment_method) {
-                    $q->join('payments', 'sales.id', '=', 'payments.sale_id')
-                        ->where('payments.paying_method', $payment_method)
-                        ->select('sales.*');
-                }
-        
+            if ($payment_method) {
+                $q->join('payments', 'sales.id', '=', 'payments.sale_id')
+                    ->where('payments.paying_method', $payment_method)
+                    ->select('sales.*');
+            }
+
             $totalFiltered = $q->count();
             $q = $q->groupBy('sales.id');
 
@@ -413,7 +412,7 @@ class SaleController extends Controller
             $sales = $q->get();
             $totalData = $sales->count();
         }
-        
+
 
 
         $data = array();
@@ -634,7 +633,7 @@ class SaleController extends Controller
                 $data[] = $nestedData;
             }
         }
-        
+
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
@@ -721,18 +720,18 @@ class SaleController extends Controller
         foreach ($custom_fields as $fieldName) {
             $field_names[] = str_replace(" ", "_", strtolower($fieldName));
         }
-        
+
         if (empty($request->input('search.value'))) {
             $q = Sale::with('biller', 'customer', 'warehouse', 'user', 'packingSlip')
                 ->whereDate('sales.created_at', '>=', $starting_date->toDateString())
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString());
-        
+
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q->where('sales.user_id', Auth::id());
             } elseif (Auth::user()->role_id > 8 && config('staff_access') == 'warehouse') {
                 $q->where('sales.warehouse_id', Auth::user()->warehouse_id);
             }
-        
+
             if ($warehouse_id) $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status) $q->where('sales.sale_status', $sale_status);
             if ($payment_status) $q->where('sales.payment_status', $payment_status);
@@ -741,27 +740,26 @@ class SaleController extends Controller
             } else {
                 $q->whereIn('sales.sale_type', ['online', 'website', 'wholesale']);
             }
-        
+
             if ($payment_method) {
                 $q->join('payments', 'sales.id', '=', 'payments.sale_id')
                     ->where('payments.paying_method', $payment_method)
                     ->select('sales.*');
             }
-        
-        
+
+
             $totalFiltered = $q->count();
             $q->groupBy('sales.id');
 
-        
+
             $q = $q->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir);
             $sales = $q->get();
             $totalData = $sales->count();
-        
         } else {
             $search = $request->input('search.value');
-        
+
             $q = Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->join('billers', 'sales.biller_id', '=', 'billers.id')
                 ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
@@ -770,7 +768,7 @@ class SaleController extends Controller
                 ->whereDate('sales.created_at', '<=', $ending_date->toDateString())
                 ->select('sales.*')
                 ->with('biller', 'customer', 'warehouse', 'user', 'packingSlip');
-        
+
             if (Auth::user()->role_id > 8 && config('staff_access') == 'own') {
                 $q->where(function ($query) use ($search, $field_names) {
                     $query->where('sales.user_id', Auth::id())
@@ -814,7 +812,7 @@ class SaleController extends Controller
                     }
                 });
             }
-        
+
             if ($warehouse_id) $q->where('sales.warehouse_id', $warehouse_id);
             if ($sale_status) $q->where('sales.sale_status', $sale_status);
             if ($payment_status) $q->where('sales.payment_status', $payment_status);
@@ -823,14 +821,14 @@ class SaleController extends Controller
             } else {
                 $q->whereIn('sales.sale_type', ['online', 'website', 'wholesale']);
             }
-        
+
             if ($payment_method) {
                 $q->join('payments', 'sales.id', '=', 'payments.sale_id')
                     ->where('payments.paying_method', $payment_method)
                     ->select('sales.*');
             }
-        
-        
+
+
             $totalFiltered = $q->count();
             $q->groupBy('sales.id');
 
@@ -840,7 +838,7 @@ class SaleController extends Controller
             $sales = $q->get();
             $totalData = $sales->count();
         }
-        
+
 
         $data = array();
         if (!empty($sales)) {
@@ -873,11 +871,10 @@ class SaleController extends Controller
                 $nestedData['product_list'] .= '</ul>';
                 $nestedData['biller'] = $sale->biller->name;
 
-                if ($sale->sale_type == 'website'){
+                if ($sale->sale_type == 'website') {
                     $phone = $sale->shipping_phone . ($sale->shipping_phone_2 ? ' / ' . $sale->shipping_phone_2 : '');
-                }else{
+                } else {
                     $phone = $sale->customer->phone_number . ($sale->customer->phone_number_2 ? '/' . $sale->customer->phone_number_2 : '');
-
                 }
 
                 $nestedData['customer'] = $sale->customer->name . '<br>' . $phone . '<input type="hidden" class="deposit" value="' . ($sale->customer->deposit - $sale->customer->expense) . '" />' . '<input type="hidden" class="points" value="' . $sale->customer->points . '" />';
@@ -1072,12 +1069,12 @@ class SaleController extends Controller
                 else
                     $currency_code = 'N/A';
 
-                if ($sale->sale_type == 'website'){
+                if ($sale->sale_type == 'website') {
                     $sale->customer->name = $sale->shipping_name;
                     $sale->customer->address = $sale->shipping_address;
                     $sale->customer->city = $sale->shipping_city;
                 }
-                
+
                 $nestedData['sale'] = array(
                     '[ "' . date(config('date_format'), strtotime($sale->created_at->toDateString())) . '"',
                     ' "' . $sale->reference_no . '"',
@@ -3419,7 +3416,6 @@ class SaleController extends Controller
         }
         // return redirect('sales')->with('message', $message);
         return redirect()->back()->with('message', $message);
-
     }
 
     public function getPayment($id)
@@ -4316,5 +4312,17 @@ class SaleController extends Controller
         $redirectUrl = $data->redirect_url;
         return $redirectUrl;
         // echo "<script>window.location.href='$redirectUrl'</script>";
+    }
+
+
+    public function customerPreviewOrder($id)
+    {
+        $twoWeeksAgo = Carbon::now()->subWeeks(2);
+        $PreviewOrders = Sale::where('customer_id', $id)->where('created_at', '>=', $twoWeeksAgo)->get();
+
+
+        $html = view('backend.sale.preview_orders', compact('PreviewOrders'))->render();
+
+        return response()->json(['html' => $html]);
     }
 }
