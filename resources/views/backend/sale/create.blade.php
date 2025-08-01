@@ -21,6 +21,7 @@
     <section id="pos-layout" class="forms hidden-print">
         <div class="container-fluid">
             <div class="row">
+               
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
@@ -30,6 +31,7 @@
                             <p class="italic">
                                 <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
                             </p>
+                             
                             {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
                             <div class="row">
                                 <div class="col-md-12">
@@ -201,6 +203,8 @@
                                         </div>
 
                                     </div>
+
+                                     <div id="previewOrderAlerts" class="my-2 px-4 col-12"></div>
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <label>{{ trans('file.Select Product') }}</label>
@@ -242,11 +246,12 @@
                                                         <th></th>
                                                         <th></th>
                                                         <th id="total-discount">
-                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
+                                                            {{ number_format(0, $general_setting->decimal) }}</th>
                                                         <th id="total-tax">
-                                                            {{ number_format(0, $general_setting->decimal ) }}</th>
+                                                            {{ number_format(0, $general_setting->decimal) }}</th>
                                                         <th id="total">
-                                                            {{ number_format(0, $general_setting->decimal, '.', '' ) }}</th>
+                                                            {{ number_format(0, $general_setting->decimal, '.', '') }}
+                                                        </th>
                                                         <th><i class="dripicons-trash"></i></th>
                                                     </tfoot>
                                                 </table>
@@ -259,27 +264,27 @@
                                         <table class="table table-bordered table-condensed totals">
                                             <td><strong>{{ trans('file.Items') }}</strong>
                                                 <span class="pull-right"
-                                                    id="item">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="item">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Total') }}</strong>
                                                 <span class="pull-right"
-                                                    id="subtotal">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="subtotal">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Order Tax') }}</strong>
                                                 <span class="pull-right"
-                                                    id="order_tax">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="order_tax">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Order Discount') }}</strong>
                                                 <span class="pull-right"
-                                                    id="order_discount">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="order_discount">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.Shipping Cost') }}</strong>
                                                 <span class="pull-right"
-                                                    id="shipping_cost">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="shipping_cost">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                             <td><strong>{{ trans('file.grand total') }}</strong>
                                                 <span class="pull-right"
-                                                    id="grand_total">{{ number_format(0, $general_setting->decimal ) }}</span>
+                                                    id="grand_total">{{ number_format(0, $general_setting->decimal) }}</span>
                                             </td>
                                         </table>
                                     </div>
@@ -464,7 +469,7 @@
                                                 <select name="sale_status" class="form-control">
                                                     <option value="1">{{ trans('file.Completed') }}</option>
                                                     <option value="2" selected>{{ trans('file.Pending') }}</option>
-                                                     <option value="3" >{{ trans('file.Draft') }}</option>
+                                                    <option value="3">{{ trans('file.Draft') }}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -573,7 +578,7 @@
                                                 <div class="form-group">
                                                     <label>{{ trans('file.Change') }}</label>
                                                     <p id="change" class="ml-2">
-                                                        {{ number_format(0, $general_setting->decimal ) }}</p>
+                                                        {{ number_format(0, $general_setting->decimal) }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -742,16 +747,14 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} *</label>
-                            <input type="text" name="phone_number" required class="form-control"
-                                  minlength="10" maxlength="10"
-                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
+                            <input type="text" name="phone_number" required class="form-control" minlength="10"
+                                maxlength="10" title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
 
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} - 2</label>
-                            <input type="text" name="phone_number_2" class="form-control"
-                                  minlength="10" maxlength="10"
-                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
+                            <input type="text" name="phone_number_2" class="form-control" minlength="10"
+                                maxlength="10" title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
 
 
@@ -841,16 +844,14 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} *</label>
-                            <input type="text" name="phone_number" required class="form-control"
-                                  minlength="10" maxlength="10"
-                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
+                            <input type="text" name="phone_number" required class="form-control" minlength="10"
+                                maxlength="10" title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
 
                         <div class="form-group">
                             <label>{{ trans('file.Phone Number') }} - 2</label>
-                            <input type="text" name="phone_number_2" class="form-control"
-                                  minlength="10" maxlength="10"
-                                title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
+                            <input type="text" name="phone_number_2" class="form-control" minlength="10"
+                                maxlength="10" title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                         </div>
                         <div class="form-group">
                             <label>{{ trans('file.Address') }}</label>
@@ -863,7 +864,8 @@
                             <select required name="city" id="city" class="selectpicker form-control"
                                 data-live-search="true" title="Select City...">
                                 @foreach ($cities as $city)
-                                    <option value="{{ $city->name_en }}"  @if ($city->name_en == $customer->city) selected @endif>
+                                    <option value="{{ $city->name_en }}"
+                                        @if ($city->name_en == $customer->city) selected @endif>
                                         {{ $city->name_en }}
                                     </option>
                                 @endforeach
@@ -915,7 +917,8 @@
                                 <input type="number" step="any" name="cash_in_hand" required class="form-control">
                             </div>
                             <div class="col-md-12 form-group">
-                                <button type="submit" class="btn btn-primary mt-2 col-md-12">{{ trans('file.submit') }}</button>
+                                <button type="submit"
+                                    class="btn btn-primary mt-2 col-md-12">{{ trans('file.submit') }}</button>
                             </div>
                         </div>
                     </div>
@@ -1366,7 +1369,7 @@
         var lims_productcodeSearch = $('#lims_productcodeSearch');
 
         lims_productcodeSearch.autocomplete({
-                source: function(request, response) {
+            source: function(request, response) {
                 var terms = request.term.toLowerCase().split(/\s+/);
                 response($.grep(lims_product_array, function(item) {
                     var itemText = item.toLowerCase();
@@ -1559,7 +1562,7 @@
         }
 
         function productSearch(data) {
-            
+
             var product_info = data.split("|");
             var code = product_info[0];
             var pre_qty = 0;
@@ -1626,7 +1629,8 @@
                             pos = product_code.indexOf(data[1]);
                             temp_unit_name = (data[6]).split(',');
                             cols += '<td>' + data[0] +
-                                '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button> <br/>' + data[1] + ' | In Stock: ' + '<span class="in-stock">'+ +'</span></td>';
+                                '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button> <br/>' +
+                                data[1] + ' | In Stock: ' + '<span class="in-stock">' + +'</span></td>';
                             cols += '<td>' + data[1] + '</td>';
                             cols += '<td><input type="text" class="form-control qty" name="qty[]" value="' +
                                 data[15] + '" required/></td>';
@@ -1644,7 +1648,7 @@
 
                             cols += '<td class="net_unit_price"></td>';
                             cols +=
-                                '<td class="discount">{{ number_format(0, $general_setting->decimal ) }}</td>';
+                                '<td class="discount">{{ number_format(0, $general_setting->decimal) }}</td>';
                             cols += '<td class="tax"></td>';
                             cols += '<td class="sub-total"></td>';
                             cols +=
@@ -1705,10 +1709,10 @@
                                     customer_group_rate));
                             else
                                 wholesale_price.splice(rowindex, 0,
-                                    '{{ number_format(0, $general_setting->decimal ) }}');
+                                    '{{ number_format(0, $general_setting->decimal) }}');
                             cost.splice(rowindex, 0, parseFloat(data[17] * currency['exchange_rate']));
                             product_discount.splice(rowindex, 0,
-                                '{{ number_format(0, $general_setting->decimal ) }}');
+                                '{{ number_format(0, $general_setting->decimal) }}');
                             tax_rate.splice(rowindex, 0, parseFloat(data[3]));
                             tax_name.splice(rowindex, 0, data[4]);
                             tax_method.splice(rowindex, 0, data[5]);
@@ -1882,19 +1886,18 @@
                             return;
                         }
                     }
-                }
-                else if(product_type[pos] == 'combo'){
+                } else if (product_type[pos] == 'combo') {
                     child_id = product_list[pos].split(',');
                     child_qty = qty_list[pos].split(',');
                     $(child_id).each(function(index) {
                         var position = product_id.indexOf(parseInt(child_id[index]));
-                        if( position == -1 || parseFloat(sale_qty * child_qty[index]) > product_qty[position] ) {
+                        if (position == -1 || parseFloat(sale_qty * child_qty[index]) > product_qty[position]) {
                             alert('Quantity exceeds stock quantity!');
                             if (flag) {
                                 sale_qty = sale_qty.substring(0, sale_qty.length - 1);
-                                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(sale_qty);
-                            }
-                            else {
+                                $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(
+                                    sale_qty);
+                            } else {
                                 edit();
                                 flag = true;
                                 return false;
@@ -2081,7 +2084,7 @@
             var order_discount_type = $('select[name="order_discount_type"]').val();
             var order_discount_value = parseFloat($('input[name="order_discount_value"]').val());
             if (!order_discount_value)
-                order_discount_value = {{ number_format(0, $general_setting->decimal ) }};
+                order_discount_value = {{ number_format(0, $general_setting->decimal) }};
 
             if (order_discount_type == 'Flat') {
                 if (!currencyChange)
@@ -2092,7 +2095,7 @@
                 var order_discount = parseFloat(subtotal * (order_discount_value / 100));
 
             if (!shipping_cost)
-                shipping_cost = {{ number_format(0, $general_setting->decimal ) }};
+                shipping_cost = {{ number_format(0, $general_setting->decimal) }};
 
             item = ++item + '(' + total_qty + ')';
             order_tax = (subtotal - order_discount) * (order_tax / 100);
@@ -2373,6 +2376,30 @@
                 });
 
             }
+        });
+
+        // customer preview order check 
+        $(document).ready(function() {
+            $('#customer_id').on('change', function() {
+                console.log("dddd");
+                let customerId = $(this).val();
+
+                if (!customerId) return;
+
+                $.ajax({
+                    url: `/sales/preview-order/customer/${customerId}`, 
+                    type: "GET",
+                    success: function(response) {
+                        $('#previewOrderAlerts').html(response.html);
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        $('#previewOrderAlerts').html(
+                            '<div class="alert alert-danger">Error loading previous orders.</div>'
+                        );
+                    }
+                });
+            });
         });
     </script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
