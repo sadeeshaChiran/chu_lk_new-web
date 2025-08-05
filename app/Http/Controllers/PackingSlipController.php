@@ -14,6 +14,7 @@ use App\Models\Product_Warehouse;
 use App\Models\Variant;
 use App\Models\ProductVariant;
 use App\Models\Delivery;
+use Spatie\Permission\Models\Role;
 use Auth;
 use DB;
 use Illuminate\Support\Facades\Http;
@@ -117,8 +118,12 @@ class PackingSlipController extends Controller
                 $nestedData['options'] = '<div class="btn-group">
                                             <a target="_blank" class="btn btn-sm btn-primary" href="' . route('sale.invoice', $packing_slip->sale->id) . '" title="Generate Invoice"><i class="dripicons-document-new"></i></a>&nbsp;&nbsp;
                                             <a target="_blank" class="btn btn-sm btn-dark" href="' . route('packingSlip.genInvoice', $packing_slip->id) . '" title="Generate Shipping Label"><i class="dripicons-ticket"></i></a>&nbsp;&nbsp;';
-                $nestedData['options'] .= \Form::open(["route" => ["packingSlip.delete", $packing_slip->id], "method" => "POST"]) . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDelete()"><i class="dripicons-trash"></i> </button>' . \Form::close() . '</div>';
 
+                $role = Role::find(Auth::user()->role_id);
+
+                if ($role->hasPermissionTo('packing_slip_challan-delete')) {
+                    $nestedData['options'] .= \Form::open(["route" => ["packingSlip.delete", $packing_slip->id], "method" => "POST"]) . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDelete()"><i class="dripicons-trash"></i> </button>' . \Form::close() . '</div>';
+                }
                 $data[] = $nestedData;
             }
         }

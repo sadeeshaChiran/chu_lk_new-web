@@ -102,18 +102,20 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    
-                                         <tr>
+
+                                        <tr>
                                             <td>Price Management</td>
                                             <td class="text-center">
                                                 <div class="icheckbox_square-blue checked" aria-checked="false"
                                                     aria-disabled="false">
                                                     <div class="checkbox">
                                                         @if (in_array('price-management-index', $all_permission))
-                                                            <input type="checkbox" value="1" id="price-management-index"
-                                                                name="price-management-index" checked />
+                                                            <input type="checkbox" value="1"
+                                                                id="price-management-index" name="price-management-index"
+                                                                checked />
                                                         @else
-                                                            <input type="checkbox" value="1" id="price-management-index"
+                                                            <input type="checkbox" value="1"
+                                                                id="price-management-index"
                                                                 name="price-management-index" />
                                                         @endif
                                                         <label for="price-management-index"></label>
@@ -121,25 +123,26 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                               -
+                                                -
                                             </td>
                                             <td class="text-center">
                                                 <div class="icheckbox_square-blue" aria-checked="false"
                                                     aria-disabled="false">
                                                     <div class="checkbox">
                                                         @if (in_array('price-management-edit', $all_permission))
-                                                            <input type="checkbox" value="1" id="price-management-edit"
-                                                                name="price-management-edit" checked />
+                                                            <input type="checkbox" value="1"
+                                                                id="price-management-edit" name="price-management-edit"
+                                                                checked />
                                                         @else
-                                                            <input type="checkbox" value="1" id="price-management-edit"
-                                                                name="price-management-edit" />
+                                                            <input type="checkbox" value="1"
+                                                                id="price-management-edit" name="price-management-edit" />
                                                         @endif
                                                         <label for="price-management-edit"></label>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                               -
+                                                -
                                             </td>
                                         </tr>
 
@@ -403,6 +406,53 @@
                                                 </div>
                                             </td>
                                         </tr>
+
+                                        <tr>
+                                            <td>{{ trans('file.Packing Slip & Challan') }}</td>
+                                            <td class="text-center">
+                                                <div class="icheckbox_square-blue checked" aria-checked="false"
+                                                    aria-disabled="false">
+                                                    <div class="checkbox">
+                                                        @if (in_array('packing_slip_challan-index', $all_permission))
+                                                            <input type="checkbox" value="1"
+                                                                id="packing_slip_challan-index"
+                                                                name="packing_slip_challan-index" checked />
+                                                        @else
+                                                            <input type="checkbox" value="1"
+                                                                id="packing_slip_challan-index"
+                                                                name="packing_slip_challan-index">
+                                                        @endif
+                                                        <label for="packing_slip_challan-index"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+
+                                            </td>
+                                            <td class="text-center">
+
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="icheckbox_square-blue" aria-checked="false"
+                                                    aria-disabled="false">
+                                                    <div class="checkbox">
+                                                        @if (in_array('packing_slip_challan-delete', $all_permission))
+                                                            <input type="checkbox" value="1"
+                                                                id="packing_slip_challan-delete"
+                                                                name="packing_slip_challan-delete" checked>
+                                                        @else
+                                                            <input type="checkbox" value="1"
+                                                                id="packing_slip_challan-delete"
+                                                                name="packing_slip_challan-delete">
+                                                        @endif
+                                                        <label for="packing_slip_challan-delete"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+
+
 
                                         <tr>
                                             <td>{{ trans('file.Sale Payment') }}</td>
@@ -1158,11 +1208,11 @@
                                                     aria-disabled="false">
                                                     <div class="checkbox">
                                                         @if (in_array('suppliers-delete', $all_permission))
-                                                            <input type="checkbox" value="1" id="suppliers-delete"
-                                                                name="suppliers-delete" checked>
+                                                            <input type="checkbox" value="1"
+                                                                id="suppliers-delete" name="suppliers-delete" checked>
                                                         @else
-                                                            <input type="checkbox" value="1" id="suppliers-delete"
-                                                                name="suppliers-delete">
+                                                            <input type="checkbox" value="1"
+                                                                id="suppliers-delete" name="suppliers-delete">
                                                         @endif
                                                         <label for="suppliers-delete"></label>
                                                     </div>
@@ -1178,8 +1228,8 @@
                                                         <div class="checkbox">
                                                             @if (in_array('purchases-draft-edit', $all_permission))
                                                                 <input type="checkbox" value="1"
-                                                                    id="purchases-draft-edit" name="purchases-draft-edit"
-                                                                    checked>
+                                                                    id="purchases-draft-edit"
+                                                                    name="purchases-draft-edit" checked>
                                                             @else
                                                                 <input type="checkbox" value="1"
                                                                     id="purchases-draft-edit"
@@ -1197,21 +1247,20 @@
                                                         <div class="checkbox">
                                                             @if (in_array('sales-draft-edit', $all_permission))
                                                                 <input type="checkbox" value="1"
-                                                                    id="sales-draft-edit"
-                                                                    name="sales-draft-edit" checked>
+                                                                    id="sales-draft-edit" name="sales-draft-edit"
+                                                                    checked>
                                                             @else
                                                                 <input type="checkbox" value="1"
-                                                                    id="sales-draft-edit"
-                                                                    name="sales-draft-edit">
+                                                                    id="sales-draft-edit" name="sales-draft-edit">
                                                             @endif
-                                                            <label for="sales-draft-edit"
-                                                                class="padding05">Sale Draft Edit
+                                                            <label for="sales-draft-edit" class="padding05">Sale Draft
+                                                                Edit
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
                                                 </span>
 
-												<span>
+                                                <span>
                                                     <div aria-checked="false" aria-disabled="false">
                                                         <div class="checkbox">
                                                             @if (in_array('pos-sales-draft-edit', $all_permission))
@@ -1223,8 +1272,8 @@
                                                                     id="pos-sales-draft-edit"
                                                                     name="pos-sales-draft-edit">
                                                             @endif
-                                                            <label for="pos-sales-draft-edit"
-                                                                class="padding05">Pos Sale Draft Edit
+                                                            <label for="pos-sales-draft-edit" class="padding05">Pos Sale
+                                                                Draft Edit
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -1235,15 +1284,14 @@
                                                         <div class="checkbox">
                                                             @if (in_array('quotes-draft-edit', $all_permission))
                                                                 <input type="checkbox" value="1"
-                                                                    id="quotes-draft-edit"
-                                                                    name="quotes-draft-edit" checked>
+                                                                    id="quotes-draft-edit" name="quotes-draft-edit"
+                                                                    checked>
                                                             @else
                                                                 <input type="checkbox" value="1"
-                                                                    id="quotes-draft-edit"
-                                                                    name="quotes-draft-edit">
+                                                                    id="quotes-draft-edit" name="quotes-draft-edit">
                                                             @endif
-                                                            <label for="quotes-draft-edit"
-                                                                class="padding05">Quotation Draft Edit
+                                                            <label for="quotes-draft-edit" class="padding05">Quotation
+                                                                Draft Edit
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -1261,8 +1309,8 @@
                                                                     id="transfers-draft-edit"
                                                                     name="transfers-draft-edit">
                                                             @endif
-                                                            <label for="transfers-draft-edit"
-                                                                class="padding05">Transfer Draft Edit
+                                                            <label for="transfers-draft-edit" class="padding05">Transfer
+                                                                Draft Edit
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -1281,7 +1329,7 @@
                                                                     name="adjustment-draft-edit">
                                                             @endif
                                                             <label for="adjustment-draft-edit"
-                                                                class="padding05">Adjustment   Draft Edit
+                                                                class="padding05">Adjustment Draft Edit
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -2197,24 +2245,7 @@
                                                         </div>
                                                     </div>
                                                 </span>
-                                                <span class="packing-slip-challan-section">
-                                                    <div aria-checked="false" aria-disabled="false">
-                                                        <div class="checkbox">
-                                                            @if (in_array('packing_slip_challan', $all_permission))
-                                                                <input type="checkbox" value="1"
-                                                                    id="packing_slip_challan"
-                                                                    name="packing_slip_challan" checked>
-                                                            @else
-                                                                <input type="checkbox" value="1"
-                                                                    id="packing_slip_challan"
-                                                                    name="packing_slip_challan">
-                                                            @endif
-                                                            <label for="packing_slip_challan"
-                                                                class="padding05">{{ trans('file.Packing Slip & Challan') }}
-                                                                &nbsp;&nbsp;</label>
-                                                        </div>
-                                                    </div>
-                                                </span>
+
                                                 <span class="delivery-section">
                                                     <div aria-checked="false" aria-disabled="false">
                                                         <div class="checkbox">
@@ -2381,13 +2412,14 @@
                                                         <div class="checkbox">
                                                             @if (in_array('complete-transfer', $all_permission))
                                                                 <input type="checkbox" value="1"
-                                                                    id="complete-transfer" name="complete-transfer" checked>
+                                                                    id="complete-transfer" name="complete-transfer"
+                                                                    checked>
                                                             @else
                                                                 <input type="checkbox" value="1"
                                                                     id="complete-transfer" name="complete-transfer">
                                                             @endif
-                                                            <label for="complete-transfer"
-                                                                class="padding05">Complete {{ trans('file.Transfer') }}
+                                                            <label for="complete-transfer" class="padding05">Complete
+                                                                {{ trans('file.Transfer') }}
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -2400,13 +2432,15 @@
                                                         <div class="checkbox">
                                                             @if (in_array('product-status-update', $all_permission))
                                                                 <input type="checkbox" value="1"
-                                                                    id="product-status-update" name="product-status-update" checked>
+                                                                    id="product-status-update"
+                                                                    name="product-status-update" checked>
                                                             @else
                                                                 <input type="checkbox" value="1"
-                                                                    id="product-status-update" name="product-status-update">
+                                                                    id="product-status-update"
+                                                                    name="product-status-update">
                                                             @endif
-                                                            <label for="product-status-update"
-                                                                class="padding05">Price Status Update
+                                                            <label for="product-status-update" class="padding05">Price
+                                                                Status Update
                                                                 &nbsp;&nbsp;</label>
                                                         </div>
                                                     </div>
@@ -2414,7 +2448,7 @@
 
 
 
-                                                
+
                                             </td>
                                         </tr>
                                     </tbody>

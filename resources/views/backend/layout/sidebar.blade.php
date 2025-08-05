@@ -91,7 +91,7 @@
             
             $sale_pos_permission_active = $role_has_permissions_list->where('name', 'pos-sales-index')->first();
             
-            $packing_slip_challan_active = $role_has_permissions_list->where('name', 'packing_slip_challan')->first();
+            $packing_slip_challan_active = $role_has_permissions_list->where('name', 'packing_slip_challan-index')->first();
             
             $gift_card_permission_active = $role_has_permissions_list->where('name', 'gift_card')->first();
             

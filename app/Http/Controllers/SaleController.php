@@ -974,7 +974,7 @@ class SaleController extends Controller
                     $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
-                } else if (in_array("sales-draft-edit", $request['all_permission']) && $sale->sale_status == 3) {
+                } else if (in_array("sales-draft-edit", $request['all_permission']) && $sale->sale_status == 3 || 2) {
                     $nestedData['action'] .= '<a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-warning" title="Edit">
                             <i class="dripicons-document-edit"></i>
                         </a>';
