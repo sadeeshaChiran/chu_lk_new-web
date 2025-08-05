@@ -1213,7 +1213,8 @@
                   return 'row_'+data['id'];
             },*/
             "createdRow": function(row, data, dataIndex) {
-                $(row).addClass('sale-link');
+                // onclick sale data model
+                // $(row).addClass('sale-link');
                 $(row).attr('data-sale', data['sale']);
             },
             "columns": columns,

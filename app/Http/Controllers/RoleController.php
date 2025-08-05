@@ -1086,13 +1086,23 @@ class RoleController extends Controller
         } else
             $role->revokePermissionTo('category');
 
-        if ($request->has('packing_slip_challan')) {
-            $permission = Permission::firstOrCreate(['name' => 'packing_slip_challan']);
-            if (!$role->hasPermissionTo('packing_slip_challan')) {
+        if ($request->has('packing_slip_challan-index')) {
+            $permission = Permission::firstOrCreate(['name' => 'packing_slip_challan-index']);
+            if (!$role->hasPermissionTo('packing_slip_challan-index')) {
                 $role->givePermissionTo($permission);
             }
         } else
-            $role->revokePermissionTo('packing_slip_challan');
+            $role->revokePermissionTo('packing_slip_challan-index');
+
+
+        if ($request->has('packing_slip_challan-delete')) {
+            $permission = Permission::firstOrCreate(['name' => 'packing_slip_challan-delete']);
+            if (!$role->hasPermissionTo('packing_slip_challan-delete')) {
+                $role->givePermissionTo($permission);
+            }
+        } else
+            $role->revokePermissionTo('packing_slip_challan-delete');
+
 
 
         if ($request->has('delivery')) {
