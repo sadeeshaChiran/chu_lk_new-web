@@ -593,7 +593,6 @@
                 }));
             },
             response: function(event, ui) {
-                console.log('ui', ui);
                 if (ui.content.length == 1) {
                     var data = ui.content[0].value;
                     $(this).autocomplete("close");
@@ -607,7 +606,6 @@
             select: function(event, ui) {
                 var data = ui.item.value;
                 $(".ui-helper-hidden-accessible").css('display', 'none');
-                ui.item.value = '';
                 productSearch(data);
             }
         });

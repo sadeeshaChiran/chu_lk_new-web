@@ -504,7 +504,7 @@ class SaleController extends Controller
                 }
 
                 // Packing Slip button (if applicable)
-                if (config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
+                if (config('is_packing_slip') && in_array("packing_slip_challan-index", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
                     $nestedData['action'] .= '<a href="' . url('sales/get-sold-items/' . $sale->id) . '" class="btn btn-sm btn-secondary" title="Packing Slip">
                         <i class="dripicons-box"></i>
                     </a>';
@@ -533,7 +533,7 @@ class SaleController extends Controller
                             <a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-link"><i class="dripicons-document-edit"></i> ' . trans('file.edit') . '</a>
                         </li>';
                 }
-                if (config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
+                if (config('is_packing_slip') && in_array("packing_slip_challan-index", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
                     $nestedData['options'] .=
                         '<li>
                         <a href="' . url('sales/get-sold-items/' . $sale->id) . '" class="create-packing-slip-btn btn btn-link" data-id = "' . $sale->id . '" ><i class="dripicons-box"></i> ' . trans('file.Create Packing Slip') . '</a>
@@ -981,7 +981,7 @@ class SaleController extends Controller
                 }
 
                 // Packing Slip button (if applicable)
-                if (config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
+                if (config('is_packing_slip') && in_array("packing_slip_challan-index", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
                     $nestedData['action'] .= '<a href="' . url('sales/get-sold-items/' . $sale->id) . '" class="btn btn-sm btn-secondary" title="Packing Slip">
                         <i class="dripicons-box"></i>
                     </a>';
@@ -1007,7 +1007,7 @@ class SaleController extends Controller
                             <a href="' . url('sales/' . $sale->id . '/create') . '" class="btn btn-link"><i class="dripicons-document-edit"></i> ' . trans('file.edit') . '</a>
                         </li>';
                 }
-                if (config('is_packing_slip') && in_array("packing_slip_challan", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
+                if (config('is_packing_slip') && in_array("packing_slip_challan-index", $request['all_permission']) && ($sale->sale_status == 2 || $sale->sale_status == 5)) {
                     $nestedData['options'] .=
                         '<li>
                         <a href="' . url('sales/get-sold-items/' . $sale->id) . '" class="create-packing-slip-btn btn btn-link" data-id = "' . $sale->id . '" ><i class="dripicons-box"></i> ' . trans('file.Create Packing Slip') . '</a>
