@@ -245,12 +245,12 @@ class SaleController extends Controller
         $ending_date_input = $request->input('ending_date');
         if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8) {
             $default_ending_date = Carbon::today();
-            $default_starting_date = $default_ending_date->copy()->subDays(30);
+            $default_starting_date = $default_ending_date->copy()->subMonths(3);
             $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
 
             if ($starting_date->lt($default_starting_date)) {
-                $starting_date = Carbon::today()->subDays(30);
+                $starting_date = Carbon::today()->subMonths(3);
                 $ending_date = Carbon::today();
             }
         } else {
@@ -664,12 +664,12 @@ class SaleController extends Controller
         $ending_date_input = $request->input('ending_date');
         if (($starting_date_input && $ending_date_input) && Auth::user()->role_id > 8) {
             $default_ending_date = Carbon::today();
-            $default_starting_date = $default_ending_date->copy()->subDays(30);
+            $default_starting_date = $default_ending_date->copy()->subMonths(3);
             $starting_date = Carbon::parse($starting_date_input);
             $ending_date = Carbon::parse($ending_date_input);
 
             if ($starting_date->lt($default_starting_date)) {
-                $starting_date = Carbon::today()->subDays(30);
+                $starting_date = Carbon::today()->subMonths(3);
                 $ending_date = Carbon::today();
             }
         } else {
