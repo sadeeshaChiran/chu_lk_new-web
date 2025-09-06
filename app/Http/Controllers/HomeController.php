@@ -108,8 +108,9 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
-                    DB::raw('COUNT(sales.id) as sale_count')
+                    DB::raw('SUM(sales.total_price) as sales_value'),
+                    DB::raw('COUNT(sales.id) as sale_count'),
+                    
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -139,7 +140,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -171,7 +172,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -203,7 +204,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -235,7 +236,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', value: $start_date)
@@ -269,7 +270,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -303,7 +304,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -337,7 +338,7 @@ class HomeController extends Controller
                 ->select(
                     'billers.id as biller_id',
                     'billers.name as biller_name',
-                    DB::raw('SUM(sales.grand_total) as sales_value'),
+                    DB::raw('SUM(sales.total_price) as sales_value'),
                     DB::raw('COUNT(sales.id) as sale_count')
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
@@ -1474,7 +1475,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1505,7 +1506,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1537,7 +1538,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1569,7 +1570,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1601,7 +1602,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1634,7 +1635,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1668,7 +1669,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1702,7 +1703,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1739,7 +1740,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', value: $start_date)
@@ -1773,7 +1774,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1807,7 +1808,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1841,7 +1842,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1875,7 +1876,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', value: $start_date)
@@ -1911,7 +1912,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1947,7 +1948,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
@@ -1983,7 +1984,7 @@ class HomeController extends Controller
                     ->select(
                         'billers.id as biller_id',
                         'billers.name as biller_name',
-                        DB::raw('SUM(sales.grand_total) as sales_value'),
+                        DB::raw('SUM(sales.total_price) as sales_value'),
                         DB::raw('COUNT(sales.id) as sale_count')
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)

@@ -164,10 +164,17 @@ class PackingSlipController extends Controller
             $productNames = array_map(function ($product) {
                 return is_array($product) ? $product['name'] : ($product->name ?? (string) $product);
             }, $data['products']);
-
+        
             $productList = implode(', ', $productNames);
         }
+        
         $description = 'Products: ' . $productList;
+        
+        // Limit description to 100 characters
+        if (strlen($description) > 100) {
+            $description = substr($description, 0, 100) . '...';
+        }
+        
 
         $response = Http::asForm()->post('https://www.fdedomestic.com/api/parcel/new_api_v1.php', [
             'api_key' => 'c5d1493dbc629f6eb6e2',
