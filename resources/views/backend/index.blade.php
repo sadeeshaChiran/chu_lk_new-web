@@ -198,7 +198,7 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="pos-Return">
+                                    <div class="pos-return">
                                         {{ number_format((float) $pos_return, $general_setting->decimal) }}</div>
                                 </div>
 
@@ -208,6 +208,9 @@
                                 <!-- − -->
                                 <div class="mx-2" style="font-size: 36px;">−</div>
 
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">(</div>
+
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
@@ -215,6 +218,19 @@
                                         {{ number_format((float) $pos_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
+
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">−</div>
+
+                                <!-- Sale Return Product Cost -->
+                                <div class="mx-2">
+                                    <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
+                                    <div class="pos-returnPC">
+                                        {{ number_format((float) $pos_returnPC, $general_setting->decimal) }}</div>
+                                </div>
+
+                                <!-- ) -->
+                                <div class="mx-2" style="font-size: 36px;">)</div>
 
                                 <!-- = -->
                                 <div class="mx-2" style="font-size: 36px;">=</div>
@@ -264,6 +280,9 @@
                                 <!-- − -->
                                 <div class="mx-2" style="font-size: 36px;">−</div>
 
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">(</div>
+
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
@@ -271,6 +290,19 @@
                                         {{ number_format((float) $online_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
+
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">−</div>
+
+                                <!-- Sale Return Product Cost -->
+                                <div class="mx-2">
+                                    <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
+                                    <div class="online-returnPC">
+                                        {{ number_format((float) $online_returnPC, $general_setting->decimal) }}</div>
+                                </div>
+
+                                <!-- ) -->
+                                <div class="mx-2" style="font-size: 36px;">)</div>
 
                                 <!-- = -->
                                 <div class="mx-2" style="font-size: 36px;">=</div>
@@ -311,7 +343,7 @@
                                 <!-- Sale Return -->
                                 <div class="mx-2">
                                     <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
-                                    <div class="website-Return">
+                                    <div class="website-return">
                                         {{ number_format((float) $website_return, $general_setting->decimal) }}</div>
                                 </div>
 
@@ -321,6 +353,9 @@
                                 <!-- − -->
                                 <div class="mx-2" style="font-size: 36px;">−</div>
 
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">(</div>
+
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
@@ -328,6 +363,19 @@
                                         {{ number_format((float) $website_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
+
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">−</div>
+
+                                <!-- Sale Return Product Cost -->
+                                <div class="mx-2">
+                                    <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
+                                    <div class="website-returnPC">
+                                        {{ number_format((float) $website_returnPC, $general_setting->decimal) }}</div>
+                                </div>
+
+                                <!-- ) -->
+                                <div class="mx-2" style="font-size: 36px;">)</div>
 
                                 <!-- = -->
                                 <div class="mx-2" style="font-size: 36px;">=</div>
@@ -340,6 +388,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
 
@@ -378,6 +428,9 @@
                                 <!-- − -->
                                 <div class="mx-2" style="font-size: 36px;">−</div>
 
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">(</div>
+
                                 <!-- Product Cost -->
                                 <div class="mx-2">
                                     <div style="color: #ff3939;">{{ trans('file.Product Cost') }}</div>
@@ -385,6 +438,19 @@
                                         {{ number_format((float) $wholesale_product_cost, $general_setting->decimal) }}
                                     </div>
                                 </div>
+
+                                <!-- − -->
+                                <div class="mx-2" style="font-size: 36px;">−</div>
+
+                                <!-- Sale Return Product Cost -->
+                                <div class="mx-2">
+                                    <div style="color: #ff8952;">{{ trans('file.Sale Return') }}</div>
+                                    <div class="wholesale-returnPC">
+                                        {{ number_format((float) $wholesale_returnPC, $general_setting->decimal) }}</div>
+                                </div>
+
+                                <!-- ) -->
+                                <div class="mx-2" style="font-size: 36px;">)</div>
 
                                 <!-- = -->
                                 <div class="mx-2" style="font-size: 36px;">=</div>
@@ -1057,6 +1123,13 @@
             }));
             $('.pos-return').show(500);
 
+            $('.pos-returnPC').hide();
+            $('.pos-returnPC').html(parseFloat(data[29]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
+            $('.pos-returnPC').show(500);
+
             $('.pos-product-cost').hide();
             $('.pos-product-cost').html(parseFloat(data[22]).toLocaleString('en-US', {
                 minimumFractionDigits: {{ $general_setting->decimal }},
@@ -1086,6 +1159,15 @@
                 maximumFractionDigits: {{ $general_setting->decimal }}
             }));
             $('.online-return').show(500);
+            console.log('222',data, data[8]);
+
+            $('.online-returnPC').hide();
+            $('.online-returnPC').html(parseFloat(data[26]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
+            $('.online-returnPC').show(500);
+
 
             $('.online-product-cost').hide();
             $('.online-product-cost').html(parseFloat(data[10]).toLocaleString('en-US', {
@@ -1117,6 +1199,13 @@
             }));
             $('.wholesale-return').show(500);
 
+            $('.wholesale-returnPC').hide();
+            $('.wholesale-returnPC').html(parseFloat(data[28]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
+            $('.wholesale-returnPC').show(500);
+
             $('.wholesale-product-cost').hide();
             $('.wholesale-product-cost').html(parseFloat(data[18]).toLocaleString('en-US', {
                 minimumFractionDigits: {{ $general_setting->decimal }},
@@ -1146,6 +1235,12 @@
                 maximumFractionDigits: {{ $general_setting->decimal }}
             }));
             $('.website-return').show(500);
+            $('.website-returnPC').hide();
+            $('.website-returnPC').html(parseFloat(data[27]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
+            $('.website-returnPC').show(500);
 
             $('.website-product-cost').hide();
             $('.website-product-cost').html(parseFloat(data[14]).toLocaleString('en-US', {
@@ -1178,8 +1273,10 @@
             $('.expense').show(500);
 
             $('.summary-profit').hide();
-            $('.summary-profit').html(parseFloat((data[9] + data[13] + data[17] + data[21]) + data[5] - data[4]).toFixed(
-                {{ $general_setting->decimal }}));
+            $('.summary-profit').html(parseFloat((data[9] + data[13] + data[17] + data[21]) + data[5] - data[4]).toLocaleString('en-US', {
+                minimumFractionDigits: {{ $general_setting->decimal }},
+                maximumFractionDigits: {{ $general_setting->decimal }}
+            }));
             $('.summary-profit').show(500);
 
 

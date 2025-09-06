@@ -137,6 +137,7 @@
                         <th>{{ trans('file.Payment Method') }}</th>
                         <th>{{ trans('file.Delivery Status') }}</th>
                         <th>{{ trans('file.grand total') }}</th>
+                        <th>Product Cost</th>
                         <th>{{ trans('file.Returned Amount') }}</th>
                         <th>{{ trans('file.Paid') }}</th>
                         <th>{{ trans('file.Due') }}</th>
@@ -150,6 +151,7 @@
                 <tfoot class="tfoot active">
                     <th></th>
                     <th>{{ trans('file.Total') }}</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -652,34 +654,37 @@
 
 
         var columns = [{
-            "data": "key"
-        }, {
-            "data": "action"
-        }, {
-            "data": "date"
-        }, {
-            "data": "reference_no"
-        }, {
-            "data": "biller"
-        }, {
-            "data": "customer"
-        }, {
-            "data": "sale_status"
-        }, {
-            "data": "payment_status"
-        }, {
-            "data": "payment_method"
-        }, {
-            "data": "delivery_status"
-        }, {
-            "data": "grand_total"
-        }, {
-            "data": "returned_amount"
-        }, {
-            "data": "paid_amount"
-        }, {
-            "data": "due"
-        }];
+                "data": "key"
+            }, {
+                "data": "action"
+            }, {
+                "data": "date"
+            }, {
+                "data": "reference_no"
+            }, {
+                "data": "biller"
+            }, {
+                "data": "customer"
+            }, {
+                "data": "sale_status"
+            }, {
+                "data": "payment_status"
+            }, {
+                "data": "payment_method"
+            }, {
+                "data": "delivery_status"
+            }, {
+                "data": "grand_total"
+            }, {
+                "data": "product_cost"
+            }, {
+                "data": "returned_amount"
+            }, {
+                "data": "paid_amount"
+            }, {
+                "data": "due"
+            }
+        ];
         var field_name = <?php echo json_encode($field_name); ?>;
         for (i = 0; i < field_name.length; i++) {
             columns.push({
@@ -738,7 +743,7 @@
             timeZone: 'Asia/Colombo',
 
             autoUpdateInput: false,
-         ranges: {
+            ranges: {
                 'Today': [moment().startOf('day'), moment().endOf('day')],
                 'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf(
                     'day')],
@@ -823,7 +828,7 @@
         $(document).on("change", ".is-packing", function(e) {
             rowindex = $(this).closest('tr').index();
             var total_price = $('table.product-list tbody tr:nth-child(' + (rowindex + 1) + ') .total-price')
-        .text();
+                .text();
             var amount = $("#packing-slip-modal input[name=amount]").val();
             if ($(this).is(":checked")) {
                 $("#packing-slip-modal input[name=amount]").val(parseFloat(amount) + parseFloat(total_price));
@@ -844,7 +849,7 @@
             a.document.write('<body>');
             a.document.write(
                 '<style>body{line-height: 1.15;-webkit-text-size-adjust: 100%;}.d-print-none{display:none}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.row{width:100%;margin-right: -15px;margin-left: -15px;}.col-md-12{width:100%;display:block;padding: 5px 15px;}.col-md-6{width: 50%;float:left;padding: 5px 15px;}table{width:100%;margin-top:30px;}th{text-aligh:left}td{padding:10px}table,th,td{border: 1px solid black; border-collapse: collapse;}</style><style>@media print {.modal-dialog { max-width: 1000px;} }</style>'
-                );
+            );
             a.document.write(divContents);
             a.document.write('</body></html>');
             a.document.close();
@@ -1035,7 +1040,7 @@
         });
 
         $('input[name="amount"]').on("input", function() {
-            if ( parseFloat($(this).val()) > parseFloat($('input[name="paying_amount"]').val())) {
+            if (parseFloat($(this).val()) > parseFloat($('input[name="paying_amount"]').val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $(this).val('');
             } else if (parseFloat($(this).val()) > parseFloat($('input[name="balance"]').val())) {
@@ -1327,8 +1332,7 @@
                     text: '<i title="column visibility" class="fa fa-eye"></i>',
                     columns: ':gt(0)'
                 },
-            ]: [
-                {
+            ] : [{
                     text: '<i title="delete" class="dripicons-cross"></i>',
                     className: 'buttons-delete',
                     action: function(e, dt, node, config) {
@@ -1391,6 +1395,9 @@
                 $(dt_selector.column(13).footer()).html(dt_selector.cells(rows, 13, {
                     page: 'current'
                 }).data().sum().toFixed({{ $general_setting->decimal }}));
+                $(dt_selector.column(14).footer()).html(dt_selector.cells(rows, 14, {
+                    page: 'current'
+                }).data().sum().toFixed({{ $general_setting->decimal }}));
             } else {
                 $(dt_selector.column(10).footer()).html(dt_selector.cells(rows, 10, {
                     page: 'current'
@@ -1402,6 +1409,9 @@
                     page: 'current'
                 }).data().sum().toFixed({{ $general_setting->decimal }}));
                 $(dt_selector.column(13).footer()).html(dt_selector.cells(rows, 13, {
+                    page: 'current'
+                }).data().sum().toFixed({{ $general_setting->decimal }}));
+                 $(dt_selector.column(14).footer()).html(dt_selector.cells(rows, 14, {
                     page: 'current'
                 }).data().sum().toFixed({{ $general_setting->decimal }}));
             }
@@ -1541,7 +1551,7 @@
                     {{ $general_setting->decimal }}));
                 e.preventDefault();
             } else if ($('input[name="edit_paying_amount"]').val() < parseFloat($('input[name="edit_amount"]')
-                .val())) {
+                    .val())) {
                 alert('Paying amount cannot be bigger than recieved amount');
                 $('input[name="edit_amount"]').val('');
                 $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(

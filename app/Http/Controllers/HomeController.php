@@ -113,7 +113,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->groupBy('billers.id', 'billers.name')
                 ->get();
@@ -144,7 +144,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->groupBy('billers.id', 'billers.name')
                 ->get();
@@ -176,7 +176,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->groupBy('billers.id', 'billers.name')
                 ->get();
@@ -208,7 +208,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->groupBy('billers.id', 'billers.name')
                 ->get();
@@ -240,7 +240,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', value: $start_date)
                 ->whereDate('sales.created_at',  '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->where('sales.biller_id', Auth::user()->biller_id)
                 ->groupBy('billers.id', 'billers.name')
@@ -274,7 +274,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->where('sales.biller_id', Auth::user()->biller_id)
                 ->groupBy('billers.id', 'billers.name')
@@ -308,7 +308,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->where('sales.biller_id', Auth::user()->biller_id)
                 ->groupBy('billers.id', 'billers.name')
@@ -342,7 +342,7 @@ class HomeController extends Controller
                 )
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->where('sales.biller_id', Auth::user()->biller_id)
                 ->groupBy('billers.id', 'billers.name')
@@ -369,13 +369,13 @@ class HomeController extends Controller
             $product_sale_data = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
                 ->get();
             $product_cost = $this->calculateAverageCOGS($product_sale_data);
-            $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->where('sale_status', 1)->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+            $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereIn('sale_status', [1, 4])->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
             // $return = Returns::whereDate('created_at', '>=' , $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=' , $end_date)->sum('grand_total');
             $return = DB::table('returns')
                 ->join('sales', 'returns.sale_id', '=', 'sales.id')
@@ -383,13 +383,20 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $returnPC = $this->calculateReturnCOGS($returnPCP);
             $purchase_return = ReturnPurchase::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('grand_total');
             $expense = Expense::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('amount');
             $income = Income::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('amount');
             $purchase = Purchase::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('grand_total');
-            $revenue = $revenue - $return + $income;
+            $revenue = ($revenue - $return) + $income;
             // $profit = $revenue + $purchase_return - $product_cost - $expense;
-            $profit = $revenue - $product_cost - $expense;
+            $profit = $revenue - ($product_cost - $returnPC) - $expense;
 
 
 
@@ -399,7 +406,7 @@ class HomeController extends Controller
             $online_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -408,7 +415,7 @@ class HomeController extends Controller
             $online_product_cost = $this->calculateAverageCOGS($online_sale);
             $online_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'online')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -419,13 +426,24 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $online_net_profit = $online_revenue - $online_return - $online_product_cost;
+            $online_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.user_id', Auth::id())
+                ->where('sales.sale_type', 'online')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $online_returnPC = $this->calculateReturnCOGS($online_returnPCP);
+
+            $online_net_profit = ($online_revenue - $online_return) - ($online_product_cost - $online_returnPC);
 
             // website sale
             $website_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -434,7 +452,7 @@ class HomeController extends Controller
             $website_product_cost = $this->calculateAverageCOGS($website_sale);
             $website_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'website')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -445,14 +463,25 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $website_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.user_id', Auth::id())
+                ->where('sales.sale_type', 'website')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $website_returnPC = $this->calculateReturnCOGS($website_returnPCP);
 
-            $website_net_profit = $website_revenue - $website_return - $website_product_cost;
+
+            $website_net_profit = ($website_revenue - $website_return) - ($website_product_cost - $website_returnPC);
 
             // Wholesale sale
             $wholesale_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -461,7 +490,7 @@ class HomeController extends Controller
             $wholesale_product_cost = $this->calculateAverageCOGS($wholesale_sale);
             $wholesale_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'wholesale')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -472,13 +501,24 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $wholesale_net_profit = $wholesale_revenue - $wholesale_return - $wholesale_product_cost;
+            $wholesale_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.user_id', Auth::id())
+                ->where('sales.sale_type', 'wholesale')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $wholesale_returnPC = $this->calculateReturnCOGS($wholesale_returnPCP);
+
+            $wholesale_net_profit = ($wholesale_revenue - $wholesale_return) - ($wholesale_product_cost - $wholesale_returnPC);
 
             // pos sale
             $pos_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -487,7 +527,7 @@ class HomeController extends Controller
             $pos_product_cost = $this->calculateAverageCOGS($pos_sale);
             $pos_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'pos')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -498,17 +538,27 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $pos_net_profit = $pos_revenue - $pos_return - $pos_product_cost;
+            $pos_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'pos')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $pos_returnPC = $this->calculateReturnCOGS($pos_returnPCP);
+
+            $pos_net_profit = ($pos_revenue - $pos_return) - ($pos_product_cost - $pos_returnPC);
         } else {
             $product_sale_data = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
                 ->get();
             $product_cost = $this->calculateAverageCOGS($product_sale_data);
-            $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sale_status', 1)->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+            $revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sale_status', [1, 4])->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
 
             $expense = Expense::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('amount');
             $income = Income::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('amount');
@@ -518,11 +568,19 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $returnPC = $this->calculateReturnCOGS($returnPCP);
+
             $purchase_return = ReturnPurchase::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('grand_total');
             $purchase = Purchase::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('grand_total');
-            $revenue = $revenue - $return + $income;
+            $revenue = ($revenue - $return) + $income;
             // $profit = $revenue + $purchase_return - $product_cost - $expense;
-            $profit = $revenue - $product_cost - $expense;
+            $profit = $revenue - ($product_cost - $returnPC) - $expense;
 
 
 
@@ -530,15 +588,16 @@ class HomeController extends Controller
             // Online sale
             $online_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
                 ->get();
             $online_product_cost = $this->calculateAverageCOGS($online_sale);
+
             $online_revenue = Sale::whereDate('created_at', '>=', $start_date)
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'online')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -548,12 +607,23 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $online_net_profit = $online_revenue - $online_return - $online_product_cost;
+            $online_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'online')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $online_returnPC = $this->calculateReturnCOGS($online_returnPCP);
+
+            $online_net_profit = ($online_revenue - $online_return) - ($online_product_cost - $online_returnPC);
+
 
             // website sale
             $website_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -561,7 +631,7 @@ class HomeController extends Controller
                 ->get();
             $website_product_cost = $this->calculateAverageCOGS($website_sale);
             $website_revenue = Sale::whereDate('created_at', '>=', $start_date)
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'website')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -571,13 +641,22 @@ class HomeController extends Controller
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $website_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'website')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $website_returnPC = $this->calculateReturnCOGS($website_returnPCP);
 
-            $website_net_profit = $website_revenue - $website_return - $website_product_cost;
+            $website_net_profit = ($website_revenue - $website_return) - ($website_product_cost - $website_returnPC);
 
             // Wholesale sale
             $wholesale_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -585,7 +664,7 @@ class HomeController extends Controller
                 ->get();
             $wholesale_product_cost = $this->calculateAverageCOGS($wholesale_sale);
             $wholesale_revenue = Sale::whereDate('created_at', '>=', $start_date)
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'wholesale')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -595,12 +674,22 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $wholesale_net_profit = $wholesale_revenue - $wholesale_return - $wholesale_product_cost;
+            $wholesale_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'wholesale')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $wholesale_returnPC = $this->calculateReturnCOGS($wholesale_returnPCP);
+
+            $wholesale_net_profit = ($wholesale_revenue - $wholesale_return) - ($wholesale_product_cost - $wholesale_returnPC);
 
             // pos sale
             $pos_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -608,7 +697,7 @@ class HomeController extends Controller
                 ->get();
             $pos_product_cost = $this->calculateAverageCOGS($pos_sale);
             $pos_revenue = Sale::whereDate('created_at', '>=', $start_date)
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'pos')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -618,7 +707,17 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $pos_net_profit = $pos_revenue - $pos_return - $pos_product_cost;
+            $pos_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'pos')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $pos_returnPC = $this->calculateReturnCOGS($pos_returnPCP);
+
+            $pos_net_profit = ($pos_revenue - $pos_return) - ($pos_product_cost - $pos_returnPC);
         }
 
         //cash flow of last 6 months
@@ -692,7 +791,7 @@ class HomeController extends Controller
 
 
 
-        return view('backend.index', compact('saleBillerSummary', 'hasSaleBiller', 'revenue', 'purchase', 'expense', 'income', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'yearly_purchase_amount', 'alertBugEnable', 'alertVersionUpgradeEnable', 'online_net_profit', 'website_net_profit', 'wholesale_net_profit', 'pos_net_profit', 'online_revenue', 'website_revenue', 'wholesale_revenue', 'pos_revenue',  'online_return', 'website_return', 'wholesale_return', 'pos_return', 'online_product_cost', 'website_product_cost', 'wholesale_product_cost', 'pos_product_cost'));
+        return view('backend.index', compact('saleBillerSummary', 'hasSaleBiller', 'revenue', 'purchase', 'expense', 'income', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'yearly_purchase_amount', 'alertBugEnable', 'alertVersionUpgradeEnable', 'online_net_profit', 'website_net_profit', 'wholesale_net_profit', 'pos_net_profit', 'online_revenue', 'website_revenue', 'wholesale_revenue', 'pos_revenue',  'online_return', 'website_return', 'wholesale_return', 'pos_return', 'online_product_cost', 'website_product_cost', 'wholesale_product_cost', 'pos_product_cost', 'online_returnPC', 'website_returnPC', 'wholesale_returnPC', 'pos_returnPC'));
     }
 
     function  mergeSalesAndReturns($sales, $returns)
@@ -849,7 +948,7 @@ class HomeController extends Controller
             $product_sale_data = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
                 ->groupBy('product_sales.product_id', 'product_sales.product_batch_id')
@@ -857,7 +956,7 @@ class HomeController extends Controller
             config()->set('database.connections.mysql.strict', true);
             DB::reconnect();
             $product_cost = $this->calculateAverageCOGS($product_sale_data);
-            $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->where('sale_status', 1)->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+            $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereIn('sale_status', [1, 4])->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
             // $return = Returns::whereDate('created_at', '>=' , $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=' , $end_date)->sum('grand_total');
             $return = DB::table('returns')
                 ->join('sales', 'returns.sale_id', '=', 'sales.id')
@@ -865,13 +964,21 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $returnPC = $this->calculateReturnCOGS($returnPCP);
+
             $purchase_return = ReturnPurchase::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('grand_total');
             $expense = Expense::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('amount');
             $income = Income::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('amount');
             $purchase = Purchase::whereDate('created_at', '>=', $start_date)->where('user_id', Auth::id())->whereDate('created_at', '<=', $end_date)->sum('grand_total');
-            $revenue = $revenue - $return + $income;
+            $revenue = ($revenue - $return) + $income;
             // $profit = $revenue + $purchase_return - $product_cost - $expense;
-            $profit = $revenue - $product_cost - $expense;
+            $profit = $revenue - ($product_cost - $returnPC) - $expense;
 
 
 
@@ -879,7 +986,7 @@ class HomeController extends Controller
             $online_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -888,7 +995,7 @@ class HomeController extends Controller
             $online_product_cost = $this->calculateAverageCOGS($online_sale);
             $online_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'online')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -899,13 +1006,24 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $online_net_profit = $online_revenue - $online_return - $online_product_cost;
+            $online_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.user_id', Auth::id())
+                ->where('sales.sale_type', 'online')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $online_returnPC = $this->calculateReturnCOGS($online_returnPCP);
+
+            $online_net_profit = ($online_revenue - $online_return) - ($online_product_cost - $online_returnPC);
 
             // website sale
             $website_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -914,7 +1032,7 @@ class HomeController extends Controller
             $website_product_cost = $this->calculateAverageCOGS($website_sale);
             $website_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'website')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -925,14 +1043,25 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
+            $website_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.user_id', Auth::id())
+                ->where('sales.sale_type', 'website')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $website_returnPC = $this->calculateReturnCOGS($website_returnPCP);
 
-            $website_net_profit = $website_revenue - $website_return - $website_product_cost;
+
+            $website_net_profit = ($website_revenue - $website_return) - ($website_product_cost - $website_returnPC);
 
             // Wholesale sale
             $wholesale_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -941,7 +1070,7 @@ class HomeController extends Controller
             $wholesale_product_cost = $this->calculateAverageCOGS($wholesale_sale);
             $wholesale_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'wholesale')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -952,13 +1081,23 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $wholesale_net_profit = $wholesale_revenue - $wholesale_return - $wholesale_product_cost;
+            $wholesale_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'wholesale')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $wholesale_returnPC = $this->calculateReturnCOGS($wholesale_returnPCP);
+
+            $wholesale_net_profit = ($wholesale_revenue - $wholesale_return) - ($wholesale_product_cost - $wholesale_returnPC);
 
             // pos sale
             $pos_sale = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
                 ->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date)
@@ -967,7 +1106,7 @@ class HomeController extends Controller
             $pos_product_cost = $this->calculateAverageCOGS($pos_sale);
             $pos_revenue = Sale::whereDate('created_at', '>=', $start_date)
                 ->where('user_id', Auth::id())
-                ->where('sale_status', 1)
+                ->whereIn('sale_status', [1, 4])
                 ->where('sale_type', 'pos')
                 ->whereDate('created_at', '<=', $end_date)
                 ->sum(DB::raw('grand_total - shipping_cost'));
@@ -978,15 +1117,24 @@ class HomeController extends Controller
                 ->whereDate('returns.created_at', '>=', $start_date)
                 ->whereDate('returns.created_at', '<=', $end_date)
                 ->sum('returns.grand_total');
-            $pos_net_profit = $pos_revenue - $pos_return - $pos_product_cost;
+            $pos_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                ->where('sales.sale_type', 'pos')
+                ->whereDate('returns.created_at', '>=', $start_date)
+                ->whereDate('returns.created_at', '<=', $end_date)
+                ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                ->get();
+            $pos_returnPC = $this->calculateReturnCOGS($pos_returnPCP);
+
+            $pos_net_profit = ($pos_revenue - $pos_return) - ($pos_product_cost - $pos_returnPC);
         } else {
             config()->set('database.connections.mysql.strict', false);
             DB::reconnect();
             $q = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-
                 //->where('sales.user_id', Auth::id())
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date);
             //return $start_date.$end_date.$warehouse_id;
@@ -994,28 +1142,28 @@ class HomeController extends Controller
             // online sale
             $online_sale_q = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'online')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date);
             // website sale
             $website_sale_q = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'website')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date);
             // wholesale sale
             $wholesale_sale_q = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'wholesale')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date);
             // pos sale
             $pos_sale_q = Sale::join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
                 ->select(DB::raw('product_sales.product_id, product_sales.product_batch_id, product_sales.sale_unit_id, sum(product_sales.qty) as sold_qty, sum(product_sales.return_qty) as return_qty, sum(product_sales.total) as sold_amount'))
-                ->where('sales.sale_status', 1)
+                ->whereIn('sales.sale_status', [1, 4])
                 ->where('sales.sale_type', 'pos')
                 ->whereDate('sales.created_at', '>=', $start_date)
                 ->whereDate('sales.created_at', '<=', $end_date);
@@ -1049,47 +1197,103 @@ class HomeController extends Controller
             config()->set('database.connections.mysql.strict', true);
             DB::reconnect();
             $product_cost = $this->calculateAverageCOGS($product_sale_data);
+
+
+
             $online_product_cost = $this->calculateAverageCOGS($online_sale_data);
             $website_product_cost = $this->calculateAverageCOGS($website_sale_data);
             $wholesale_product_cost = $this->calculateAverageCOGS($wholesale_sale_data);
             $pos_product_cost = $this->calculateAverageCOGS($pos_sale_data);
 
+            // $pos_product_cost1 = $this->calculateFifoCOGS($pos_sale_data);
             if ($warehouse_id == 0) {
-                $revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sales.sale_status', 1)->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
-                $online_revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sale_status', 1)->where('sale_type', 'online')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
-                $website_revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sale_status', 1)->where('sale_type', 'website')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
-                $wholesale_revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sale_status', 1)->where('sale_type', 'wholesale')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
-                $pos_revenue = Sale::whereDate('created_at', '>=', $start_date)->where('sale_status', 1)->where('sale_type', 'pos')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+                $revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sales.sale_status', [1, 4])->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+                $online_revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sale_status', [1, 4])->where('sale_type', 'online')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+                $website_revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sale_status', [1, 4])->where('sale_type', 'website')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+                $wholesale_revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sale_status', [1, 4])->where('sale_type', 'wholesale')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+                $pos_revenue = Sale::whereDate('created_at', '>=', $start_date)->whereIn('sale_status', [1, 4])->where('sale_type', 'pos')->whereDate('created_at', '<=', $end_date)->sum(DB::raw('grand_total - shipping_cost'));
+
 
                 $return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $returnPC = $this->calculateReturnCOGS($returnPCP);
+
+
                 $online_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('sales.sale_type', 'online')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $online_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('sales.sale_type', 'online')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $online_returnPC = $this->calculateReturnCOGS($online_returnPCP);
+
+
                 $website_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('sales.sale_type', 'website')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $website_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('sales.sale_type', 'website')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $website_returnPC = $this->calculateReturnCOGS($website_returnPCP);
+
+
                 $wholesale_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('sales.sale_type', 'wholesale')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $wholesale_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('sales.sale_type', 'wholesale')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $wholesale_returnPC = $this->calculateReturnCOGS($wholesale_returnPCP);
+
+
                 $pos_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('sales.sale_type', 'pos')
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $pos_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('sales.sale_type', 'pos')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $pos_returnPC = $this->calculateReturnCOGS($pos_returnPCP);
 
 
                 $purchase_return = ReturnPurchase::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('grand_total');
@@ -1097,30 +1301,30 @@ class HomeController extends Controller
                 $revenue = Sale::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->where('sale_status', 1)
+                    ->whereIn('sale_status', [1, 4])
                     ->sum(DB::raw('grand_total - shipping_cost'));
                 $online_revenue = Sale::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->where('sale_status', 1)
+                    ->whereIn('sale_status', [1, 4])
                     ->where('sale_type', 'online')
                     ->sum(DB::raw('grand_total - shipping_cost'));
                 $website_revenue = Sale::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->where('sale_status', 1)
+                    ->whereIn('sale_status', [1, 4])
                     ->where('sale_type', 'website')
                     ->sum(DB::raw('grand_total - shipping_cost'));
                 $wholesale_revenue = Sale::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->where('sale_status', 1)
+                    ->whereIn('sale_status', [1, 4])
                     ->where('sale_type', 'wholesale')
                     ->sum(DB::raw('grand_total - shipping_cost'));
                 $pos_revenue = Sale::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->where('sale_status', 1)
+                    ->whereIn('sale_status', [1, 4])
                     ->where('sale_type', 'pos')
                     ->sum(DB::raw('grand_total - shipping_cost'));
 
@@ -1133,6 +1337,14 @@ class HomeController extends Controller
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
 
+                $returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $returnPC = $this->calculateReturnCOGS($returnPCP);
 
                 $website_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
@@ -1141,6 +1353,18 @@ class HomeController extends Controller
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+
+                $website_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('sales.sale_type', 'website')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $website_returnPC = $this->calculateReturnCOGS($website_returnPCP);
+
                 $pos_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('returns.warehouse_id', $warehouse_id)
@@ -1148,6 +1372,18 @@ class HomeController extends Controller
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+
+                $pos_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('sales.sale_type', 'pos')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $pos_returnPC = $this->calculateReturnCOGS($pos_returnPCP);
+
                 $wholesale_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('returns.warehouse_id', $warehouse_id)
@@ -1155,6 +1391,18 @@ class HomeController extends Controller
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $wholesale_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('sales.sale_type', 'wholesale')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $wholesale_returnPC = $this->calculateReturnCOGS($wholesale_returnPCP);
+
+
                 $online_return = DB::table('returns')
                     ->join('sales', 'returns.sale_id', '=', 'sales.id')
                     ->where('returns.warehouse_id', $warehouse_id)
@@ -1162,24 +1410,35 @@ class HomeController extends Controller
                     ->whereDate('returns.created_at', '>=', $start_date)
                     ->whereDate('returns.created_at', '<=', $end_date)
                     ->sum('returns.grand_total');
+                $online_returnPCP = Returns::join('product_returns', 'returns.id', '=', 'product_returns.return_id')
+                    ->select(DB::raw('product_returns.product_id, product_returns.product_batch_id, product_returns.variant_id, sum(product_returns.qty) as return_qty, sum(product_returns.total) as return_amount'))
+                    ->join('sales', 'returns.sale_id', '=', 'sales.id')
+                    ->where('returns.warehouse_id', $warehouse_id)
+                    ->where('sales.sale_type', 'online')
+                    ->whereDate('returns.created_at', '>=', $start_date)
+                    ->whereDate('returns.created_at', '<=', $end_date)
+                    ->groupBy('product_returns.product_id', 'product_returns.product_batch_id', 'product_returns.variant_id')
+                    ->get();
+                $online_returnPC = $this->calculateReturnCOGS($online_returnPCP);
 
 
                 $purchase_return = ReturnPurchase::where('warehouse_id', $warehouse_id)
                     ->whereDate('created_at', '>=', $start_date)
                     ->whereDate('created_at', '<=', $end_date)
-                    ->sum('returns.grand_total');
+                    ->sum('grand_total');
             }
 
             $expense = Expense::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('amount');
             $income = Income::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('amount');
             $revenue = $revenue - $return + $income;
             // $profit = $revenue + $purchase_return - $product_cost - $expense;
-            $profit = $revenue - $product_cost - $expense;
+            $profit = $revenue - ($product_cost - $returnPC) - $expense;
 
-            $online_net_profit = $online_revenue - $online_return - $online_product_cost;
-            $website_net_profit = $website_revenue - $website_return - $website_product_cost;
-            $wholesale_net_profit = $wholesale_revenue - $wholesale_return - $wholesale_product_cost;
-            $pos_net_profit = $pos_revenue - $pos_return - $pos_product_cost;
+            $online_net_profit = ($online_revenue - $online_return) - ($online_product_cost - $online_returnPC);
+            $website_net_profit = ($website_revenue - $website_return) - ($website_product_cost - $website_returnPC);
+            $wholesale_net_profit = ($wholesale_revenue - $wholesale_return) - ($wholesale_product_cost - $wholesale_returnPC);
+            $pos_net_profit = ($pos_revenue - $pos_return) - ($pos_product_cost - $pos_returnPC);
+
 
             $data[0] = $revenue;
             $data[1] = $return;
@@ -1220,7 +1479,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'online')
                     ->groupBy('billers.id', 'billers.name')
                     ->get();
@@ -1251,7 +1510,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'pos')
                     ->groupBy('billers.id', 'billers.name')
                     ->get();
@@ -1283,7 +1542,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'wholesale')
                     ->groupBy('billers.id', 'billers.name')
                     ->get();
@@ -1315,7 +1574,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'website')
                     ->groupBy('billers.id', 'billers.name')
                     ->get();
@@ -1347,7 +1606,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'online')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1380,7 +1639,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'pos')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1414,7 +1673,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'wholesale')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1448,7 +1707,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'website')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1485,7 +1744,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', value: $start_date)
                     ->whereDate('sales.created_at',  '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'online')
                     ->where('sales.biller_id', Auth::user()->biller_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1519,7 +1778,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'pos')
                     ->where('sales.biller_id', Auth::user()->biller_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1553,7 +1812,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'wholesale')
                     ->where('sales.biller_id', Auth::user()->biller_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1587,7 +1846,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'website')
                     ->where('sales.biller_id', Auth::user()->biller_id)
                     ->groupBy('billers.id', 'billers.name')
@@ -1621,7 +1880,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', value: $start_date)
                     ->whereDate('sales.created_at',  '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'online')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->where('sales.biller_id', Auth::user()->biller_id)
@@ -1657,7 +1916,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'pos')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->where('sales.biller_id', Auth::user()->biller_id)
@@ -1693,7 +1952,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'wholesale')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->where('sales.biller_id', Auth::user()->biller_id)
@@ -1729,7 +1988,7 @@ class HomeController extends Controller
                     )
                     ->whereDate('sales.created_at', '>=', $start_date)
                     ->whereDate('sales.created_at', '<=', $end_date)
-                    ->where('sales.sale_status', 1)
+                    ->whereIn('sales.sale_status', [1, 4])
                     ->where('sales.sale_type', 'website')
                     ->where('sales.warehouse_id', $warehouse_id)
                     ->where('sales.biller_id', Auth::user()->biller_id)
@@ -1769,21 +2028,125 @@ class HomeController extends Controller
         $data[23] = $saleBillerSummary;
         $data[24] = $hasSaleBiller;
 
+        $data[25] = $returnPC;
+        $data[26] = $online_returnPC;
+        $data[27] = $website_returnPC;
+        $data[28] = $wholesale_returnPC;
+        $data[29] = $pos_returnPC;
+
 
         return $data;
     }
 
+    // public function calculateAverageCOGS($product_sale_data)
+    // {
+    //     $product_cost = 0;
+    //     foreach ($product_sale_data as $key => $product_sale) {
+    //         $product_data = Product::select('type', 'product_list', 'variant_list', 'qty_list')->find($product_sale->product_id);
+    //         if ($product_data && $product_data->type == 'combo') {
+    //             $product_list = explode(",", $product_data->product_list);
+    //             if ($product_data->variant_list)
+    //                 $variant_list = explode(",", $product_data->variant_list);
+    //             else
+    //                 $variant_list = [];
+    //             $qty_list = explode(",", $product_data->qty_list);
+
+    //             foreach ($product_list as $index => $product_id) {
+    //                 if (count($variant_list) && $variant_list[$index]) {
+    //                     $product_purchase_data = ProductPurchase::where([
+    //                         ['product_id', $product_id],
+    //                         ['variant_id', $variant_list[$index]]
+    //                     ])
+    //                         ->select('recieved', 'purchase_unit_id', 'total')
+    //                         ->get();
+    //                 } else {
+    //                     $product_purchase_data = ProductPurchase::where('product_id', $product_id)
+    //                         ->select('recieved', 'purchase_unit_id', 'total')
+    //                         ->get();
+    //                 }
+    //                 $total_received_qty = 0;
+    //                 $total_purchased_amount = 0;
+    //                 $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) * $qty_list[$index];
+    //                 $units = Unit::select('id', 'operator', 'operation_value')->get();
+    //                 foreach ($product_purchase_data as $key => $product_purchase) {
+    //                     $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
+    //                     if ($purchase_unit_data->operator == '*')
+    //                         $total_received_qty += $product_purchase->recieved * $purchase_unit_data->operation_value;
+    //                     else
+    //                         $total_received_qty += $product_purchase->recieved / $purchase_unit_data->operation_value;
+    //                     $total_purchased_amount += $product_purchase->total;
+    //                 }
+    //                 if ($total_received_qty)
+    //                     $averageCost = $total_purchased_amount / $total_received_qty;
+    //                 else
+    //                     $averageCost = 0;
+    //                 $product_cost += $sold_qty * $averageCost;
+    //             }
+    //         } else {
+    //             if ($product_sale->product_batch_id) {
+    //                 $product_purchase_data = ProductPurchase::where([
+    //                     ['product_id', $product_sale->product_id],
+    //                     ['product_batch_id', $product_sale->product_batch_id]
+    //                 ])
+    //                     ->select('recieved', 'purchase_unit_id', 'total')
+    //                     ->get();
+    //             } elseif ($product_sale->variant_id) {
+    //                 $product_purchase_data = ProductPurchase::where([
+    //                     ['product_id', $product_sale->product_id],
+    //                     ['variant_id', $product_sale->variant_id]
+    //                 ])
+    //                     ->select('recieved', 'purchase_unit_id', 'total')
+    //                     ->get();
+    //             } else {
+    //                 $product_purchase_data = ProductPurchase::where('product_id', $product_sale->product_id)
+    //                     ->select('recieved', 'purchase_unit_id', 'total')
+    //                     ->get();
+    //             }
+    //             $total_received_qty = 0;
+    //             $total_purchased_amount = 0;
+    //             $units = Unit::select('id', 'operator', 'operation_value')->get();
+    //             if ($product_sale->sale_unit_id) {
+    //                 $sale_unit_data = $units->where('id', $product_sale->sale_unit_id)->first();
+    //                 if ($sale_unit_data->operator == '*')
+    //                     $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) * $sale_unit_data->operation_value;
+    //                 else
+    //                     $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) / $sale_unit_data->operation_value;
+    //             } else {
+    //                 $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty);
+    //             }
+    //             foreach ($product_purchase_data as $key => $product_purchase) {
+    //                 $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
+    //                 if ($purchase_unit_data) {
+    //                     if ($purchase_unit_data->operator == '*')
+    //                         $total_received_qty += $product_purchase->recieved * $purchase_unit_data->operation_value;
+    //                     else
+    //                         $total_received_qty += $product_purchase->recieved / $purchase_unit_data->operation_value;
+    //                     $total_purchased_amount += $product_purchase->total;
+    //                 }
+    //             }
+    //             if ($total_received_qty)
+    //                 $averageCost = $total_purchased_amount / $total_received_qty;
+    //             else
+    //                 $averageCost = 0;
+    //             $product_cost += $sold_qty * $averageCost;
+    //         }
+    //     }
+    //     return $product_cost;
+    // }
+
     public function calculateAverageCOGS($product_sale_data)
     {
         $product_cost = 0;
-        foreach ($product_sale_data as $key => $product_sale) {
-            $product_data = Product::select('type', 'product_list', 'variant_list', 'qty_list')->find($product_sale->product_id);
+        $units = Unit::select('id', 'operator', 'operation_value')->get();
+
+        foreach ($product_sale_data as $product_sale) {
+            $product_data = Product::select('type', 'product_list', 'variant_list', 'qty_list')
+                ->find($product_sale->product_id);
+
+            // Combo products
             if ($product_data && $product_data->type == 'combo') {
                 $product_list = explode(",", $product_data->product_list);
-                if ($product_data->variant_list)
-                    $variant_list = explode(",", $product_data->variant_list);
-                else
-                    $variant_list = [];
+                $variant_list = $product_data->variant_list ? explode(",", $product_data->variant_list) : [];
                 $qty_list = explode(",", $product_data->qty_list);
 
                 foreach ($product_list as $index => $product_id) {
@@ -1791,83 +2154,277 @@ class HomeController extends Controller
                         $product_purchase_data = ProductPurchase::where([
                             ['product_id', $product_id],
                             ['variant_id', $variant_list[$index]]
-                        ])
-                            ->select('recieved', 'purchase_unit_id', 'total')
-                            ->get();
+                        ])->select('recieved', 'purchase_unit_id', 'total')->get();
                     } else {
                         $product_purchase_data = ProductPurchase::where('product_id', $product_id)
-                            ->select('recieved', 'purchase_unit_id', 'total')
-                            ->get();
+                            ->select('recieved', 'purchase_unit_id', 'total')->get();
                     }
+
                     $total_received_qty = 0;
                     $total_purchased_amount = 0;
-                    $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) * $qty_list[$index];
-                    $units = Unit::select('id', 'operator', 'operation_value')->get();
-                    foreach ($product_purchase_data as $key => $product_purchase) {
+
+                    // ✅ use sold_qty only
+                    $sold_qty = $product_sale->sold_qty * $qty_list[$index];
+
+                    foreach ($product_purchase_data as $product_purchase) {
                         $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
-                        if ($purchase_unit_data->operator == '*')
-                            $total_received_qty += $product_purchase->recieved * $purchase_unit_data->operation_value;
-                        else
-                            $total_received_qty += $product_purchase->recieved / $purchase_unit_data->operation_value;
-                        $total_purchased_amount += $product_purchase->total;
+                        if ($purchase_unit_data) {
+                            $total_received_qty += $purchase_unit_data->operator == '*'
+                                ? $product_purchase->recieved * $purchase_unit_data->operation_value
+                                : $product_purchase->recieved / $purchase_unit_data->operation_value;
+
+                            $total_purchased_amount += $product_purchase->total;
+                        }
                     }
-                    if ($total_received_qty)
-                        $averageCost = $total_purchased_amount / $total_received_qty;
-                    else
-                        $averageCost = 0;
+
+                    $averageCost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
                     $product_cost += $sold_qty * $averageCost;
                 }
-            } else {
+            }
+            // Normal products
+            else {
                 if ($product_sale->product_batch_id) {
                     $product_purchase_data = ProductPurchase::where([
                         ['product_id', $product_sale->product_id],
                         ['product_batch_id', $product_sale->product_batch_id]
-                    ])
-                        ->select('recieved', 'purchase_unit_id', 'total')
-                        ->get();
+                    ])->select('recieved', 'purchase_unit_id', 'total')->get();
                 } elseif ($product_sale->variant_id) {
                     $product_purchase_data = ProductPurchase::where([
                         ['product_id', $product_sale->product_id],
                         ['variant_id', $product_sale->variant_id]
-                    ])
-                        ->select('recieved', 'purchase_unit_id', 'total')
-                        ->get();
+                    ])->select('recieved', 'purchase_unit_id', 'total')->get();
                 } else {
                     $product_purchase_data = ProductPurchase::where('product_id', $product_sale->product_id)
-                        ->select('recieved', 'purchase_unit_id', 'total')
-                        ->get();
+                        ->select('recieved', 'purchase_unit_id', 'total')->get();
                 }
+
                 $total_received_qty = 0;
                 $total_purchased_amount = 0;
-                $units = Unit::select('id', 'operator', 'operation_value')->get();
+
                 if ($product_sale->sale_unit_id) {
                     $sale_unit_data = $units->where('id', $product_sale->sale_unit_id)->first();
-                    if ($sale_unit_data->operator == '*')
-                        $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) * $sale_unit_data->operation_value;
-                    else
-                        $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty) / $sale_unit_data->operation_value;
+                    $sold_qty = $sale_unit_data && $sale_unit_data->operator == '*'
+                        ? $product_sale->sold_qty * $sale_unit_data->operation_value
+                        : $product_sale->sold_qty / $sale_unit_data->operation_value;
                 } else {
-                    $sold_qty = ($product_sale->sold_qty - $product_sale->return_qty);
+                    $sold_qty = $product_sale->sold_qty;
                 }
-                foreach ($product_purchase_data as $key => $product_purchase) {
+
+                foreach ($product_purchase_data as $product_purchase) {
                     $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
                     if ($purchase_unit_data) {
-                        if ($purchase_unit_data->operator == '*')
-                            $total_received_qty += $product_purchase->recieved * $purchase_unit_data->operation_value;
-                        else
-                            $total_received_qty += $product_purchase->recieved / $purchase_unit_data->operation_value;
+                        $total_received_qty += $purchase_unit_data->operator == '*'
+                            ? $product_purchase->recieved * $purchase_unit_data->operation_value
+                            : $product_purchase->recieved / $purchase_unit_data->operation_value;
+
                         $total_purchased_amount += $product_purchase->total;
                     }
                 }
-                if ($total_received_qty)
-                    $averageCost = $total_purchased_amount / $total_received_qty;
-                else
-                    $averageCost = 0;
+
+                $averageCost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
                 $product_cost += $sold_qty * $averageCost;
+            }
+        }
+
+        return $product_cost;
+    }
+
+    public function calculateReturnCOGS($product_return_data)
+    {
+        $return_cost = 0;
+        $units = Unit::select('id', 'operator', 'operation_value')->get(); // fetch once for performance
+
+        foreach ($product_return_data as $product_return) {
+            $product_data = Product::select('type', 'product_list', 'variant_list', 'qty_list')
+                ->find($product_return->product_id);
+
+            // Combo products
+            if ($product_data && $product_data->type == 'combo') {
+                $product_list  = explode(",", $product_data->product_list);
+                $variant_list  = $product_data->variant_list ? explode(",", $product_data->variant_list) : [];
+                $qty_list      = explode(",", $product_data->qty_list);
+
+                foreach ($product_list as $index => $product_id) {
+                    if (count($variant_list) && $variant_list[$index]) {
+                        $product_purchase_data = ProductPurchase::where([
+                            ['product_id', $product_id],
+                            ['variant_id', $variant_list[$index]]
+                        ])->select('recieved', 'purchase_unit_id', 'total')->get();
+                    } else {
+                        $product_purchase_data = ProductPurchase::where('product_id', $product_id)
+                            ->select('recieved', 'purchase_unit_id', 'total')->get();
+                    }
+
+                    $total_received_qty = 0;
+                    $total_purchased_amount = 0;
+
+                    // ✅ use return_qty instead of sold_qty
+                    $return_qty = $product_return->return_qty * $qty_list[$index];
+
+                    foreach ($product_purchase_data as $product_purchase) {
+                        $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
+                        if ($purchase_unit_data) {
+                            $total_received_qty += $purchase_unit_data->operator == '*'
+                                ? $product_purchase->recieved * $purchase_unit_data->operation_value
+                                : $product_purchase->recieved / $purchase_unit_data->operation_value;
+
+                            $total_purchased_amount += $product_purchase->total;
+                        }
+                    }
+
+                    $averageCost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
+                    $return_cost += $return_qty * $averageCost;
+                }
+            }
+            // Normal products
+            else {
+                if ($product_return->product_batch_id) {
+                    $product_purchase_data = ProductPurchase::where([
+                        ['product_id', $product_return->product_id],
+                        ['product_batch_id', $product_return->product_batch_id]
+                    ])->select('recieved', 'purchase_unit_id', 'total')->get();
+                } elseif ($product_return->variant_id) {
+                    $product_purchase_data = ProductPurchase::where([
+                        ['product_id', $product_return->product_id],
+                        ['variant_id', $product_return->variant_id]
+                    ])->select('recieved', 'purchase_unit_id', 'total')->get();
+                } else {
+                    $product_purchase_data = ProductPurchase::where('product_id', $product_return->product_id)
+                        ->select('recieved', 'purchase_unit_id', 'total')->get();
+                }
+
+                $total_received_qty = 0;
+                $total_purchased_amount = 0;
+
+                if ($product_return->sale_unit_id) {
+                    $sale_unit_data = $units->where('id', $product_return->sale_unit_id)->first();
+                    $return_qty = $sale_unit_data && $sale_unit_data->operator == '*'
+                        ? $product_return->return_qty * $sale_unit_data->operation_value
+                        : $product_return->return_qty / $sale_unit_data->operation_value;
+                } else {
+                    $return_qty = $product_return->return_qty;
+                }
+
+                foreach ($product_purchase_data as $product_purchase) {
+                    $purchase_unit_data = $units->where('id', $product_purchase->purchase_unit_id)->first();
+                    if ($purchase_unit_data) {
+                        $total_received_qty += $purchase_unit_data->operator == '*'
+                            ? $product_purchase->recieved * $purchase_unit_data->operation_value
+                            : $product_purchase->recieved / $purchase_unit_data->operation_value;
+
+                        $total_purchased_amount += $product_purchase->total;
+                    }
+                }
+
+                $averageCost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
+                $return_cost += $return_qty * $averageCost;
+            }
+        }
+
+        return $return_cost;
+    }
+
+
+
+    private function calculateFifoCost($product_purchase_data, $sold_qty, $units)
+    {
+        $purchases = [];
+
+        // Prepare FIFO purchase queue
+        foreach ($product_purchase_data as $purchase) {
+            $purchase_unit = $units->where('id', $purchase->purchase_unit_id)->first();
+            if (!$purchase_unit) continue;
+
+            if ($purchase_unit->operator == '*')
+                $converted_qty = $purchase->recieved * $purchase_unit->operation_value;
+            else
+                $converted_qty = $purchase->recieved / $purchase_unit->operation_value;
+
+            if ($converted_qty <= 0) continue;
+
+            $purchases[] = [
+                'available_qty' => $converted_qty,
+                'cost_per_unit' => $purchase->total / $converted_qty,
+            ];
+        }
+
+        // FIFO Calculation
+        $remaining = $sold_qty;
+        $cost = 0;
+
+        foreach ($purchases as &$purchase) {
+            if ($remaining <= 0) break;
+
+            $take = min($remaining, $purchase['available_qty']);
+            $cost += $take * $purchase['cost_per_unit'];
+            $remaining -= $take;
+
+            $purchase['available_qty'] -= $take;
+        }
+
+        return $cost;
+    }
+
+    public function calculateFifoCOGS($sales)
+    {
+        $units = Unit::select('id', 'operator', 'operation_value')->get();
+        $product_cost = 0;
+
+        foreach ($sales as $sale) {
+            // 1. Convert sold qty into base units
+            if ($sale->sale_unit_id) {
+                $sale_unit = $units->where('id', $sale->sale_unit_id)->first();
+                if ($sale_unit->operator == '*') {
+                    $sold_qty = ($sale->sold_qty - $sale->return_qty) * $sale_unit->operation_value;
+                } else {
+                    $sold_qty = ($sale->sold_qty - $sale->return_qty) / $sale_unit->operation_value;
+                }
+            } else {
+                $sold_qty = ($sale->sold_qty - $sale->return_qty);
+            }
+
+            // 2. Get purchases for this product in FIFO order
+            $purchases = ProductPurchase::where('product_id', $sale->product_id)
+                ->when($sale->product_batch_id, fn($q) => $q->where('product_batch_id', $sale->product_batch_id))
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            // 3. Process FIFO consumption
+            $remaining = $sold_qty;
+
+            // dd($sale, $sale->return_qty);
+
+            foreach ($purchases as $purchase) {
+                if ($remaining <= 0) break;
+
+                $purchase_unit = $units->where('id', $purchase->purchase_unit_id)->first();
+                if (!$purchase_unit) continue;
+
+                $received_qty = $purchase_unit->operator == '*'
+                    ? $purchase->recieved * $purchase_unit->operation_value
+                    : ($purchase_unit->operation_value != 0
+                        ? $purchase->recieved / $purchase_unit->operation_value
+                        : 0);
+
+                // Skip invalid purchases
+                if ($received_qty <= 0) {
+                    continue;
+                }
+                $cost_per_unit = $purchase->total / $received_qty;
+                $take = min($remaining, $received_qty);
+
+
+
+                $product_cost += $take * $cost_per_unit;
+                $remaining -= $take;
+
+                // 🔥 Optionally, persist updated stock ledger here
             }
         }
         return $product_cost;
     }
+
+
 
     public function myTransaction($year, $month)
     {

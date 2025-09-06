@@ -467,10 +467,15 @@ class SaleController extends Controller
                     $nestedData['delivery_status'] = 'N/A';
 
                 $nestedData['grand_total'] = number_format($sale->grand_total, config('decimal'));
+                $product_sale_data = Product_Sale::where('sale_id', $sale->id)->get();
+                $nestedData['product_cost'] = $this->calculateAverageCOGS($product_sale_data);
+                $nestedData['product_cost'] = number_format($nestedData['product_cost'], config('decimal'));
+
                 //$nestedData['grand_total'] = \Illuminate\Support\Number::format($sale->grand_total, locale: 'id');
                 $returned_amount = DB::table('returns')->where('sale_id', $sale->id)->sum('grand_total');
                 $nestedData['returned_amount'] = number_format($returned_amount, config('decimal'));
                 $nestedData['paid_amount'] = number_format($sale->paid_amount, config('decimal'));
+
                 $nestedData['due'] = number_format($sale->grand_total - $returned_amount - $sale->paid_amount, config('decimal'));
                 //fetching custom fields data
                 foreach ($field_names as $field_name) {
@@ -931,6 +936,9 @@ class SaleController extends Controller
                 $nestedData['total_amount'] = number_format($sale->total_price, config('decimal'));
                 $nestedData['delivery_amount'] = number_format($sale->shipping_cost, config('decimal'));
                 $nestedData['grand_total'] = number_format($sale->grand_total, config('decimal'));
+                $product_sale_data = Product_Sale::where('sale_id', $sale->id)->get();
+                $nestedData['product_cost'] = $this->calculateAverageCOGS($product_sale_data);
+                $nestedData['product_cost'] = number_format($nestedData['product_cost'], config('decimal'));
                 //$nestedData['grand_total'] = \Illuminate\Support\Number::format($sale->grand_total, locale: 'id');
                 $nestedData['discount'] = number_format($sale->total_discount, config('decimal'));
                 $returned_amount = DB::table('returns')->where('sale_id', $sale->id)->sum('grand_total');
@@ -4324,5 +4332,103 @@ class SaleController extends Controller
         $html = view('backend.sale.preview_orders', compact('PreviewOrders'))->render();
 
         return response()->json(['html' => $html]);
+    }
+
+
+    public function calculateAverageCOGS($product_sale_data)
+    {
+        $product_cost = 0;
+
+        // Fetch all units once for conversions
+        $units = Unit::select('id', 'operator', 'operation_value')->get();
+
+        foreach ($product_sale_data as $product_sale) {
+
+            $product_data = Product::select('type', 'product_list', 'variant_list', 'qty_list')
+                ->find($product_sale->product_id);
+
+            // Handle combo products
+            if ($product_data && $product_data->type == 'combo') {
+                $product_list = explode(",", $product_data->product_list);
+                $variant_list = $product_data->variant_list ? explode(",", $product_data->variant_list) : [];
+                $qty_list = explode(",", $product_data->qty_list);
+
+                foreach ($product_list as $index => $product_id) {
+                    $variant_id = $variant_list[$index] ?? null;
+                    $component_qty = $qty_list[$index] ?? 1;
+
+                    $product_purchase_data = ProductPurchase::when($variant_id, function ($q) use ($product_id, $variant_id) {
+                        $q->where('product_id', $product_id)->where('variant_id', $variant_id);
+                    }, function ($q) use ($product_id) {
+                        $q->where('product_id', $product_id);
+                    })
+                        ->select('recieved', 'purchase_unit_id', 'total')
+                        ->get();
+
+                    $total_received_qty = 0;
+                    $total_purchased_amount = 0;
+                    $sold_qty = $product_sale->qty * $component_qty;
+
+                    foreach ($product_purchase_data as $purchase) {
+                        $purchase_unit = $units->where('id', $purchase->purchase_unit_id)->first();
+                        if ($purchase_unit) {
+                            $total_received_qty += $purchase_unit->operator == '*'
+                                ? $purchase->recieved * $purchase_unit->operation_value
+                                : $purchase->recieved / $purchase_unit->operation_value;
+
+                            $total_purchased_amount += $purchase->total;
+                        }
+                    }
+
+                    $average_cost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
+                    $product_cost += $sold_qty * $average_cost;
+                }
+            }
+            // Handle normal products
+            else {
+                $product_purchase_data = ProductPurchase::when($product_sale->product_batch_id, function ($q) use ($product_sale) {
+                    $q->where('product_id', $product_sale->product_id)
+                        ->where('product_batch_id', $product_sale->product_batch_id);
+                })->when($product_sale->variant_id && !$product_sale->product_batch_id, function ($q) use ($product_sale) {
+                    $q->where('product_id', $product_sale->product_id)
+                        ->where('variant_id', $product_sale->variant_id);
+                }, function ($q) use ($product_sale) {
+                    $q->where('product_id', $product_sale->product_id);
+                })
+                    ->select('recieved', 'purchase_unit_id', 'total')
+                    ->get();
+
+                $sold_qty = $product_sale->qty;
+
+                // Adjust sold quantity based on sale unit
+                if ($product_sale->sale_unit_id) {
+                    $sale_unit = $units->where('id', $product_sale->sale_unit_id)->first();
+                    if ($sale_unit) {
+                        $sold_qty = $sale_unit->operator == '*'
+                            ? $product_sale->qty * $sale_unit->operation_value
+                            : $product_sale->qty / $sale_unit->operation_value;
+                    }
+                }
+
+                $total_received_qty = 0;
+                $total_purchased_amount = 0;
+
+                foreach ($product_purchase_data as $purchase) {
+                    $purchase_unit = $units->where('id', $purchase->purchase_unit_id)->first();
+                    if ($purchase_unit) {
+                        $total_received_qty += $purchase_unit->operator == '*'
+                            ? $purchase->recieved * $purchase_unit->operation_value
+                            : $purchase->recieved / $purchase_unit->operation_value;
+
+                        $total_purchased_amount += $purchase->total;
+                    }
+                }
+
+                $average_cost = $total_received_qty ? $total_purchased_amount / $total_received_qty : 0;
+                $product_cost += $sold_qty * $average_cost;
+            }
+        }
+
+        return round($product_cost, config('decimal')); // Optional: round to config decimals
     }
 }
