@@ -79,6 +79,15 @@ Route::get('migrate', function () {
     dd('migrated');
 });
 
+Route::get('/phpinfo', function() {
+    return response()->json([
+        'max_execution_time' => ini_get('max_execution_time'),
+        'max_input_time' => ini_get('max_input_time'),
+        'memory_limit' => ini_get('memory_limit'),
+    ]);
+});
+
+
 Route::get('clear', function () {
     Artisan::call('optimize:clear');
     cache()->forget('biller_list');
