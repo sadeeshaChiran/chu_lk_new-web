@@ -62,6 +62,8 @@
                     <th class="not-exported"></th>
                     <th>{{trans('file.Date')}}</th>
                     <th>{{trans('file.reference')}} No</th>
+                    <th>Account Name</th>
+                    <th>User</th>
                     <th>{{trans('file.Warehouse')}}</th>
                     <th>{{trans('file.category')}}</th>
                     <th>{{trans('file.Amount')}}</th>
@@ -72,6 +74,8 @@
             <tfoot class="tfoot active">
                 <th></th>
                 <th>{{trans('file.Total')}}</th>
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -241,6 +245,8 @@
             {"data": "key"},
             {"data": "date"},
             {"data": "reference_no"},
+            {"data": "account"},
+            {"data": "user"},
             {"data": "warehouse"},
             {"data": "expenseCategory"},
             {"data": "amount"},

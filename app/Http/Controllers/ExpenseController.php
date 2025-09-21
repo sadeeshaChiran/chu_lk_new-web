@@ -75,7 +75,7 @@ class ExpenseController extends Controller
         $order = 'expenses.'.$columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
         if(empty($request->input('search.value'))) {
-            $q = Expense::with('warehouse', 'expenseCategory')
+            $q = Expense::with('warehouse', 'expenseCategory','user', 'account')
                 ->whereDate('created_at', '>=' ,$request->input('starting_date'))
                 ->whereDate('created_at', '<=' ,$request->input('ending_date'))
                 ->offset($start)
@@ -96,7 +96,7 @@ class ExpenseController extends Controller
                 ->orderBy($order,$dir);
             if(Auth::user()->role_id > 2 && config('staff_access') == 'own') {
                 $expenses =  $q->select('expenses.*')
-                                ->with('warehouse', 'expenseCategory')
+                                ->with('warehouse', 'expenseCategory','user', 'account')
                                 ->where('expenses.user_id', Auth::id())
                                 ->orwhere([
                                     ['reference_no', 'LIKE', "%{$search}%"],
@@ -107,7 +107,7 @@ class ExpenseController extends Controller
             }
             elseif(Auth::user()->role_id > 2 && config('staff_access') == 'warehouse') {
                 $expenses =  $q->select('expenses.*')
-                                ->with('warehouse', 'expenseCategory')
+                                ->with('warehouse', 'expenseCategory','user', 'account')
                                 ->where('expenses.user_id', Auth::id())
                                 ->orwhere([
                                     ['reference_no', 'LIKE', "%{$search}%"],
@@ -118,7 +118,7 @@ class ExpenseController extends Controller
             }
             else {
                 $expenses =  $q->select('expenses.*')
-                                ->with('warehouse', 'expenseCategory')
+                                ->with('warehouse', 'expenseCategory','user', 'account')
                                 ->orwhere('reference_no', 'LIKE', "%{$search}%")
                                 ->get();
 
@@ -128,6 +128,7 @@ class ExpenseController extends Controller
         $data = array();
         if(!empty($expenses))
         {
+            
             foreach ($expenses as $key=>$expense)
             {
                 $nestedData['id'] = $expense->id;
@@ -135,6 +136,8 @@ class ExpenseController extends Controller
                 $nestedData['date'] = date(config('date_format'), strtotime($expense->created_at->toDateString()));
                 $nestedData['reference_no'] = $expense->reference_no;
                 $nestedData['warehouse'] = $expense->warehouse->name;
+                $nestedData['user'] = $expense->user->name;
+                $nestedData['account'] = $expense->account->name;
                 $nestedData['expenseCategory'] = $expense->expenseCategory->name;
                 $nestedData['amount'] = number_format($expense->amount, config('decimal'));
                 $nestedData['note'] = $expense->note;

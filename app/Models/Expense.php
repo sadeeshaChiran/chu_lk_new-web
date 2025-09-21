@@ -18,4 +18,12 @@ class Expense extends Model
     public function expenseCategory() {
     	return $this->belongsTo('App\Models\ExpenseCategory');
     }
+
+    public function user() {
+    	return $this->belongsTo('App\Models\User');
+    }
+
+    public function account() {
+    	return $this->belongsTo('App\Models\Account');
+    }
 }
