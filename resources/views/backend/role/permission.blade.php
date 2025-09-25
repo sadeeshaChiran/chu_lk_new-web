@@ -1551,7 +1551,9 @@
                                         <tr class="report-row">
                                             <td>{{ trans('file.Reports') }}</td>
                                             <td class="report-permissions" colspan="5">
-                                                <span>
+                                                
+
+                                                 <span>
                                                     <div aria-checked="false" aria-disabled="false">
                                                         <div class="checkbox">
                                                             @if (in_array('profit-loss', $all_permission))
@@ -1567,6 +1569,24 @@
                                                         </div>
                                                     </div>
                                                 </span>
+
+                                                <span>
+                                                    <div aria-checked="false" aria-disabled="false">
+                                                        <div class="checkbox">
+                                                            @if (in_array('brand-sales', $all_permission))
+                                                                <input type="checkbox" value="1" id="brand-sales"
+                                                                    name="brand-sales" checked>
+                                                            @else
+                                                                <input type="checkbox" value="1" id="brand-sales"
+                                                                    name="brand-sales">
+                                                            @endif
+                                                            <label for="brand-sales"
+                                                                class="padding05">Brand Sales
+                                                                &nbsp;&nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </span>
+
                                                 <span>
                                                     <div aria-checked="false" aria-disabled="false">
                                                         <div class="checkbox">

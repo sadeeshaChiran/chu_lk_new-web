@@ -898,7 +898,7 @@
             rowindex = $(this).closest('tr').index();
             deposit = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.deposit').val();
             var sale_id = $(this).data('id').toString();
-            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(21)')
+            var balance = $('table.sale-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(22)')
                 .text();
             balance = parseFloat(balance.replace(/,/g, ''));
             console.log(balance);

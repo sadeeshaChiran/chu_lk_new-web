@@ -726,6 +726,16 @@ class RoleController extends Controller
         } else
             $role->revokePermissionTo('profit-loss');
 
+        if ($request->has('brand-sales')) {
+            $permission = Permission::firstOrCreate(['name' => 'brand-sales']);
+            if (!$role->hasPermissionTo('brand-sales')) {
+                $role->givePermissionTo($permission);
+            }
+        } else
+            $role->revokePermissionTo('brand-sales');
+
+
+
         if ($request->has('best-seller')) {
             $permission = Permission::firstOrCreate(['name' => 'best-seller']);
             if (!$role->hasPermissionTo('best-seller')) {

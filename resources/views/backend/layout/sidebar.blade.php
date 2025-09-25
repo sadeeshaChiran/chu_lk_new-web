@@ -12,9 +12,9 @@
             $stock_count_active = $role_has_permissions_list->where('name', 'stock_count')->first();
             
             $adjustment_active = $role_has_permissions_list->where('name', 'adjustment')->first();
-
+            
             $price_management_active = $role_has_permissions_list->where('name', 'price-management-index')->first();
-
+            
             ?>
             @if (
                 $category_permission_active ||
@@ -57,9 +57,9 @@
                                     href="{{ route('stock-count.index') }}">{{ trans('file.Stock Count') }}</a></li>
                         @endif
 
-                        @if($price_management_active)
-                            <li id="price-management-menu"><a
-                                    href="{{ route('product.priceManagement') }}">Price Management</a></li>
+                        @if ($price_management_active)
+                            <li id="price-management-menu"><a href="{{ route('product.priceManagement') }}">Price
+                                    Management</a></li>
                         @endif
                     </ul>
                 </li>
@@ -432,6 +432,9 @@
             <?php
             
             $profit_loss_active = $role_has_permissions_list->where('name', 'profit-loss')->first();
+
+            $brand_sales_active = $role_has_permissions_list->where('name', 'brand-sales')->first();
+
             
             $best_seller_active = $role_has_permissions_list->where('name', 'best-seller')->first();
             
@@ -511,6 +514,18 @@
                                 {!! Form::close() !!}
                             </li>
                         @endif
+                        @if ($brand_sales_active)
+                            <li id="profit-loss-report-menu">
+                                {!! Form::open(['route' => 'report.brandSales', 'method' => 'post', 'id' => 'brandSales-report-form']) !!}
+                                <input type="hidden" name="start_date" value="{{ date('Y-m') . '-01' }}" />
+                                <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
+                                <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('brandSales-report-form').submit();">
+                                    Brand Sales Report
+                                </a>
+                                {!! Form::close() !!}
+                            </li>
+                        @endif
                         @if ($best_seller_active)
                             <li id="best-seller-report-menu">
                                 <a href="{{ url('report/best_seller') }}">{{ trans('file.Best Seller') }}</a>
@@ -587,7 +602,11 @@
 
                         @if ($payment_report_active)
                             <li id="purchase-payment-report-menu">
-                                {!! Form::open(['route' => 'report.purchasePaymentByDate', 'method' => 'post', 'id' => 'purchase-payment-report-form']) !!}
+                                {!! Form::open([
+                                    'route' => 'report.purchasePaymentByDate',
+                                    'method' => 'post',
+                                    'id' => 'purchase-payment-report-form',
+                                ]) !!}
                                 <input type="hidden" name="start_date" value="{{ date('Y-m') . '-' . '01' }}" />
                                 <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}" />
                                 <a id="purchase-payment-report-link" href="">Purchase
