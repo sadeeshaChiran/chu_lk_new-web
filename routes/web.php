@@ -79,13 +79,13 @@ Route::get('migrate', function () {
     dd('migrated');
 });
 
-Route::get('/phpinfo', function() {
-    return response()->json([
-        'max_execution_time' => ini_get('max_execution_time'),
-        'max_input_time' => ini_get('max_input_time'),
-        'memory_limit' => ini_get('memory_limit'),
-    ]);
-});
+// Route::get('/phpinfo', function() {
+//     return response()->json([
+//         'max_execution_time' => ini_get('max_execution_time'),
+//         'max_input_time' => ini_get('max_input_time'),
+//         'memory_limit' => ini_get('memory_limit'),
+//     ]);
+// });
 
 
 Route::get('clear', function () {
@@ -517,6 +517,7 @@ Route::group(['middleware' => ['common', 'auth', 'active']], function () {
             Route::get('best_seller', 'bestSeller');
             Route::post('best_seller', 'bestSellerByWarehouse')->name('report.bestSellerByWarehouse');
             Route::post('profit_loss', 'profitLoss')->name('report.profitLoss');
+            Route::post('brand_sales', 'brandSales')->name('report.brandSales');
             Route::get('product_report', 'productReport')->name('report.product');
             Route::post('product_report_data', 'productReportData');
             Route::post('purchase', 'purchaseReport')->name('report.purchase');
