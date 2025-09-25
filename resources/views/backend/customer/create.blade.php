@@ -69,8 +69,7 @@
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} *</label>
                                         <input type="text" name="phone_number" required class="form-control"
-                                              minlength="10"
-                                            maxlength="10"
+                                            minlength="10" maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                         @if ($errors->has('phone_number'))
                                             <span>
@@ -82,8 +81,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{ trans('file.Phone Number') }} - 2 </label>
-                                        <input type="text" name="phone_number_2" class="form-control"
-                                              minlength="10"
+                                        <input type="text" name="phone_number_2" class="form-control" minlength="10"
                                             maxlength="10"
                                             title="Enter a valid 10-digit Sri Lankan mobile number starting with 07">
                                         @if ($errors->has('phone_number_2'))
@@ -109,17 +107,17 @@
                                     <div class="form-group">
                                         <label>{{ trans('file.City') }}</label>
                                         <select required name="city" id="city" class="selectpicker form-control"
-                                        data-live-search="true" title="Select City...">
-                                        @foreach ($cities as $city)
-                                            <option value="{{ $city->name_en }}">
-                                                {{ $city->name_en }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                            data-live-search="true" title="Select City...">
+                                            @foreach ($cities as $city)
+                                                <option value="{{ $city->name_en }}">
+                                                    {{ $city->name_en }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{ trans('file.State') }}</label>
@@ -218,6 +216,41 @@
                                         </div>
                                     @endif
                                 @endforeach
+
+
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Baby name</label>
+                                        <input type="text" name="baby_name" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Baby DOB</label>
+                                        <input type="date" name="baby_dob" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Baby Gender</label>
+                                        <select name="baby_gender" id="baby_gender"
+                                            class="selectpicker form-control" data-live-search="false"
+                                            title="Select Baby Gender...">
+                                            <option value="male">
+                                                Male
+                                            </option>
+                                            <option value="female">
+                                                Female
+                                            </option>
+                                        </select>
+                                        
+                                    </div>
+                                </div>
+
+
                                 <div class="col-md-4 mt-4">
                                     <div class="form-group">
                                         <input type="checkbox" name="user" value="1" />&nbsp;

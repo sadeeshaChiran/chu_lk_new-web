@@ -1622,6 +1622,35 @@
                                         </select>
                                     </div>
 
+
+                                    <div class="form-group">
+                                        <label>Baby name</label>
+                                        <input type="text" name="baby_name" class="form-control">
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label>Baby DOB</label>
+                                        <input type="date" name="baby_dob" class="form-control">
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label>Baby Gender</label>
+                                        <select name="baby_gender" id="baby_gender" class="selectpicker form-control"
+                                            data-live-search="false" title="Select Baby Gender...">
+                                            <option value="male">
+                                                Male
+                                            </option>
+                                            <option value="female">
+                                                Female
+                                            </option>
+                                        </select>
+
+                                    </div>
+
                                     {{-- <div class="form-group">
                                         <label>{{ trans('file.City') }}</label>
                                         <input type="text" name="city" required class="form-control">
@@ -1710,8 +1739,9 @@
                                 <div class="modal-header">
                                     <h5 id="exampleModalLabel" class="modal-title">
                                         {{ trans('file.Add Cash Register') }}</h5>
-                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
-                                            aria-hidden="true"><i class="dripicons-cross"></i></span></button>
+                                    <button type="button" data-dismiss="modal" aria-label="Close"
+                                        class="close"><span aria-hidden="true"><i
+                                                class="dripicons-cross"></i></span></button>
                                 </div>
                                 <div class="modal-body">
                                     <p class="italic">
@@ -1889,14 +1919,18 @@
                                                         class="form-control col-md-12 p-2 " step="any"
                                                         placeholder="Next Day Opening Balance" required>
                                                     <input type="number" step="any" name="closing_cash_balance"
-                                                        id="closing_cash_balance" class="form-control col-md-12 p-2 mt-2"
-                                                        step="any" placeholder="Closing Cash Balance" required>
-                                                    <input type="number" step="any" name="closing_credit_card_balance"
-                                                        id="closing_credit_card_balance" class="form-control col-md-12 p-2 mt-2"
-                                                        step="any" placeholder="Closing Credit Card Balance" required>
-                                                    <input type="number" step="any" name="closing_deposit_balance"
-                                                        id="closing_deposit_balance" class="form-control col-md-12 p-2 mt-2"
-                                                        step="any" placeholder="Closing Deposit Balance" required>
+                                                        id="closing_cash_balance"
+                                                        class="form-control col-md-12 p-2 mt-2" step="any"
+                                                        placeholder="Closing Cash Balance" required>
+                                                    <input type="number" step="any"
+                                                        name="closing_credit_card_balance"
+                                                        id="closing_credit_card_balance"
+                                                        class="form-control col-md-12 p-2 mt-2" step="any"
+                                                        placeholder="Closing Credit Card Balance" required>
+                                                    <input type="number" step="any"
+                                                        name="closing_deposit_balance" id="closing_deposit_balance"
+                                                        class="form-control col-md-12 p-2 mt-2" step="any"
+                                                        placeholder="Closing Deposit Balance" required>
 
 
                                                     <textarea rows="3" class="form-control col-md-12 my-2" placeholder="Note" name="note"></textarea>
@@ -1981,7 +2015,8 @@
                                                     </tr>
                                                     <tr>
                                                         <td>{{ trans('file.Deposit Payment') }}:</td>
-                                                        <td id="deposit_payment" class="deposit_payment text-right"></td>
+                                                        <td id="deposit_payment" class="deposit_payment text-right">
+                                                        </td>
                                                     </tr>
                                                     @if (in_array('paypal', $options) &&
                                                             strlen(env('PAYPAL_LIVE_API_USERNAME')) > 0 &&
@@ -2281,19 +2316,20 @@
             }
 
             function calculateCreditCardShortage() {
-                let totalCreditCard = parseFloat($('#register-details-modal #credit_card_payment_received').text()) || 0;
+                let totalCreditCard = parseFloat($('#register-details-modal #credit_card_payment_received')
+                .text()) || 0;
                 const closing = parseFloat($('#closing_credit_card_balance').val()) || 0;
-                const shortage = closing  - ((totalCreditCard / 100) * 103);
+                const shortage = closing - ((totalCreditCard / 100) * 103);
                 $('#credit_card_shortage_balance').text(shortage.toFixed(2));
             }
 
             function calculateDepositShortage() {
                 let totalCreditCard = parseFloat($('#register-details-modal #deposit_payment').text()) || 0;
                 const closing = parseFloat($('#closing_deposit_balance').val()) || 0;
-                const shortage = closing  - totalCreditCard;
+                const shortage = closing - totalCreditCard;
                 $('#deposit_shortage_balance').text(shortage.toFixed(2));
             }
-            
+
             // $('select[name="customer_id"]').on('change', function() {
 
             $('#next_day_opening_balance , #closing_cash_balance').on('input', calculateCashShortage);
@@ -3137,8 +3173,8 @@
                 response($.grep(lims_product_array, function(item) {
                     var itemText = item.toLowerCase();
                     return terms.every(function(term) {
-                return itemText.includes(term);
-        });
+                        return itemText.includes(term);
+                    });
                 }));
             },
             response: function(event, ui) {
@@ -4768,7 +4804,8 @@
 
             // Prepare form
             if ($('input[name="sale_status"]').val() == 1) {
-                $("#submit-btn").prop('disabled', true).html('<span class="spinner-border text-light" role="status"></span>');
+                $("#submit-btn").prop('disabled', true).html(
+                    '<span class="spinner-border text-light" role="status"></span>');
             }
             $('input[name="paid_by_id"]').val($('select[name="paid_by_id_select"]').val());
             $('select[name="paid_by_id_select[]"]').each(function(index) {
@@ -4790,7 +4827,7 @@
                         $('#pos-layout').hide();
                         let head = $('head').html();
                         $('head').html('');
-                        $('#print-layout').load(link, function () {
+                        $('#print-layout').load(link, function() {
                             setTimeout(() => window.print(), 50);
                         });
 
@@ -4815,7 +4852,7 @@
                             '<div class="alert alert-success alert-dismissible text-center">' +
                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                             '<span aria-hidden="true">&times;</span></button>' +
-                            '{{ trans("file.Sale successfully added to draft") }}</div>'
+                            '{{ trans('file.Sale successfully added to draft') }}</div>'
                         );
                         $('input[name="sale_status"]').val(1);
                         cancel(rownumber);
@@ -4832,6 +4869,5 @@
                 }
             });
         });
-
     </script>
 @endpush

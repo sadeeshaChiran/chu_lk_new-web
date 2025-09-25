@@ -21,7 +21,7 @@
     <section id="pos-layout" class="forms hidden-print">
         <div class="container-fluid">
             <div class="row">
-               
+
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
@@ -31,7 +31,7 @@
                             <p class="italic">
                                 <small>{{ trans('file.The field labels marked with * are required input fields') }}.</small>
                             </p>
-                             
+
                             {!! Form::open(['route' => 'sales.store', 'method' => 'post', 'files' => true, 'class' => 'payment-form']) !!}
                             <div class="row">
                                 <div class="col-md-12">
@@ -204,7 +204,7 @@
 
                                     </div>
 
-                                     <div id="previewOrderAlerts" class="my-2 px-4 col-12"></div>
+                                    <div id="previewOrderAlerts" class="my-2 px-4 col-12"></div>
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <label>{{ trans('file.Select Product') }}</label>
@@ -763,6 +763,8 @@
                             <input type="text" name="address" class="form-control">
                         </div>
 
+
+
                         {{-- <div class="form-group">
                             <label>District *</label>
                             <select required name="district" id="district" class="selectpicker form-control"
@@ -784,6 +786,35 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Baby name</label>
+                            <input type="text" name="baby_name" class="form-control">
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label>Baby DOB</label>
+                            <input type="date" name="baby_dob" class="form-control">
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label>Baby Gender</label>
+                            <select name="baby_gender" id="baby_gender" class="selectpicker form-control"
+                                data-live-search="false" title="Select Baby Gender...">
+                                <option value="male">
+                                    Male
+                                </option>
+                                <option value="female">
+                                    Female
+                                </option>
+                            </select>
+
                         </div>
 
 
@@ -871,6 +902,37 @@
                                 @endforeach
                             </select>
                         </div>
+
+
+
+                        <div class="form-group">
+                            <label>Baby name</label>
+                            <input type="text" name="baby_name" class="form-control"
+                                value="{{ $customer->baby_name }}">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Baby DOB</label>
+                            <input type="date" name="baby_dob" class="form-control"
+                                value="{{ $customer->baby_dob }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Baby Gender</label>
+                            <select name="baby_gender" id="baby_gender" class="selectpicker form-control"
+                                data-live-search="false" title="Select Baby Gender...">
+                                <option value="male" @selected($customer->baby_gender == 'male')>
+                                    Male
+                                </option>
+                                <option value="female" @selected($customer->baby_gender == 'female')>
+                                    Female
+                                </option>
+
+                            </select>
+
+                        </div>
+
                         {{-- <div class="form-group">
                             <label>{{ trans('file.City') }}</label>
                             <input type="text" name="city" class="form-control" value="{{ $customer->city }}">
@@ -2387,7 +2449,7 @@
                 if (!customerId) return;
 
                 $.ajax({
-                    url: `/sales/preview-order/customer/${customerId}`, 
+                    url: `/sales/preview-order/customer/${customerId}`,
                     type: "GET",
                     success: function(response) {
                         $('#previewOrderAlerts').html(response.html);
