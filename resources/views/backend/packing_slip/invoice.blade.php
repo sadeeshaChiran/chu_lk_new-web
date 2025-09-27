@@ -15,9 +15,10 @@
             size: 75mm 100mm;
             margin: 0;
         }
+
         @media print {
             * {
-                font-size: 8px;
+                font-size: 10px;
                 line-height: 11px;
             }
 
@@ -45,7 +46,8 @@
                 page-break-before: avoid;
             }*/
         }
-        p{
+
+        p {
             font-size: 11.5px
         }
 
@@ -76,7 +78,7 @@
         td,
         th {
             padding: 1px;
-            font-size: 8px;
+            font-size: 8.5px;
         }
 
         .line {
@@ -89,6 +91,11 @@
             text-align: center;
         }
 
+        .barcode img {
+            max-width: 90%;
+            height: auto;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -96,27 +103,27 @@
     <div class="text-center">
         {{-- <img src="{{ url('logo', $general_setting->site_logo) }}" height="50"> --}}
         <span style="font-weight: bolder; font-size: 13px;">{{ $general_setting->site_title }}</span>
-        <br/>
+        <br />
         <span>{{ $sale->warehouse->phone }} | {{ $sale->warehouse->address }}</span>
-        <br/>
+        <br />
 
     </div>
     <div class="line"></div>
-    <span style="font-size: 12px">
+    <span style="font-size: 15px">
         <strong>To:</strong><br>
         @if ($sale->sale_type == 'website')
             {{ $sale->shipping_name }}<br>
             {{ $sale->shipping_phone }}
-            @if($sale->shipping_phone_2)
-                / {{$sale->shipping_phone_2}}
+            @if ($sale->shipping_phone_2)
+                / {{ $sale->shipping_phone_2 }}
             @endif
             <br>
             {{ $sale->shipping_address }}, {{ $sale->shipping_city }}
         @else
             {{ $sale->customer->name }}<br>
-            {{ $sale->customer->phone_number }} 
-            @if($sale->customer->phone_number_2)
-                / {{$sale->customer->phone_number_2}}
+            {{ $sale->customer->phone_number }}
+            @if ($sale->customer->phone_number_2)
+                / {{ $sale->customer->phone_number_2 }}
             @endif
             <br>
             {{ $sale->customer->address }}, {{ $sale->customer->city }}
@@ -142,11 +149,13 @@
                 @endif
             </td>
         </tr> --}}
-        <div style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 6px; margin-bottom: 6px;">
+        <div
+            style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 6px; margin-bottom: 6px;">
             <span>COD:</span>
-            <span class="text-right text-bold" style="margin-left: 5px; font-size: 13px;">Rs.{{ $sale->grand_total - $sale->paid_amount }}.00</span>
+            <span class="text-right text-bold"
+                style="margin-left: 5px; font-size: 15px;">Rs.{{ $sale->grand_total - $sale->paid_amount }}.00</span>
         </div>
-        
+
         {{-- <tr>
             <td>Courier Name:</td>
             <td class="text-right text-bold">{{ $delivery_details->courier->name }}</td>
@@ -156,11 +165,13 @@
     </table>
     <tr>
         <div class="barcode">
-            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128') . '" " alt="barcode">'; ?>
+            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128', 2, 50) . '" " alt="barcode">'; ?>
         </div>
     </tr>
-    <div style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 3px; margin-bottom: 3px;">
-        <span class="text-right text-bold" style="margin-left: 5px; font-size: 11px;">{{ $packing_slip->waybill_id }}</span>
+    <div
+        style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 3px; margin-bottom: 3px;">
+        <span class="text-right text-bold"
+            style="margin-left: 5px; font-size: 13px;">{{ $packing_slip->waybill_id }}</span>
     </div>
     <div class="line"></div>
     <table>
@@ -190,25 +201,26 @@
         window.onload = function() {
             window.print();
         };
+
         function getDateStr(date) {
-        return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    }
+            return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        }
 
-    window.onafterprint = function () {
-        const today = new Date();
-        const priorDate = new Date();
-        priorDate.setDate(today.getDate() - 30);
+        window.onafterprint = function() {
+            const today = new Date();
+            const priorDate = new Date();
+            priorDate.setDate(today.getDate() - 30);
 
-        const startingDate = getDateStr(priorDate);
-        const endingDate = getDateStr(today);
+            const startingDate = getDateStr(priorDate);
+            const endingDate = getDateStr(today);
 
-        const url = "{{ route('sales.index') }}" +
-            "?sale_status=2" +
-            "&starting_date=" + encodeURIComponent(startingDate) +
-            "&ending_date=" + encodeURIComponent(endingDate);
+            const url = "{{ route('sales.index') }}" +
+                "?sale_status=2" +
+                "&starting_date=" + encodeURIComponent(startingDate) +
+                "&ending_date=" + encodeURIComponent(endingDate);
 
-        window.location.href = url;
-    };
+            window.location.href = url;
+        };
     </script>
 </body>
 
