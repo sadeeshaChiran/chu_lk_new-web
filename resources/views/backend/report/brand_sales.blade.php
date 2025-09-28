@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header mt-2">
-                    <h3 class="text-center">{{ trans('file.Brand Sales Report') }}</h3>
+                    <h3 class="text-center">Brand Sales Report</h3>
                 </div>
                 {!! Form::open(['route' => 'report.brandSales', 'method' => 'post']) !!}
                 <div class="row mb-3 product-report-filter">
@@ -72,6 +72,17 @@
     <script type="text/javascript">
         $(".daterangepicker-field").daterangepicker({
             timeZone: 'Asia/Colombo',
+             autoUpdateInput: true,
+            ranges: {
+                'Today': [moment().startOf('day'), moment().endOf('day')],
+                'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf(
+                    'day')],
+                'Last 5 Days': [moment().subtract(4, 'days').startOf('day'), moment().endOf('day')],
+                'Last 30 Days': [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')]
+            },
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
             callback: function(startDate, endDate, period) {
                 var start_date = startDate.format('YYYY-MM-DD');
                 var end_date = endDate.format('YYYY-MM-DD');
@@ -80,6 +91,11 @@
                 $('input[name="end_date"]').val(end_date);
             }
         });
+        $('form').on('submit', function(e) {
+            e.preventDefault(); // stop normal submit
+            $('#brand-sales-table').DataTable().ajax.reload();
+        });
+        
 
         $('#brand-sales-table').DataTable({
             processing: true,
@@ -107,7 +123,7 @@
                     data: "product_count"
                 }
             ],
-           dom: '<"row"lfB>rtip', // 👈 enables button placement
+            dom: '<"row"lfB>rtip', // 👈 enables button placement
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],

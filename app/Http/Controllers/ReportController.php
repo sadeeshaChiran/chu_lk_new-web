@@ -727,6 +727,7 @@ class ReportController extends Controller
         $end_date     = $request->input('end_date', date('Y-m-d'));
         $warehouse_id = $request->input('warehouse_id', 0);
 
+
         $query = DB::table('sales')
             ->join('product_sales', 'sales.id', '=', 'product_sales.sale_id')
             ->join('products', 'product_sales.product_id', '=', 'products.id')
