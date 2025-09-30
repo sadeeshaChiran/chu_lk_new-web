@@ -18,7 +18,7 @@
 
         @media print {
             * {
-                font-size: 10px;
+                font-size: 12px;
                 line-height: 11px;
             }
 
@@ -165,7 +165,7 @@
     </table>
     <tr>
         <div class="barcode">
-            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128', 2, 50) . '" " alt="barcode">'; ?>
+            <?php echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG($packing_slip->waybill_id, 'C128', 3, 80) . '" " alt="barcode">'; ?>
         </div>
     </tr>
     <div
