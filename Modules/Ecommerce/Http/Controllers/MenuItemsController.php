@@ -54,7 +54,7 @@ class MenuItemsController extends Controller
  
     public function addCatToMenu(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -95,7 +95,7 @@ class MenuItemsController extends Controller
 
     public function addCollectionToMenu(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -139,7 +139,7 @@ class MenuItemsController extends Controller
 
     public function addBrandToMenu(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -184,7 +184,7 @@ class MenuItemsController extends Controller
 
     public function addPageToMenu(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -225,7 +225,7 @@ class MenuItemsController extends Controller
 
     public function addBlogToMenu(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -260,7 +260,7 @@ class MenuItemsController extends Controller
 
     public function addCustomLink(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disabled for demo!');
         }
 
@@ -295,7 +295,7 @@ class MenuItemsController extends Controller
 
     public function updateMenuItem(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         $data = $request->all();
@@ -306,7 +306,7 @@ class MenuItemsController extends Controller
 
     public function deleteMenuItem($id, $key, $in)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         $menuitem = MenuItems::findOrFail($id);
@@ -330,7 +330,7 @@ class MenuItemsController extends Controller
 
     public function destroy(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         MenuItems::where('menu_id', $request->id)->delete();

@@ -69,7 +69,7 @@ class LanguageSettingController extends Controller
 
     public function store(LanguageRequest $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with(['error' => 'This feature is disabled for demo!']);
         }
 
@@ -89,7 +89,7 @@ class LanguageSettingController extends Controller
 
     public function languageDelete(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             session()->flash('message', 'This feature is disabled for demo!');
             session()->flash('type', 'danger');
             return response()->json('error');

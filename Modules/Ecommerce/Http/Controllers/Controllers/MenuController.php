@@ -23,7 +23,7 @@ class MenuController extends Controller
 
     public function store(Request $request)
     {
-        if(!env('USER_VERIFIED')) {
+        if(!config('custom.user_verified')) {
             Session::flash('message', 'This feature is disable for demo!');
             Session::flash('type', 'error');
             return redirect()->back();
@@ -52,7 +52,7 @@ class MenuController extends Controller
 
     public function updateMenu(Request $request)
     {
-        if(!env('USER_VERIFIED')) {
+        if(!config('custom.user_verified')) {
             Session::flash('message', 'This feature is disable for demo!');
             Session::flash('type', 'error');
             return redirect()->back();
@@ -69,7 +69,7 @@ class MenuController extends Controller
 
     public function destroy(Request $request)
     {
-        if(!env('USER_VERIFIED')) {
+        if(!config('custom.user_verified')) {
             Session::flash('message', 'This feature is disable for demo!');
             Session::flash('type', 'error');
             return redirect()->back();

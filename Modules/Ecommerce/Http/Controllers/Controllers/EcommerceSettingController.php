@@ -25,7 +25,7 @@ class EcommerceSettingController extends Controller
 
     public function update(Request $request)
     {
-        if(!env('USER_VERIFIED')) {
+        if(!config('custom.user_verified')) {
             Session::flash('message', 'This feature is disable for demo!');
             Session::flash('type', 'error');
             return redirect()->back();
@@ -118,7 +118,7 @@ class EcommerceSettingController extends Controller
 
     public function gatewayUpdate(Request $request)
     {
-        if(!env('USER_VERIFIED')) {
+        if(!config('custom.user_verified')) {
             Session::flash('message', 'This feature is disable for demo!');
             Session::flash('type', 'error');
             return redirect()->back();

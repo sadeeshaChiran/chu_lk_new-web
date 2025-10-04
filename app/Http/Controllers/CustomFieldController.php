@@ -33,7 +33,7 @@ class CustomFieldController extends Controller
 
     public function store(Request $request)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $data = $request->all();
@@ -116,7 +116,7 @@ class CustomFieldController extends Controller
 
     public function update(Request $request, $id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         $data = $request->all();
         $lims_custom_field_data = CustomField::find($id);
@@ -203,7 +203,7 @@ class CustomFieldController extends Controller
 
     public function destroy($id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $custom_field_data = CustomField::find($id);

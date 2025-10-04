@@ -31,7 +31,7 @@ class PageController extends Controller
 
     public function store(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         if (isset($request->image)) {
@@ -113,7 +113,7 @@ class PageController extends Controller
 
     public function update(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         $id = $request->page_id;
@@ -158,7 +158,7 @@ class PageController extends Controller
 
     public function destroy($id)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         Page::whereId($id)->delete();
@@ -167,7 +167,7 @@ class PageController extends Controller
     }
     function delete_by_selection(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
 
@@ -182,7 +182,7 @@ class PageController extends Controller
 
     public function status($id, $status)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
 

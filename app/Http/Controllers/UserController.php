@@ -163,7 +163,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $this->validate($request, [
@@ -208,7 +208,7 @@ class UserController extends Controller
 
     public function profileUpdate(Request $request, $id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $input = $request->all();
@@ -219,7 +219,7 @@ class UserController extends Controller
 
     public function changePassword(Request $request, $id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $input = $request->all();
@@ -252,7 +252,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        if(!env('USER_VERIFIED'))
+        if(!config('custom.user_verified'))
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
 
         $lims_user_data = User::find($id);

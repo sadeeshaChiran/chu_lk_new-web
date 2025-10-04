@@ -1233,7 +1233,7 @@ class ProductController extends Controller
 
     public function updateProduct(Request $request)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         } else {
             $this->validate($request, [
@@ -1915,7 +1915,7 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         } else {
             $lims_product_data = Product::findOrFail($id);
@@ -2243,7 +2243,7 @@ class ProductController extends Controller
 
     public function productDisable($id)
     {
-        if (!env('USER_VERIFIED')) {
+        if (!config('custom.user_verified')) {
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         } else {
             $lims_product_data = Product::findOrFail($id);

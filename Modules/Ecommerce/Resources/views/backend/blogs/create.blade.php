@@ -152,7 +152,7 @@
     })
 
     $('#publish').on('click', function(e) {
-        @if(!env('USER_VERIFIED'))
+        @if(!config('custom.user_verified'))
         var message = '<div class="ajax-message"><div class="alert alert-danger alert-dismissible text-center mar-bot-30"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{trans("file.This feature is disabled for demo")}}</div></div>';
         $('body section').append(message);
         $("div.alert").delay(3000).slideUp(800);
@@ -165,7 +165,7 @@
     })
 
     $('#draft').on('click', function(e) {
-        @if(!env('USER_VERIFIED'))
+        @if(!config('custom.user_verified'))
         var message = '<div class="ajax-message"><div class="alert alert-danger alert-dismissible text-center mar-bot-30"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{trans("file.This feature is disabled for demo")}}</div></div>';
         $('body section').append(message);
         $("div.alert").delay(3000).slideUp(800);

@@ -23,7 +23,7 @@ class MenuController extends Controller
 
     public function store(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         $data = $request->all();
@@ -48,7 +48,7 @@ class MenuController extends Controller
 
     public function updateMenu(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
         $newdata = $request->all();
@@ -71,7 +71,7 @@ class MenuController extends Controller
 
     public function destroy(Request $request)
     {
-        if(!env('USER_VERIFIED')){
+        if(!config('custom.user_verified')){
             return redirect()->back()->with('not_permitted', 'This feature is disable for demo!');
         }
 

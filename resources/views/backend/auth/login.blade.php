@@ -72,7 +72,7 @@
               </div>
               <button type="submit" class="btn btn-primary btn-block">{{trans('file.LogIn')}}</button>
             </form>
-            {{-- @if(!env('USER_VERIFIED'))
+            {{-- @if(!config('custom.user_verified'))
             <!-- This three button for demo only-->
             <button type="submit" class="btn btn-success admin-btn">LogIn as Admin</button>
             <button type="submit" class="btn btn-info staff-btn">LogIn as Staff</button>
