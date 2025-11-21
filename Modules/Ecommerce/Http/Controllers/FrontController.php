@@ -24,46 +24,120 @@ class FrontController extends Controller
 
     public function index()
     {
+
         $sliders = DB::table('sliders')->orderBy('order', 'asc')->get();
 
         $ecommerce_setting = Cache::get('ecommerce_setting');
 
-        if(isset($ecommerce_setting->home_page)) {
-            $home = $ecommerce_setting->home_page;
-        }            
-        
-        if(isset($home)){
-            $page = DB::table('pages')->where('id',$home)->first();
+        // data
+        // --- TOP CATEGORIES ---
+        $top_categories = Cache::remember('top_categories', 600, function () {
+            return DB::table('categories')
+                ->select('categories.id', 'categories.name', 'categories.image', DB::raw('SUM(ps.qty) as total_sold'))
+                ->join('products as p', 'p.category_id', '=', 'categories.id')
+                ->join('product_sales as ps', 'ps.product_id', '=', 'p.id')
+                ->where('categories.is_active', 1)
+                ->groupBy('categories.id', 'categories.name', 'categories.image')
+                ->orderByDesc('total_sold')
+                ->take(6)
+                ->get();
+        });
 
-            if(isset($page)){
-                if($page->template == 'home'){
-                    $widgets = DB::table('page_widgets')->where('page_id',$home)->orderBy('order','ASC')->get();
+        // --- POPULAR PRODUCTS BY CATEGORY (in one query) ---
+        $category_ids = $top_categories->pluck('id');
+
+        $popular_products_by_category = [];
+
+        foreach ($category_ids as $catId) {
+            $popular_products_by_category[$catId] = DB::table('products as p')
+                ->join('product_sales as ps', 'ps.product_id', '=', 'p.id')
+                ->select('p.*', DB::raw('SUM(ps.qty) as sold_count'))
+                ->where('p.category_id', $catId)
+                ->where('p.is_active', 1)
+                ->where('p.is_online', 1)
+                ->groupBy('p.id')
+                ->orderByDesc('sold_count')
+                ->limit(10)
+                ->get();
+        }
+
+        // --- FEATURED PRODUCTS ---
+        $featured_products = Cache::remember('featured_products', 600, function () {
+            return DB::table('products')
+                ->select('id', 'name', 'price', 'image', 'online_price', 'retail_price')
+                ->where('is_active', 1)
+                ->where('is_online', 1)
+                ->where('featured', 1)
+                ->orderByDesc('id')
+                ->limit(10)
+                ->get();
+        });
+
+        // --- POPULAR PRODUCTS ---
+        $popular_products = Cache::remember('popular_products', 600, function () {
+            return DB::table('products as p')
+                ->join('product_sales as ps', 'ps.product_id', '=', 'p.id')
+                ->select('p.*', DB::raw('SUM(ps.qty) as total_sold'))
+                ->where('p.is_active', 1)
+                ->where('p.is_online', 1)
+                ->groupBy('p.id')
+                ->orderByDesc('total_sold')
+                ->limit(10)
+                ->get();
+        });
+
+        // --- NEW PRODUCTS ---
+        $new_products = Cache::remember('new_products', 600, function () {
+            return DB::table('products')
+                ->select('id', 'name', 'price', 'image', 'created_at', 'online_price', 'retail_price')
+                ->where('is_active', 1)
+                ->where('is_online', 1)
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
+        });
+        // ---
+
+        if (isset($ecommerce_setting->home_page)) {
+            $home = $ecommerce_setting->home_page;
+        }
+
+        if (isset($home)) {
+            $page = DB::table('pages')->where('id', $home)->first();
+
+            if (isset($page)) {
+                if ($page->template == 'home') {
+                    $widgets = DB::table('page_widgets')->where('page_id', $home)->orderBy('order', 'ASC')->get();
                 }
 
                 $recently_viewed = [];
-                if(session()->has('recently_viewed')){
+                if (session()->has('recently_viewed')) {
                     $recently_viewed = session()->get('recently_viewed');
                 }
-                
-                return view('ecommerce::frontend/home', compact('sliders', 'widgets', 'recently_viewed'));
+
+                return view('ecommerce::frontend/home', compact('sliders', 'widgets', 'recently_viewed', 'top_categories', 'popular_products_by_category', 'featured_products', 'popular_products', 'new_products'));
             }
         }
 
-        return view('ecommerce::frontend/home', compact('sliders'));
+        return view('ecommerce::frontend/home', compact('sliders', 'recently_viewed', 'top_categories', 'popular_products_by_category', 'featured_products', 'popular_products', 'new_products'));
     }
 
+    public function about()
+    {
+        return view('ecommerce::frontend.about');
+    }
     public function page($slug)
     {
         $page = DB::table('pages')->where('slug', $slug)->where('status', 1)->first();
-        
-        if(isset($page)){
-            if($page->template == 'faq'){
-                $categories = DB::table('faq_categories')->orderBy('order','ASC')->get();
-                $faqs = DB::table('faqs')->orderBy('order','ASC')->get();
-                return view('ecommerce::frontend.faq', compact('page','faqs','categories'));
+
+        if (isset($page)) {
+            if ($page->template == 'faq') {
+                $categories = DB::table('faq_categories')->orderBy('order', 'ASC')->get();
+                $faqs = DB::table('faqs')->orderBy('order', 'ASC')->get();
+                return view('ecommerce::frontend.faq', compact('page', 'faqs', 'categories'));
             }
 
-            if($page->template == 'contact'){
+            if ($page->template == 'contact') {
                 return view('ecommerce::frontend.contact', compact('page'));
             }
         }
@@ -85,21 +159,21 @@ class FrontController extends Controller
         return view('ecommerce::frontend.blog-details', compact('post'));
     }
 
-    public function trackOrder($order_id='',$email='')
+    public function trackOrder($order_id = '', $email = '')
     {
-        if(($order_id != '') && ($email != '')){
-            $customer = DB::table('customers')->where('email',$email)->first();
-            $sale = DB::table('sales')->where('customer_id',$customer->id)->where('reference_no',$order_id)->first();
-            $delivery = DB::table('deliveries')->where('sale_id',$sale->id)->first();
+        if (($order_id != '') && ($email != '')) {
+            $customer = DB::table('customers')->where('email', $email)->first();
+            $sale = DB::table('sales')->where('customer_id', $customer->id)->where('reference_no', $order_id)->first();
+            $delivery = DB::table('deliveries')->where('sale_id', $sale->id)->first();
             $product_sales = DB::table('product_sales')
-                             ->join('products','product_sales.product_id','=','products.id')
-                             ->select('products.name','products.image','products.is_variant','products.variant_option','product_sales.*')
-                             ->where('sale_id',$sale->id)
-                             ->get();
-            if(!isset($delivery)){
+                ->join('products', 'product_sales.product_id', '=', 'products.id')
+                ->select('products.name', 'products.image', 'products.is_variant', 'products.variant_option', 'product_sales.*')
+                ->where('sale_id', $sale->id)
+                ->get();
+            if (!isset($delivery)) {
                 $delivery = 0;
             }
-            return view('ecommerce::frontend.track-order', compact('sale','customer','delivery','product_sales'));
+            return view('ecommerce::frontend.track-order', compact('sale', 'customer', 'delivery', 'product_sales'));
         } else {
             return view('ecommerce::frontend.track-order');
         }
@@ -108,7 +182,7 @@ class FrontController extends Controller
     public function search($product)
     {
         $search = $product;
-        $data = DB::table('products')->select('id', 'image', 'name', 'slug','in_stock','qty','price','promotion_price','promotion','last_date','is_variant')
+        $data = DB::table('products')->select('id', 'image', 'name', 'slug', 'in_stock', 'qty', 'price', 'promotion_price', 'promotion', 'last_date', 'is_variant')
             ->where('is_active', 1)
             ->where('is_online', 1)
             ->where(function ($query) use ($search) {
@@ -124,11 +198,11 @@ class FrontController extends Controller
     {
         $search = htmlspecialchars($request->input('search'));
         $products = DB::table('products')->where('is_active', 1)->where('is_online', 1)
-                    ->where(function ($query) use ($search) {
-                        $query->where('name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('tags', 'LIKE', '%' . $search . '%');
-                    })
-                    ->get();
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('tags', 'LIKE', '%' . $search . '%');
+            })
+            ->get();
 
         return view('ecommerce::frontend/products-search', compact('products', 'search'));
     }
@@ -136,59 +210,58 @@ class FrontController extends Controller
     public function productDetails($product_name, $product_id)
     {
         $recently_viewed = session()->has('recently_viewed') ? session()->get('recently_viewed') : [];
-        if(!array_key_exists($product_id, $recently_viewed)) {
-            array_push($recently_viewed,$product_id);
+        if (!array_key_exists($product_id, $recently_viewed)) {
+            array_push($recently_viewed, $product_id);
             session(['recently_viewed' => $recently_viewed]);
-    	}
+        }
 
         $product = DB::table('products')
-                   ->where('id', $product_id)
-                   ->where('is_active', 1)
-                   ->where('is_online', 1)
-                   ->first();
+            ->where('id', $product_id)
+            ->where('is_active', 1)
+            ->where('is_online', 1)
+            ->first();
 
-        if($product->variant_option) {
+        if ($product->variant_option) {
             $product->variant_option = json_decode($product->variant_option);
             $product->variant_value = json_decode($product->variant_value);
         }
-        
-        $brand = DB::table('brands')->where('id',$product->brand_id)->first();
-        
-        $categories = Cache::get('category_list');
-        $category = $categories->where('id',$product->category_id)->first();
 
-        $product_arr = explode(',',$product->related_products);
-        $related_products = DB::table('products')->whereIn('id',$product_arr)->get(); 
+        $brand = DB::table('brands')->where('id', $product->brand_id)->first();
+
+        $categories = Cache::get('category_list');
+        $category = $categories->where('id', $product->category_id)->first();
+
+        $product_arr = explode(',', $product->related_products);
+        $related_products = DB::table('products')->whereIn('id', $product_arr)->get();
 
         $recently_viewed = [];
-        if(session()->has('recently_viewed')){
+        if (session()->has('recently_viewed')) {
             $recently_viewed = session()->get('recently_viewed');
         }
 
-        if($product->is_variant == 1){
+        if ($product->is_variant == 1) {
             $variant = DB::table('product_variants')
-                       ->join('variants','product_variants.variant_id','=','variants.id')
-                       ->select('name','qty')
-                       ->where('product_id',$product->id)
-                       ->get();
+                ->join('variants', 'product_variants.variant_id', '=', 'variants.id')
+                ->select('name', 'qty')
+                ->where('product_id', $product->id)
+                ->get();
             //return $variant;
 
-            return view('ecommerce::frontend/product-details', compact('product','brand','category','related_products','recently_viewed','variant'));
+            return view('ecommerce::frontend/product-details', compact('product', 'brand', 'category', 'related_products', 'recently_viewed', 'variant'));
         }
 
-        return view('ecommerce::frontend/product-details', compact('product','brand','category','related_products','recently_viewed'));
-        
+        return view('ecommerce::frontend/product-details', compact('product', 'brand', 'category', 'related_products', 'recently_viewed'));
     }
 
     public function productModal($product_id)
     {
         $product = DB::table('products')
-                   ->where('id', $product_id)
-                   ->where('is_active', 1)
-                   ->where('is_online', 1)
-                   ->first();
+            ->where('id', $product_id)
+            ->where('is_active', 1)
+            ->where('is_online', 1)
+            ->first();
 
-        if($product->variant_option) {
+        if ($product->variant_option) {
             $product->variant_option = json_decode($product->variant_option);
             $product->variant_value = json_decode($product->variant_value);
         }
@@ -205,31 +278,31 @@ class FrontController extends Controller
 
     public function category($category, Request $request)
     {
-        $queryParams = $request->query();        
+        $queryParams = $request->query();
         $category = DB::table('categories')
-                        ->select('id','name','slug','page_title','short_description')
-                        ->where('slug', $category)
-                        ->where('is_active', 1)->first();
+            ->select('id', 'name', 'slug', 'page_title', 'short_description')
+            ->where('slug', $category)
+            ->where('is_active', 1)->first();
 
         $sub_categories = DB::table('categories')
-                            ->select('id','name','slug','page_title','short_description')
-                            ->where('parent_id', $category->id)
-                            ->where('is_active', 1)->get();
-        
+            ->select('id', 'name', 'slug', 'page_title', 'short_description')
+            ->where('parent_id', $category->id)
+            ->where('is_active', 1)->get();
+
         if (count($sub_categories) > 0) {
             $sub_cats = [];
-            foreach($sub_categories as $cat){
+            foreach ($sub_categories as $cat) {
                 array_push($sub_cats, $cat->id);
             }
 
             $products = DB::table('products')
-                            ->where('is_active', 1)
-                            ->where('is_online', 1)
-                            // ->where('is_variant', 1)
-                            ->where(function($query) use ($category,$sub_cats){
-                                $query->where('category_id', $category->id);
-                                $query->orWhereIn('category_id',$sub_cats);
-                            });
+                ->where('is_active', 1)
+                ->where('is_online', 1)
+                // ->where('is_variant', 1)
+                ->where(function ($query) use ($category, $sub_cats) {
+                    $query->where('category_id', $category->id);
+                    $query->orWhereIn('category_id', $sub_cats);
+                });
 
             // Loop through each query parameter to build flexible conditions
             foreach ($queryParams as $key => $value) {
@@ -237,7 +310,7 @@ class FrontController extends Controller
 
                 $products->where(function ($query) use ($key, $valuesArray) {
                     $query->whereRaw("variant_option LIKE ?", ["%\"$key\"%"]);
-                    
+
                     // Apply OR conditions for each individual value
                     $query->where(function ($subQuery) use ($valuesArray) {
                         foreach ($valuesArray as $val) {
@@ -249,30 +322,29 @@ class FrontController extends Controller
 
             // Execute the query and paginate results
             $products = $products->paginate(10);
-            
+
             if ($request->ajax()) {
                 $view = view('ecommerce::frontend/products-load-more', compact('products'))->render();
                 return response()->json(['html' => $view]);
             }
 
             $variants = DB::table('products')
-                            ->where('is_active', 1)
-                            ->where('is_online', 1)
-                            // ->where('is_variant', 1)
-                            ->where(function ($query) use ($category, $sub_cats) {
-                                $query->where('category_id', $category->id)
-                                    ->orWhereIn('category_id', $sub_cats);
-                            })
-                            ->get(['variant_option', 'variant_value']);
-            
-            return view('ecommerce::frontend/products', compact('products', 'category','variants'));
+                ->where('is_active', 1)
+                ->where('is_online', 1)
+                // ->where('is_variant', 1)
+                ->where(function ($query) use ($category, $sub_cats) {
+                    $query->where('category_id', $category->id)
+                        ->orWhereIn('category_id', $sub_cats);
+                })
+                ->get(['variant_option', 'variant_value']);
 
+            return view('ecommerce::frontend/products', compact('products', 'category', 'variants'));
         } else {
             $products = DB::table('products')
-                            ->where('category_id', $category->id)
-                            ->where('is_active', 1)
-                            ->where('is_online', 1);
-                            // ->where('is_variant', 1)
+                ->where('category_id', $category->id)
+                ->where('is_active', 1)
+                ->where('is_online', 1);
+            // ->where('is_variant', 1)
 
             foreach ($queryParams as $key => $value) {
                 $valuesArray = explode(',', $value); // Split the parameter values into an array
@@ -298,13 +370,13 @@ class FrontController extends Controller
             }
 
             $variants = DB::table('products')
-                        ->where('category_id', $category->id)
-                        ->where('is_active', 1)
-                        ->where('is_online', 1)
-                        // ->where('is_variant', 1)
-                        ->get(['variant_option', 'variant_value']);
+                ->where('category_id', $category->id)
+                ->where('is_active', 1)
+                ->where('is_online', 1)
+                // ->where('is_variant', 1)
+                ->get(['variant_option', 'variant_value']);
 
-            return view('ecommerce::frontend/products', compact('products', 'category','variants'));
+            return view('ecommerce::frontend/products', compact('products', 'category', 'variants'));
         }
     }
 
@@ -320,21 +392,21 @@ class FrontController extends Controller
         $collections = DB::table('collections')->where('status', 1)->get();
 
         $product_ids = $collections // Replace with your actual table name
-                        ->pluck('products') // Get the 'products' column values as a collection
-                        ->flatMap(function ($item) {
-                            return explode(',', $item); // Split each row's products by comma
-                        })
-                        ->unique() // Remove duplicate entries
-                        ->values() // Reset keys
-                        ->toArray(); 
+            ->pluck('products') // Get the 'products' column values as a collection
+            ->flatMap(function ($item) {
+                return explode(',', $item); // Split each row's products by comma
+            })
+            ->unique() // Remove duplicate entries
+            ->values() // Reset keys
+            ->toArray();
         $products = DB::table('products')
-                    ->select('id', 'image', 'name', 'slug','in_stock','qty','price','promotion_price','promotion','last_date','is_variant')
-                    ->whereIn('id',$product_ids)
-                    ->where('is_active', 1)
-                    ->where('is_online', 1)
-                    ->get();
+            ->select('id', 'image', 'name', 'slug', 'in_stock', 'qty', 'price', 'promotion_price', 'promotion', 'last_date', 'is_variant')
+            ->whereIn('id', $product_ids)
+            ->where('is_active', 1)
+            ->where('is_online', 1)
+            ->get();
 
-        return view('ecommerce::frontend.collections', compact('collections','products'));
+        return view('ecommerce::frontend.collections', compact('collections', 'products'));
     }
 
     public function collectionProducts($collection, Request $request)
@@ -343,14 +415,14 @@ class FrontController extends Controller
 
         $collection = $collections->where('slug', $collection)->where('status', 1)->first();
 
-        $product_arr = explode(',',$collection->products);
+        $product_arr = explode(',', $collection->products);
 
         $products = DB::table('products')
-                    ->select('id', 'image', 'name', 'slug','in_stock','qty','price','promotion_price','promotion','last_date','is_variant')
-                    ->whereIn('id', $product_arr)
-                    ->where('is_active', 1)
-                    ->where('is_online', 1)
-                    ->get();
+            ->select('id', 'image', 'name', 'slug', 'in_stock', 'qty', 'price', 'promotion_price', 'promotion', 'last_date', 'is_variant')
+            ->whereIn('id', $product_arr)
+            ->where('is_active', 1)
+            ->where('is_online', 1)
+            ->get();
 
         return view('ecommerce::frontend.collection-products', compact('products', 'collection', 'collections'));
     }
@@ -360,9 +432,9 @@ class FrontController extends Controller
         $brand = DB::table('brands')->where('slug', $brand)->where('is_active', 1)->first();
 
         $products = DB::table('products')->where('brand_id', $brand->id)
-                    ->where('is_active', 1)
-                    ->where('is_online', 1)
-                    ->paginate(5);
+            ->where('is_active', 1)
+            ->where('is_online', 1)
+            ->paginate(5);
 
         if ($request->ajax()) {
             $view = view('ecommerce::frontend/brand-products-load-more', compact('products'))->render();
@@ -398,7 +470,7 @@ class FrontController extends Controller
             'email'  => 'required|unique:newsletter,email',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $messages = $validator->messages();
             return $validator->errors();
         } else {
@@ -412,7 +484,6 @@ class FrontController extends Controller
 
     public function sessionRenew(Request $request)
     {
-        return response()->json('success'); 
+        return response()->json('success');
     }
-
 }
